@@ -1,0 +1,76 @@
+/* LandingPage.css */
+.landing-page {
+    font-family: Arial, sans-serif;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: #003366;
+    color: white;
+  }
+  
+  .auth-buttons button {
+    margin-left: 10px;
+    padding: 0.5rem 1.5rem; /* Consistent padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 120px; /* Fixed width for uniform size */
+    text-align: center;
+    background: none; /* Reset default styles */
+    color: inherit;
+}
+
+.header .auth-buttons .login-btn {
+    background: #4CAF50; /* Green background for Log In */
+    color: white;
+}
+
+.header .auth-buttons .signup-btn {
+    background: #ff9900; /* Orange background for Sign Up */
+    color: white;
+}
+
+/* Optional: Remove outline when buttons are focused */
+.auth-buttons button:focus {
+    outline: none;
+}
+
+  
+  .hero-section {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: #f4f4f4;
+  }
+  
+  .features-section {
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+  
+  .feature-card {
+    display: inline-block;
+    margin: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 250px;
+  }
+  
+  .footer {
+    text-align: center;
+    padding: 1rem;
+    background: #003366;
+    color: white;
+  }
+
+  .demo img {
+    width: 50%;
+    max-width: 250px;
+    height: auto;
+  }
+  
+  
