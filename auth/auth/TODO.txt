@@ -1,0 +1,2 @@
+1. change random method for otp generation
+2. finish the first api: enter phone number -> send verification code
