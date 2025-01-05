@@ -1,9 +1,10 @@
 package com.example.auth.controller;
 
 import com.example.auth.entity.User;
-import com.example.auth.service.OtpService;
-import com.example.auth.service.UserService;
-import com.example.auth.service.FileService;
+import com.example.auth.service.*;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,35 +15,43 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
+@Slf4j
 public class AuthController {
 
+    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
     private final FileService fileService;
     private final OtpService otpService;
+    private final SMSSenderService smsSenderService;
+    private final EmailSenderService emailSenderService;
 
     @Autowired
-    public AuthController(UserService userService, FileService fileService, OtpService otpService) {
+    public AuthController(UserService userService, FileService fileService, OtpService otpService, SMSSenderService smsSenderService, EmailSenderService emailSenderService) {
         this.userService = userService;
         this.fileService = fileService;
         this.otpService = otpService;
+        this.smsSenderService = smsSenderService;
+        this.emailSenderService = emailSenderService;
     }
 
-    @PostMapping("/validate-phone")
+    @PostMapping("/validate-email")
     public ResponseEntity<?> validatePhone(
-            @RequestParam("phoneNumber") String phoneNumber,
+            @RequestParam("email") String toEmail,
             @RequestParam(value = "otp", required = false) String otp) {
         if (otp == null) {
             // Generate OTP
-            String generatedOtp = otpService.generateOtp(phoneNumber);
+            String generatedOtp = otpService.generateOtp(toEmail);
+
             // Send OTP
+            log.info("Process EmailSenderService started sendRequest: (OTP=" + generatedOtp + " ,email=" + toEmail);
+            emailSenderService.sendOtp(toEmail, generatedOtp);
 
-
-            return ResponseEntity.ok("OTP " + generatedOtp + " sent to " + phoneNumber);
+            return ResponseEntity.ok(emailSenderService.sendOtp(toEmail, generatedOtp));
         } else {
             // Validate OTP
-            boolean isValid = otpService.validateOtp(phoneNumber, otp);
+            boolean isValid = otpService.validateOtp(toEmail, otp);
             if (isValid) {
-                return ResponseEntity.ok("Phone number validated successfully");
+                return ResponseEntity.ok("Email validated successfully");
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
             }
