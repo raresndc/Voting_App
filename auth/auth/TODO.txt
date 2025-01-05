@@ -1,2 +1,16 @@
 1. change random method for otp generation
 2. finish the first api: enter phone number -> send verification code
+
+CHANGE:
+     - enter mail instead of phone number and send verification code through it -> DONE
+     - phone number - moved to personal info
+
+05.01.2025
+
+SENDING OTP = DONE
+VERIFICATION = DONE
+
+TODO:
+-> why is it sending two mails?
+-> change the mail format
+-> move to the next api

@@ -23,7 +23,7 @@ public class OTP {
     private Long id;
 
     @Column(nullable = false)
-    private String phoneNumber;
+    private String email;
 
     @Column(nullable = false)
     private String code;
