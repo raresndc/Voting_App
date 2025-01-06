@@ -8,7 +8,7 @@ const LandingPage = () => {
   return (
     <div className="landing-page">
       <header className="header">
-        <button className="logo" onClick={() => navigate("/")}>VoteApp</button>
+        <button className="logo" onClick={() => navigate("/")}>VoteMeUp</button>
         <div className="auth-buttons">
           <button className="login-btn" onClick={() => navigate("/login")}>Log In</button>
           <button className="signup-btn" onClick={() => navigate("/signup")}>Sign Up</button>
@@ -43,7 +43,7 @@ const LandingPage = () => {
       </section>
 
       <footer className="footer">
-        <p>&copy; 2024 VoteApp. All rights reserved.</p>
+        <p>&copy; 2024 VoteMeUp. All rights reserved.</p>
       </footer>
     </div>
   );
