@@ -2,15 +2,21 @@ package com.example.auth.controller;
 
 import com.example.auth.entity.User;
 import com.example.auth.service.*;
+import com.example.auth.util.JwtUtil;
+import jakarta.mail.MessagingException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -18,40 +24,46 @@ import java.util.Optional;
 @Slf4j
 public class AuthController {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
     private final UserService userService;
     private final FileService fileService;
     private final OtpService otpService;
     private final SMSSenderService smsSenderService;
     private final EmailSenderService emailSenderService;
+    private final JwtUtil jwtUtil;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public AuthController(UserService userService, FileService fileService, OtpService otpService, SMSSenderService smsSenderService, EmailSenderService emailSenderService) {
+    public AuthController(UserService userService, FileService fileService, OtpService otpService, SMSSenderService smsSenderService, EmailSenderService emailSenderService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.fileService = fileService;
         this.otpService = otpService;
         this.smsSenderService = smsSenderService;
         this.emailSenderService = emailSenderService;
+        this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/validate-email")
-    public ResponseEntity<?> validatePhone(
+    public ResponseEntity<?> validateEmail(
             @RequestParam("email") String toEmail,
-            @RequestParam(value = "otp", required = false) String otp) {
+            @RequestParam(value = "otp", required = false) Integer otp) throws MessagingException {
+        Optional<User> existingUser = userService.findUserByEmail(toEmail);
+
+        if (existingUser.isPresent() && otp == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already exists in the system");
+        }
+
         if (otp == null) {
-            // Generate OTP
-            String generatedOtp = otpService.generateOtp(toEmail);
+            int generatedOtp = otpService.generateOtp(toEmail);
+            log.info("OTP generated for email: {}", toEmail);
 
-            // Send OTP
-            log.info("Process EmailSenderService started sendRequest: (OTP=" + generatedOtp + " ,email=" + toEmail);
             emailSenderService.sendOtp(toEmail, generatedOtp);
-
-            return ResponseEntity.ok(emailSenderService.sendOtp(toEmail, generatedOtp));
+            return ResponseEntity.ok("OTP sent to " + toEmail);
         } else {
-            // Validate OTP
             boolean isValid = otpService.validateOtp(toEmail, otp);
             if (isValid) {
-                return ResponseEntity.ok("Email validated successfully");
+                String token = jwtUtil.generateToken(toEmail); // Generate JWT
+                return ResponseEntity.ok(Map.of("message", "Email validated successfully", "token", token));
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid OTP");
             }
@@ -60,29 +72,42 @@ public class AuthController {
 
     @PostMapping("/personal-info")
     public ResponseEntity<?> submitPersonalInfo(@RequestBody User user) {
-        // Ensure phone number is already validated
-        Optional<User> existingUser = userService.findUserByPhoneNumber(user.getPhoneNumber());
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // Get authenticated email
+        Optional<User> existingUser = userService.findUserByEmail(email);
+
         if (existingUser.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Phone number not validated");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not validated");
         }
 
         User existing = existingUser.get();
-        existing.setName(user.getName());
-        existing.setEmail(user.getEmail());
+
+        // Validate the password field
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Password cannot be null or empty");
+        }
+
+        existing.setFirstName(user.getFirstName());
+        existing.setLastName(user.getLastName());
+        existing.setPhoneNumber(user.getPhoneNumber());
         existing.setAddress(user.getAddress());
         existing.setDateOfBirth(user.getDateOfBirth());
+
+        // Hash the password before saving
+        existing.setPassword(passwordEncoder.encode(user.getPassword()));
         userService.saveUser(existing);
 
         return ResponseEntity.ok("Personal information submitted successfully");
     }
 
-    @PostMapping("/verify-identity")
+
+
+    @PostMapping(value = "/verify-identity")
     public ResponseEntity<?> verifyIdentity(
-            @RequestParam("phoneNumber") String phoneNumber,
-            @RequestParam("governmentId") MultipartFile governmentId,
-            @RequestParam("selfie") MultipartFile selfie) {
+            @RequestParam("email") String email,
+            @RequestPart(value = "governmentId", required = true) MultipartFile governmentId,
+            @RequestPart(value = "selfie", required = true) MultipartFile selfie) {
         // Ensure user exists and has submitted personal info
-        Optional<User> userOptional = userService.findUserByPhoneNumber(phoneNumber);
+        Optional<User> userOptional = userService.findUserByEmail(email);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
@@ -103,29 +128,22 @@ public class AuthController {
         }
     }
 
-//    @PostMapping("/register")
-//    public ResponseEntity<?> register(@RequestBody User user) {
-//        userService.saveUser(user);
-//
-//        //create otp and send it to the user + i should have three apis here: 1. phone number + otp confirmation;
-//        //2.personal info
-//        //3.identity
-//
-//        return ResponseEntity.ok("User registered successfully");
-//    }
-//
-//    @PostMapping("/upload")
-//    public ResponseEntity<?> uploadDocuments(
-//            @RequestParam("governmentId") MultipartFile governmentId,
-//            @RequestParam("selfie") MultipartFile selfie) {
-//        try {
-//            String govIdPath = fileService.saveGovernmentId(governmentId);
-//            String selfiePath = fileService.saveSelfie(selfie);
-//            return ResponseEntity.ok("Documents uploaded successfully:\n" +
-//                    "Government ID: " + govIdPath + "\n" +
-//                    "Selfie: " + selfiePath);
-//        } catch (Exception e) {
-//            return ResponseEntity.badRequest().body("Error uploading files: " + e.getMessage());
-//        }
-//    }
+
+    @PostMapping("/set-passcode")
+    public ResponseEntity<?> setPasscode(@RequestBody User user) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName(); // Get authenticated email
+        Optional<User> existingUser = userService.findUserByEmail(email);
+
+        if (existingUser.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email not validated");
+        }
+
+        User existing = existingUser.get();
+
+        existing.setPasscode(user.getPasscode());
+        userService.saveUser(existing);
+
+        return ResponseEntity.ok("Passcode set successfully");
+    }
+
 }

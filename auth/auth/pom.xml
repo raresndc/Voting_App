@@ -24,7 +24,6 @@
 		</repository>
 	</repositories>
 
-
 	<dependencies>
 		<!-- Spring Boot Starter Web -->
 		<dependency>
@@ -68,10 +67,9 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version> <!-- Specify the version explicitly -->
-			<optional>true</optional>
+			<version>1.18.30</version>
+			<scope>provided</scope>
 		</dependency>
-
 
 		<!-- JWT Dependencies -->
 		<dependency>
@@ -118,6 +116,14 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>5.0.0</version> <!-- Compatible with Spring Boot 3.x -->
+			<scope>provided</scope>
+		</dependency>
+
 	</dependencies>
 
 	<build>
