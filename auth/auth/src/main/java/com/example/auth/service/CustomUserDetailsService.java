@@ -2,12 +2,14 @@ package com.example.auth.service;
 
 import com.example.auth.entity.User;
 import com.example.auth.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -31,6 +33,8 @@ public class CustomUserDetailsService implements UserDetailsService {
                     .roles("UNVERIFIED_USER") // Temporary role
                     .build();
         }
+
+        log.info("Loaded user: {}, password: {}", user.getEmail(), user.getPassword());
 
         // Fully registered users
         return org.springframework.security.core.userdetails.User.builder()
