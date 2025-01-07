@@ -31,36 +31,44 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        final String authHeader = request.getHeader("Authorization");
+        final String path = request.getServletPath();
 
+        // Skip JWT validation for login or other public endpoints
+        if ("/api/auth/login".equals(path) || "/api/auth/validate-email".equals(path)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        final String authHeader = request.getHeader("Authorization");
         String email = null;
         String jwt = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            email = jwtUtil.extractEmail(jwt); // Extract email from the token
+            email = jwtUtil.extractEmail(jwt);
         }
 
         if (email != null && jwtUtil.validateToken(jwt, email)) {
             try {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                if (userDetails.getPassword().isEmpty()) {
-                    log.warn("User is in account creation flow: {}", email);
-                }
-
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             } catch (UsernameNotFoundException e) {
                 log.error("User not found: {}", email);
             }
         }
 
-
         chain.doFilter(request, response);
     }
+
+
+//    @Override
+//    protected boolean shouldNotFilter(HttpServletRequest request) {
+//        String path = request.getRequestURI();
+//        return path.startsWith("/api/auth/login");
+//    }
 }
 
 //How It Works:

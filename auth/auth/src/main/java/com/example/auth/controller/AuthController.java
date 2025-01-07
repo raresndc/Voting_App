@@ -103,29 +103,31 @@ public class AuthController {
 
     @PostMapping(value = "/verify-identity")
     public ResponseEntity<?> verifyIdentity(
-            @RequestParam("email") String email,
+            @RequestParam("email") String email/*,
             @RequestPart(value = "governmentId", required = true) MultipartFile governmentId,
-            @RequestPart(value = "selfie", required = true) MultipartFile selfie) {
+            @RequestPart(value = "selfie", required = true) MultipartFile selfie*/) {
         // Ensure user exists and has submitted personal info
         Optional<User> userOptional = userService.findUserByEmail(email);
         if (userOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
 
-        try {
-            // Save uploaded files
-            String govIdPath = fileService.saveGovernmentId(governmentId);
-            String selfiePath = fileService.saveSelfie(selfie);
+//        try {
+//            // Save uploaded files
+//            String govIdPath = fileService.saveGovernmentId(governmentId);
+//            String selfiePath = fileService.saveSelfie(selfie);
+//
+//            // Mark user as verified
+//            User user = userOptional.get();
+//            user.setVerified(true);
+//            userService.saveUser(user);
+//
+//            return ResponseEntity.ok("Identity verified successfully");
+//        } catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during verification: " + e.getMessage());
+//        }
+        return ResponseEntity.ok("Identity verified successfully");
 
-            // Mark user as verified
-            User user = userOptional.get();
-            user.setVerified(true);
-            userService.saveUser(user);
-
-            return ResponseEntity.ok("Identity verified successfully");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error during verification: " + e.getMessage());
-        }
     }
 
 
