@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@Slf4j
 public class AuthController {
 
     private final UserService userService;
@@ -31,6 +31,8 @@ public class AuthController {
     private final EmailSenderService emailSenderService;
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
 
     @Autowired
     public AuthController(UserService userService, FileService fileService, OtpService otpService, SMSSenderService smsSenderService, EmailSenderService emailSenderService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder) {

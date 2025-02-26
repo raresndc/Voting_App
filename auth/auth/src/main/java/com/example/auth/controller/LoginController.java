@@ -4,6 +4,8 @@ import com.example.auth.entity.User;
 import com.example.auth.service.UserService;
 import com.example.auth.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class LoginController {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
 
     @Autowired
     public LoginController(AuthenticationManager authenticationManager, JwtUtil jwtUtil, PasswordEncoder passwordEncoder, UserService userService) {
@@ -45,7 +49,7 @@ public class LoginController {
                     new UsernamePasswordAuthenticationToken(email, password)
             );
 
-            log.info("Database password hash: {}", user.getPassword());
+//            log.info("Database password hash: {}", user.getPassword());
             log.info("Encoded password input: {}", passwordEncoder.encode(password));
 
             // Generate JWT token
