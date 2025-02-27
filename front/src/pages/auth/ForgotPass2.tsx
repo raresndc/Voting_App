@@ -87,9 +87,6 @@ export default function ForgotPass2() {
               {/* <p className="resendNote">Didn't receive the code? <button className="resendBtn">Resend Code</button></p> */}
               
           </form>
-
-
-
       </div>
     </>
   )
