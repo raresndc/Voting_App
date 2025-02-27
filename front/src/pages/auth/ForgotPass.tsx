@@ -26,7 +26,13 @@ export default function ForgotPass() {
 
   const [credentials, setCredentials] = useState<ICredentials>({username: "", password: ""})
 
+  const [email, setEmail] = useState("");
   const navigate = useNavigate();
+
+  const isValidEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   async function loginForm() {
     try {
@@ -57,8 +63,25 @@ export default function ForgotPass() {
   }
 
   
-  const navigateForgot2 = () => {
-    navigate("/forgotPass/step2")
+  const navigateForgot2 = (e) => {
+    e.preventDefault();
+        if(!email.trim()) {
+          Swal.fire({
+            icon: 'error', 
+            title: 'Error', 
+            text: 'Email field cannot be empty!'
+          });
+          return;
+        } else if(!isValidEmail(email)) {
+          Swal.fire({
+            icon: 'error', 
+            title: 'Error', 
+            text: "Email field isn't valid!"
+          });
+          return;
+        }
+
+        navigate("/forgotPass/step2")
   }
 
 
@@ -71,10 +94,24 @@ export default function ForgotPass() {
                 <p className="message">Enter your email to restore your password </p> 
                 <p className="message"> </p>
                 <label>
-                    <input required placeholder="" type="email" className="input"/>
-                    <span>Email</span>
-                </label>  
-                <button className="submit" onClick={navigateForgot2}>Next step</button>
+            <input
+              required
+              placeholder=""
+              type="email"
+              className="input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <span>Email</span>
+          </label>
+                <button
+            className={`submit ${!email.trim() ? "opacity-50 cursor-not-allowed" : ""}`}
+            onClick={navigateForgot2}
+            disabled={!email.trim()} // Disable if empty
+          >
+            Next Step
+          </button> 
+                {/* <button className="submit" onClick={navigateForgot2}>Next step</button> */}
                 {/* <p className="signin">Already have an acount ? <a onClick={navigateLogin}>Signin</a> </p> */}
             </form>
       </div>

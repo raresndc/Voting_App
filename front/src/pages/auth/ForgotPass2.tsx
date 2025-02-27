@@ -28,6 +28,36 @@ export default function ForgotPass2() {
 
   const navigate = useNavigate();
 
+    // State to store OTP values
+    const [otp, setOtp] = useState<string[]>(new Array(9).fill(""));
+  
+    // Function to update OTP state
+    const handleOtpChange = (index: number, value: string) => {
+      // Only allow numbers (0-9)
+      if (!/^\d?$/.test(value)) {
+        Swal.fire({
+          icon: "error",
+          title: "Invalid Input",
+          text: "Please enter only a number.",
+        });
+        return;
+      }
+
+      const newOtp = [...otp];
+      newOtp[index] = value;
+      setOtp(newOtp);
+  
+      // Move to the next input field automatically when a digit is entered
+      if (value && index < otp.length - 1) {
+        const nextInput = document.getElementById(`otp-input${index + 1}`);
+        if (nextInput) {
+          (nextInput as HTMLInputElement).focus();
+        }
+      }
+    };
+
+    const isOtpComplete = otp.every((digit) => digit !== "");
+
   async function loginForm() {
     try {
       if(!credentials.username || credentials.username === "" ||
@@ -57,7 +87,18 @@ export default function ForgotPass2() {
   }
 
   
-  const navigateForgot3 = () => {
+  const navigateForgot3 = (e) => {
+    e.preventDefault();
+
+    if (!isOtpComplete) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Please complete the OTP before proceeding!",
+      });
+      return;
+    }
+
     navigate("/forgotPass/step3")
   }
 
@@ -71,17 +112,19 @@ export default function ForgotPass2() {
             <span className="mainHeading">Enter OTP</span>
             <p className="otpSubheading">We have sent a verification code to your email</p>
             <div className="inputContainer">
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input1"/>
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input2"/>
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input3"/>
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input4"/> 
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input5"/> 
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input6"/> 
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input7"/> 
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input8"/> 
-            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input9"/> 
-            
-            </div>
+            {otp.map((value, index) => (
+              <input
+                key={index}
+                id={`otp-input${index}`}
+                maxLength={1}
+                type="text"
+                className="otp-input text-center"
+                value={value}
+                onChange={(e) => handleOtpChange(index, e.target.value)}
+                onFocus={(e) => e.target.select()} // Select input value on focus
+              />
+            ))}
+          </div>
             <button className="verifyButton" type="submit" onClick={navigateForgot3}>Next step</button>
               <button className="exitBtn">×</button>
               {/* <p className="resendNote">Didn't receive the code? <button className="resendBtn">Resend Code</button></p> */}
