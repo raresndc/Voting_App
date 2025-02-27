@@ -33,7 +33,7 @@ export default function ForgotPass3() {
       if(!credentials.username || credentials.username === "" ||
       !credentials.password || credentials.password === ""
       ) {
-          Swal.fire({icon: 'error', title: 'Eroare', text: 'Trebuie completate username si password!'})
+          Swal.fire({icon: 'error', title: 'Error', text: 'Username and Password must be completed!'})
           return;
       }
       
