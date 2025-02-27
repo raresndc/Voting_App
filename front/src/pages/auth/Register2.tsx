@@ -75,6 +75,11 @@ export default function Register2() {
             <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input2"/>
             <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input3"/>
             <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input4"/> 
+            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input5"/> 
+            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input6"/> 
+            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input7"/> 
+            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input8"/> 
+            <input required="required" maxlength="1" type="text" className="otp-input" id="otp-input9"/> 
             
             </div>
             <button className="verifyButton" type="submit" onClick={navigateStep3}>Next step</button>
