@@ -159,7 +159,7 @@ export default function HomePage() {
                         </Button> */}
 
                         <button className="buttonH">
-                        <span className="text">Vizualizeaza</span>
+                        <span className="text">View</span>
                         </button>
 
 
