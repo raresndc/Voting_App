@@ -128,7 +128,11 @@ export default function ForgotPass2() {
             <button className="verifyButton" type="submit" onClick={navigateForgot3}>Next step</button>
               <button className="exitBtn">×</button>
               {/* <p className="resendNote">Didn't receive the code? <button className="resendBtn">Resend Code</button></p> */}
-              
+              <button className="exitBtn">×</button>
+          <p className="resendNote">
+            Didn't receive the code?{" "}
+            <button className="resendBtn">Resend Code</button>
+          </p>
           </form>
       </div>
     </>

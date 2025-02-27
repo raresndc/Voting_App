@@ -48,7 +48,7 @@ export default function AboutPage() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-600">
       <Card className="w-full max-w-2xl p-6 shadow-lg rounded-2xl bg-white/90">
-        <CardHeader className="flex justify-center pb-4 border-b">
+        <CardHeader className="flex pb-4 border-b ml-0" style={{ justifyItems:'center', justifyContent:'center'}}>
           <Avatar
             src="/votingLogo.png"
             alt="Voting App Logo"
