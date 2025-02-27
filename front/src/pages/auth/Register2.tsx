@@ -54,7 +54,7 @@ export default function Register2() {
   return (
     <>
       <div className="absolute inset-0 z-0 h-full w-full bg-gradient-to-r from-indigo-500" />
-      <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
+      <div className="container mx-auto p-4" style={{justifyContent:'center', justifyItems:'center', marginTop:'10%'}}> 
         <form className="otp-Form">
           <span className="mainHeading">Enter OTP</span>
           <p className="otpSubheading">
