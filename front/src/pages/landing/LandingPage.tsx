@@ -136,7 +136,13 @@ const LandingPage = () => {
           className="mt-4 h-48 w-48 mx-auto animate-bounce"
         />
         <p className="mt-4 text-xl font-serif animate-fade-in">
-        Our mission is to bring transparency and trust to the voting process through the power of blockchain technology. Our innovative app empowers communities, organizations, and institutions to conduct secure and verifiable elections with ease. Whether you're hosting a small poll or a large-scale election, our platform ensures every vote is counted, every voice is heard, and the entire process remains tamper-proof. We're here to make voting not just a right, but a seamless and trustworthy experience for everyone!
+        Our mission is to bring transparency and trust to the voting process through 
+        the power of blockchain technology. Our innovative app empowers communities, 
+        organizations, and institutions to conduct secure and verifiable elections 
+        with ease. Whether you're hosting a small poll or a large-scale election, our 
+        platform ensures every vote is counted, every voice is heard, and the entire 
+        process remains tamper-proof. We're here to make voting not just a right, but a 
+        seamless and trustworthy experience for everyone!
         </p>
       </div>
 
@@ -151,7 +157,12 @@ const LandingPage = () => {
           We Offer Secure and Transparent Voting Solutions
           </h1>
           <p className="mt-4 text-lg animate-fade-in">
-          Vote Me Up is a revolutionary voting app leveraging blockchain technology to ensure transparency, security, and fairness in every election. We take a tailored approach to meet the needs of communities, organizations, and institutions, whether for local polls, corporate voting, or large-scale elections. Our platform offers robust features for managing voter registration, conducting secure voting, and delivering verifiable results with ease and integrity.
+          Vote Me Up is a revolutionary voting app leveraging blockchain 
+          technology to ensure transparency, security, and fairness in every election. 
+          We take a tailored approach to meet the needs of communities, organizations, 
+          and institutions, whether for local polls, corporate voting, or large-scale 
+          elections. Our platform offers robust features for managing voter registration, 
+          conducting secure voting, and delivering verifiable results with ease and integrity.
           </p>
           <h2 className="mt-4 text-2xl animate-fade-in">UI/UX Design (90%)</h2>
           <div className="w-full bg-red-200 h-4 mt-2">
@@ -223,7 +234,12 @@ const LandingPage = () => {
             <h1 className="text-3xl animate-fade-in">WE PROVIDE</h1>
             <h2 className="text-2xl animate-fade-in">Remote Employee</h2>
             <p className="text-lg animate-fade-in">
-            A diverse pool of verified voters from every community, ready to participate in your election. Solve your voting challenges by letting us help you engage the most reliable voters or even manage an entire voting system that ensures transparency and fairness. Everything is securely managed by our trusted platform!
+            A diverse pool of verified voters from every community, 
+            ready to participate in your election. Solve your voting 
+            challenges by letting us help you engage the most reliable 
+            voters or even manage an entire voting system that ensures 
+            transparency and fairness. Everything is securely managed 
+            by our trusted platform!
             </p>
           </div>
           <img
@@ -238,9 +254,9 @@ const LandingPage = () => {
             <h2 className="text-2xl animate-fade-in">Global Partnership</h2>
             <p className="text-lg animate-fade-in">
               Our Global partners are spread 12 countries and our client base
-              is growing day by day . Many of my clients are repeat customers
+              is growing day by day. Many of our clients are repeat customers
               and several have come to us through high recommendation and
-              referrals . Our client hail from different domains
+              referrals. Our client hail from different domains.
             </p>
           </div>
           <img
@@ -254,14 +270,13 @@ const LandingPage = () => {
             <h1 className="text-3xl animate-fade-in">OUR GOAL</h1>
             <h2 className="text-2xl animate-fade-in">Same Quality at Low Cost</h2>
             <p className="text-lg animate-fade-in">
-              We have unique and revolutionary business principle, ‘Same
-              quality but significantly lower cost’. we aims to fulfill the
-              long-standing outsourcing vacuum felt by Small Medium
-              Enterprises across the country who, till now, were dependent
-              mostly on offshore freelancers.The hired professionals match
-              their western counterparts in skills, qualifications and
-              experience alongwith the added advantage of attractive low
-              costs.
+            We have a unique and revolutionary approach: "Same security, transparency, 
+            and efficiency, but at significantly lower costs."Our goal is to bridge the 
+            gap in secure and reliable voting solutions for organizations and governments 
+            who, until now, relied mainly on expensive, complex systems. Our platform 
+            ensures a seamless and trustworthy voting experience, with professionals and 
+            technologies that match the highest standards—combined with the advantage 
+            of affordable pricing.
             </p>
           </div>
           <img
@@ -322,7 +337,7 @@ const LandingPage = () => {
       </div>
 
       <div className="bg-blue-500 text-white p-8 reveal fade-in">
-        <h1 className="text-4xl text-center animate-fade-in">ECERA SYSTEM</h1>
+        <h1 className="text-4xl text-center animate-fade-in">VOTE ME UP SYSTEM</h1>
         <div className="flex justify-around">
           <a href="#" className="flex items-center text-white animate-fade-in">
             <img
