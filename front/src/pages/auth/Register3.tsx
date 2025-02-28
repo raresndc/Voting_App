@@ -56,16 +56,16 @@ export default function Register3() {
   }
 
   const navigateLogin = (e) => {
-    e.preventDefault();
+    // e.preventDefault();
 
-    if(!isValidCnp) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'CNP must be exactly 13 digits!'
-      });
-      return;
-    }
+    // if(!isValidCnp) {
+    //   Swal.fire({
+    //     icon: 'error',
+    //     title: 'Error',
+    //     text: 'CNP must be exactly 13 digits!'
+    //   });
+    //   return;
+    // }
 
 
     navigate("/*")
@@ -105,15 +105,15 @@ export default function Register3() {
                   <span>Confirm password</span>
               </label>
 
-              <button
+              {/* <button
             className={`submit ${!isValidCnp ? "opacity-50 cursor-not-allowed" : ""}`}
             type="submit"
             onClick={navigateLogin}
             disabled={!isValidCnp}
           >
             Next Step
-          </button>
-              {/* <button className="submit">Submit</button> */}
+          </button> */}
+              <button className="submit">Submit</button>
               <p className="signin  cursor-pointer">Already have an acount ? <a onClick={navigateLogin}>Signin</a> </p>
           </form>
       </div>

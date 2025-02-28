@@ -14,6 +14,7 @@ import ForgotPass from 'pages/auth/ForgotPass.tsx';
 import ForgotPass2 from 'pages/auth/ForgotPass2.tsx';
 import ForgotPass3 from 'pages/auth/ForgotPass3.tsx';
 import AboutPage from 'pages/auth/AboutPage.tsx';
+import LandingPage from 'pages/landing/LandingPage.tsx';
 
 const app = observer(() => {
 
@@ -34,7 +35,8 @@ const app = observer(() => {
       {
         !isAuthenticated() ? 
         <>
-          <Route path="/*" element={<LoginPage />} />
+          <Route path="/*" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/register/step2" element={<Register2 />} />
           <Route path="/register/step3" element={<Register3 />} />

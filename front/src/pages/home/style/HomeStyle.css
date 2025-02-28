@@ -1,57 +1,24 @@
-.buttonH {
-    align-items: center;
-    background-image: linear-gradient(144deg, #c08ae7, #5B42F3 50%, #00DDEB);
-    border: 0;
-    border-radius: 9px;
-    box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
-    box-sizing: border-box;
-    color: #FFFFFF;
-    display: flex;
-    font-family: Phantomsans, sans-serif;
-    font-size: 18px;
-    justify-content: center;
-    line-height: 1em;
-    max-width: 100%;
-    min-width: 140px;
-    padding: 2px;
-    text-decoration: none;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    white-space: nowrap;
-    transition: all 0.3s;
-  }
-  
-  .buttonH:active,
-  .buttonH:hover {
-    outline: 0;
-  }
-  
-  .buttonH span {
-    background-color: rgb(16, 41, 180);
-    padding: 5px 15px;
-    border-radius: 6px;
-    width: 100%;
-    height: 100%;
-    transition: 300ms;
-  }
-  
-  .buttonH:hover span {
-    background: none;
-  }
-  
-  .buttonH:active {
-    transform: scale(0.9);
-  }
-  
 
+   /* styles.css */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
 
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
 
-  .cardHome {
-    width: 190px;
-    height: 254px;
-    border-radius: 50px;
-    background: #3F51B5;
-    box-shadow: 20px 20px 60px #3F51B5,
-                  -20px -20px 60px #ffffff;
-   }
+.comm1.active {
+  width: 90%;
+}
+
+.comm2.active {
+  width: 85%;
+}
+
+.comm3.active {
+  width: 70%;
+}
