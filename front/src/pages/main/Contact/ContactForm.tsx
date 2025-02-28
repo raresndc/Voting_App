@@ -1,9 +1,14 @@
 import React from 'react';
 import Button from "./Button.tsx";
+import ContactHeader from "./ContactHeader.tsx";
 import { PhoneIcon, EnvelopeIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline';
 
 const ContactForm: React.FC = () => {
   return (
+    <div className="bg-gradient-to-tl from-[#0F172A] to-[#1E293B] py-24 px-8 md:px-12">
+      {/* Integrating the ContactHeader */}
+      <ContactHeader />
+
     <section className="max-w-[1000px] mx-auto flex items-center">
       <div className="flex flex-col gap-6 w-full">
         <div className="flex gap-8">
@@ -48,6 +53,7 @@ const ContactForm: React.FC = () => {
         <img src="/contact.svg" alt="Contact Illustration" />
       </div>
     </section>
+    </div>
   );
 };
 
