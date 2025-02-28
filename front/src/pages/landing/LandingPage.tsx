@@ -90,13 +90,13 @@ const LandingPage = () => {
       <a href="#" className="flex items-center">
         <span>
           <img
-            src="https://www.ecerasystem.com/ecerasystem/images/eslogo.png"
+            src="/votingLogo.PNG"
             alt="Logo"
             className="h-16 w-16 mx-3 rounded-full border border-white animate-pulse"
           />
         </span>
         <span className="text-white text-4xl font-bold font-serif shadow-lg animate-bounce">
-          ECERA SYSTEM
+          VOTE ME UP
         </span>
       </a>
       <ul className="flex space-x-4">
@@ -128,7 +128,7 @@ const LandingPage = () => {
     <main className="flex flex-col items-center bg-transparent">
       <div className="bg-blue-500 text-white text-center p-8 reveal fade-in">
         <h1 className="text-5xl font-cursive shadow-lg animate-pulse">
-          Welcome, To Ecera System
+          Welcome To Vote Me Up System
         </h1>
         <img
           src="https://cdni.iconscout.com/illustration/premium/thumb/about-us-1805547-1537820.png"
@@ -136,11 +136,7 @@ const LandingPage = () => {
           className="mt-4 h-48 w-48 mx-auto animate-bounce"
         />
         <p className="mt-4 text-xl font-serif animate-fade-in">
-          " Our goal is to remove any technical or financial barriers that can
-          prevent you from making your own website. Our powerful tools empower
-          individuals and business owners to create a website, sell online, or
-          reach global audiences. Whether you're a beginner or website expert,
-          we're excited to help you on your journey! "
+        Our mission is to bring transparency and trust to the voting process through the power of blockchain technology. Our innovative app empowers communities, organizations, and institutions to conduct secure and verifiable elections with ease. Whether you're hosting a small poll or a large-scale election, our platform ensures every vote is counted, every voice is heard, and the entire process remains tamper-proof. We're here to make voting not just a right, but a seamless and trustworthy experience for everyone!
         </p>
       </div>
 
@@ -152,14 +148,10 @@ const LandingPage = () => {
         />
         <div className="text-left">
           <h1 className="text-3xl font-bold animate-fade-in">
-            We Offer Innovative Technology Solutions
+          We Offer Secure and Transparent Voting Solutions
           </h1>
           <p className="mt-4 text-lg animate-fade-in">
-            EceraSystem is a full-service digital marketing agency with a long
-            history of delivering great results for our clients. We take an
-            individualized approach to every customer project. In some cases
-            we may focus more on SEO, while in others we’ll dig more into PPC,
-            social media or conversion optimization.
+          Vote Me Up is a revolutionary voting app leveraging blockchain technology to ensure transparency, security, and fairness in every election. We take a tailored approach to meet the needs of communities, organizations, and institutions, whether for local polls, corporate voting, or large-scale elections. Our platform offers robust features for managing voter registration, conducting secure voting, and delivering verifiable results with ease and integrity.
           </p>
           <h2 className="mt-4 text-2xl animate-fade-in">UI/UX Design (90%)</h2>
           <div className="w-full bg-red-200 h-4 mt-2">
@@ -231,10 +223,7 @@ const LandingPage = () => {
             <h1 className="text-3xl animate-fade-in">WE PROVIDE</h1>
             <h2 className="text-2xl animate-fade-in">Remote Employee</h2>
             <p className="text-lg animate-fade-in">
-              A huge pool of talent from every domain available for your
-              office. Solve your freelancing problems by letting us help you
-              find the most suitable employee or a whole team that won't let
-              you down. Everything is managed by Indirect Employee staff!
+            A diverse pool of verified voters from every community, ready to participate in your election. Solve your voting challenges by letting us help you engage the most reliable voters or even manage an entire voting system that ensures transparency and fairness. Everything is securely managed by our trusted platform!
             </p>
           </div>
           <img
@@ -365,7 +354,7 @@ const LandingPage = () => {
             />
             <span>
               <h3>E-mail</h3>
-              <p>Sales@Ecerasystem.com</p>
+              <p>support@votemeup.com</p>
             </span>
           </a>
         </div>
@@ -452,7 +441,7 @@ const LandingPage = () => {
       </div>
     </footer>
     <p className="text-white text-center bg-gray-800 py-4 animate-fade-in">
-      &copy; Copyright <b>ecerasystem</b>. All Rights Reserved
+      &copy; Copyright <b>votemeupsystem</b>. All Rights Reserved
     </p>
   </div>
   );
