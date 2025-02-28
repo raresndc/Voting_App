@@ -40,3 +40,28 @@
 
 
 
+/* styles.css */
+.reveal {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.comm1.active {
+  width: 90%;
+}
+
+.comm2.active {
+  width: 85%;
+}
+
+.comm3.active {
+  width: 70%;
+}
+
+
