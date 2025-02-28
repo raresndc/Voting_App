@@ -1,8 +1,14 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from "react-router-dom"
 import './style/LandingStyle.css';
 
 const LandingPage = () => {
 
+    const navigate = useNavigate();
+
+  const navigateRegisterSignIn = () => {  
+        navigate("/login")
+    }
 
 
   useEffect(() => {
@@ -100,9 +106,12 @@ const LandingPage = () => {
           </a>
         </li>
         <li>
-          <a href="#" className="text-white font-semibold text-lg hover:text-blue-300 transition-colors duration-300">
+        <button
+            onClick={navigateRegisterSignIn}
+            className="text-white font-semibold text-lg hover:text-blue-300 transition-colors duration-300"
+          >
             Register/Sign In
-          </a>
+          </button>
         </li>
         <li>
           <a href="#" className="text-white font-semibold text-lg hover:text-blue-300 transition-colors duration-300">
