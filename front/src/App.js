@@ -14,7 +14,8 @@ import ForgotPass from 'pages/auth/ForgotPass.tsx';
 import ForgotPass2 from 'pages/auth/ForgotPass2.tsx';
 import ForgotPass3 from 'pages/auth/ForgotPass3.tsx';
 import AboutPage from 'pages/auth/AboutPage.tsx';
-import LandingPage from 'pages/landing/LandingPage.tsx';
+import LandingPage from 'pages/main/LandingPage.tsx';
+import ContactForm from 'pages/main/Contact/ContactForm.tsx';
 
 const app = observer(() => {
 
@@ -44,6 +45,7 @@ const app = observer(() => {
           <Route path="/forgotPass/step2" element={<ForgotPass2 />} />
           <Route path="/forgotPass/step3" element={<ForgotPass3 />} />
           <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactForm />} />
         </>
           :
         <>
