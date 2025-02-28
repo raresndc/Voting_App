@@ -1,0 +1,5 @@
+verificare cnp:
+
+sex - prima cifra in conformitate cu poza
+codul de judet in conformitate cu loc de nastere
+
