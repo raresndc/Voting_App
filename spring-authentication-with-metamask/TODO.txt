@@ -1,0 +1,5 @@
+https://dzone.com/articles/spring-authentication-with-metamask
+https://github.com/alexandermakeev/spring-authentication-with-metamask?tab=readme-ov-file
+
+
+an automation that installs meta mask and handles the creation of an account
