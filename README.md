@@ -64,5 +64,5 @@ This voter authentication service is designed to ensure secure and reliable part
 # Architecture Diagram
 
 <p align="center">
-  <img src="./chart_diagramArchitecture.svg" width="20000">
+  <img src="./architectureDiagram_files/chart_diagramArchitecture.svg" width="2000">
 </p>
