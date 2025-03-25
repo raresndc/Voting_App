@@ -60,3 +60,9 @@ Given the sensitivity of election data and voter authentication, several securit
 Conclusion
 
 This voter authentication service is designed to ensure secure and reliable participation in elections, leveraging modern technologies like OCR, facial recognition, and JWTs in a microservice-based architecture.
+
+# Architecture Diagram
+
+<p align="center">
+  <img src="./chart_diagramArchitecture.svg" width="200">
+</p>
