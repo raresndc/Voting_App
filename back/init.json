@@ -1,0 +1,109 @@
+{
+	"defaultPassword" : "{bcrypt}$2a$10$mxGogZvbYuImIZZn9i/AF.icd4hz3qmaAN3gWBWKZOPX57trVhNpS",
+	"defaultPasswordSuper" : "{bcrypt}$2a$10$mxGogZvbYuImIZZn9i/AF.icd4hz3qmaAN3gWBWKZOPX57trVhNpS",
+
+	"USER_APP" :"USER_CLIENT_AP",
+	"SECRET_APP" : "123456",
+
+	"SUPER_APP" : "",
+	"SUPER_SECRET_APP" : "",
+	
+	"credentials": [
+		{
+			"username": "adm_comsec@IBD74",
+			"password": "IBD74#comsec",
+			"ibdType": "IBD74",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD74",
+			"password": "IBD74#crypto",
+			"ibdType": "IBD74",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD83",
+			"password": "IBD83#comsec",
+			"ibdType": "IBD83",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD83",
+			"password": "IBD83#crypto",
+			"ibdType": "IBD83",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD81",
+			"password": "IBD81#comsec",
+			"ibdType": "IBD81",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD81",
+			"password": "IBD81#crypto",
+			"ibdType": "IBD81",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD88",
+			"password": "IBD88#comsec",
+			"ibdType": "IBD88",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD88",
+			"password": "IBD88#crypto",
+			"ibdType": "IBD88",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD75",
+			"password": "IBD75#comsec",
+			"ibdType": "IBD75",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD75",
+			"password": "IBD75#crypto",
+			"ibdType": "IBD75",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD90",
+			"password": "IBD90#comsec",
+			"ibdType": "IBD90",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD90",
+			"password": "IBD90#crypto",
+			"ibdType": "IBD90",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD85",
+			"password": "IBD85#comsec",
+			"ibdType": "IBD85",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD85",
+			"password": "IBD85#crypto",
+			"ibdType": "IBD85",
+			"credentialType": "crypto"
+		}, 
+				{
+			"username": "adm_comsec@IBD91",
+			"password": "IBD91#comsec",
+			"ibdType": "IBD91",
+			"credentialType": "comsec"
+		}, 
+				{
+			"username": "adm_crypto@IBD91",
+			"password": "IBD91#crypto",
+			"ibdType": "IBD91",
+			"credentialType": "crypto"
+		}
+	]
+}
