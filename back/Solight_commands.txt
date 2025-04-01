@@ -1,0 +1,141 @@
+
+Temp control warming between 2 values: #24#0#1#Tmin#Tmax#
+Temp control cooling between 2 values: #24#0#2#Tmin#Tmax#
+Temp control warming between 18-24 degrees: #23#0#1#
+Stop temp control warmin/cooling: #23#0#0#
+
+Temp alert ON between 20-25 degrees: #21#0#1#  x
+Temp alert OFF between 20-25 degrees: #21#0#0#
+Temp alert between 2 values: #22#0#TAmin#TAmax#
+
+MINUTES FOR DELAY: 0-720
+Delay turn ON after value in minutes: #12#0#DELAY#1#
+Delay turn OFF after value in minutes: #12#0#DELAY#0#
+Stop delay: #11#0#
+
+SMS Alert ON for weak gsm signal: #27#1#
+SMS Alert OFF for weak gsm signal: #27#0#
+
+Set users:#06#val#
+
+Schedule ON everyday between 8 AM - 6 PM: #19#0#1#
+Schedule OFF: #19#0#0#
+
+The hour format: 13:52 -> 1352
+Schedule ON everyday between 2 values in hour: #20#0#0#ValMIN#ValMAX# 
+Schedule ON Monday-Friday between 2 hours: #20#0#8#ValMin#ValMAX#
+Schedule ON Sat-Sun between 2 hours: #20#0#9#ValMin#ValMAX#
+
+Monday-Sunday -> 1-7
+Schedule ON on a specific day between 2 hours: #20#0#DAY#ValMin#ValMAX#
+
+
+STATUS	#07#0#   x
+POWER ON	#01#0#   x
+POWER OFF	#02#0#   x
+TEMP INFO	#35#0#   
+
+
+
+0040761613103
+
+
+
+
+
+1	POWER ON 	#01#0#	1	
+2	POWER OFF 	#02#0#	1	
+3	STATUS 	#07#0#	1	
+4	TEMP INFO 	#35#0#	1	
+5	TEMP WARMING 	#23#0#1#	1	
+6	TEMP WARMING INTERVAL	#24#0#1#Tmin#Tmax#	1	
+7	TEMP COOLING INTERVAL	#24#0#2#Tmin#Tmax#	1	
+8	STOP TEMP CONTROL	#23#0#0#	1	
+9	TEMP ALERT ON	#21#0#1#	1	
+10	TEMP ALERT OFF	#21#0#0#	1	
+11	TEMP ALERT INTERVAL	#22#0#TAmin#TAmax#	1	
+12	DELAY ON	#12#0#DELAY#1#	1	
+13	DELAY OFF	#12#0#DELAY#0#	1	
+14	STOP DELAY	#11#0#	1	
+15	WEAK GSM SIGNAL ALERT ON	#27#1#	1	
+16	WEAK GSM SIGNAL ALERT OFF	#27#0#	1	
+17	SCHEDULE ON	#19#0#1#	1	
+18	SCHEDULE EVERYDAY INTERVAL	#20#0#0#ValMIN#ValMAX#	1	
+19	SCHEDULE MON-FRI INTERVAL	#20#0#8#ValMin#ValMAX#	1	
+20	SCHEDULE SAT-SUN INTERVAL	#20#0#9#ValMin#ValMAX#	1	
+21	SCHEDULE OFF	#19#0#0#	1	
+22	SCHEDULE INTERVAL	#20#0#DAY#ValMin#ValMAX#	1	
+
+
+{
+    "outletMsisdn" : "0040799109367",
+    "outletDetails" : "Priza .....",
+    "outletLocation" : "Priza_01_Location",
+    "outletName" : "Priza_01",
+    "device_type_id" : "1",
+    "outletPassword" : "1234"
+}
+
+
+1	1	Priza .....	Priza_01_location	0040799109367	Priza_01	1254
+
+1	Priza ...details...	Priza_01_Location	0040799109367	Priza_01	1234	1	
+2	Priza .02..details...	Priza_02_location	0040761613103	Priza_02	1234	1	40761613103
+3	Priza .03..details...	Priza_03_location	0040725606632	Priza_03	1234	1	40725606632
+
+
+0040725606632
+0040761613103
+
+1	GSM Remote Controlled Socket	Solight DY10GSM
+
+
+1	1	RUT955 - 4G/LTE router with I/O, GNSS and RS232/RS485	192.168.1.1	Teltonika RUT995 - 1	asdASD123	gsmctl -S -s	admin	0040725606635
+2	0	RUT955 - 4G/LTE router with I/O, GNSS and RS232/RS485	192.168.1.5	Teltonika RUT995 - 2	asdASD123	gsmctl -S -s	admin	
+4	1	RUT955 - 4G/LTE router with I/O, GNSS and RS232/RS485	192.168.1.2	Teltonika RUT995 - 3	asdASD123	gsmctl -S -s	admin	0040733108768
+
+
+TO DO: 
+
+UPDATE NAME, LOCATION AND MSISDN FOR OUTLET
+RESPONSE CODE BODY CLASS 
+LOG PART 
+AUDIT
+IMPLEMENTATION
+USER AND AUTHORISATION
+De creat master pt o priza atunci cand se inroleaza
+
+
+LEG TABLE WITH ROUTERS AND OUTLETS WITH ROLE LIKE:
+ROUTER 1 -> OUTLET 1 -> MASTER
+ROUTER 2 -> OUTLET 1 -> USER
+ROUTER 3 -> OUTLET 1 -> USER
+ROUTER 1 -> OUTLET 2 -> MASTER
+-----
+THE IDEA BEHIND: EVERY 10 INSERTS OR SO WE WILL CHANGE THE MASTER ROUTER 
+
+
+Action	                                          Post/get URL examples
+View mobile messages list	              http://192.168.1.1/cgi-bin/sms_list?username=user1&password=user_pass
+Read mobile message	                      http://192.168.1.1/cgi-bin/sms_read?username=user1&password=user_pass&number=1
+Send mobile message to a single number	      http://192.168.1.1/cgi-bin/sms_send?username=user1&password=user_pass&number=0037060000001&text=testmessage
+Send mobile message to a group	              http://192.168.1.1/cgi-bin/sms_send?username=user1&password=user_pass&group=group_name&text=testmessage
+View mobile messages total	              http://192.168.1.1/cgi-bin/sms_total?username=user1&password=user_pass
+Delete mobile message	                      http://192.168.1.1/cgi-bin/sms_delete?username=user1&password=user_pass&number=1
+
+
+
+
+1	RUT955 - 4G-LTE router with I-O, GNSS and RS232-RS485	TELTONIKA RUT955	gsmctl -S -s
+
+
+Error: WARN-127.0.0.1 36mo.a.c.loader.WebappClassLoaderBase  The web application [ROOT] appears to have started a thread named [OkHttp ConnectionPool] but has failed to stop it. This is very likely to create a memory leak. Stack trace of thread:
+
+
+
+in sms_send vrem: in loc de comanda id-ul comenzii din ElCmd si cine a trmis mesajul + id de la outlet in loc de msg_receiver
+in sms_message vrem la sender_id sa aiba foreign key, data de la outlet sa fie in coloana separata, la msj_content sa fie doar ce e in text fara text, si alta coloana pentru status fara status
+
+sms_send cu id de la cmd 
+sms_message la sender id sa fie index de la outlet 
+sms send in loc de pmsg receiver id-ul prizei send msdg id-ul cmd-uli 
