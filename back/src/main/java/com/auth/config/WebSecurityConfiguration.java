@@ -50,7 +50,8 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.and().authorizeRequests().antMatchers("/getAllPermissions").permitAll()
 				.and().authorizeRequests().antMatchers("/getAllUsersWithRoles").permitAll()
 				.and().authorizeRequests().antMatchers("/**").permitAll();
-		
+//				.anyRequest().authenticated();
+
 		http.headers().addHeaderWriter(new StaticHeadersWriter("X-Content-Security-Policy","script-src 'self'"));
 	}
 
