@@ -5,6 +5,7 @@ import com.oauth2.model.User;
 import com.oauth2.repository.RoleRepository;
 import com.oauth2.repository.UserRepository;
 import com.oauth2.util.RoleName;
+import com.oauth2.wrapper.AppOAuth2User;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,51 +23,72 @@ import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
-public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+public class CustomOAuth2UserService
+        implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final UserRepository userRepo;
     private final RoleRepository roleRepo;
 
     @Transactional
     @Override
-    public OAuth2User loadUser(OAuth2UserRequest req) throws OAuth2AuthenticationException {
-        OAuth2User googleUser = new DefaultOAuth2UserService().loadUser(req);
+    public OAuth2User loadUser(OAuth2UserRequest req)
+            throws OAuth2AuthenticationException {
 
-        String provider = req.getClientRegistration().getRegistrationId().toUpperCase();
-        String providerId = googleUser.getName();                                           //sub for google
+        // delegate to the default to fetch the user’s attributes
+        OAuth2User oauth2User = new DefaultOAuth2UserService().loadUser(req);
 
-        User user = userRepo.findByProviderAndProviderId(provider, providerId)
-                .orElseGet(() -> firstTimeSignup(googleUser, provider, providerId));
+        // registrationId == "google" or "facebook" or "github"
+        String registrationId = req.getClientRegistration()
+                .getRegistrationId().toUpperCase();
 
-        return new DefaultOAuth2User(
+        // dynamically fetch the key Spring is using for the "username"
+        String userNameAttributeName = req.getClientRegistration()
+                .getProviderDetails()
+                .getUserInfoEndpoint()
+                .getUserNameAttributeName();
+
+        // that key is "sub" for Google, "id" for FB/GH by default
+        String providerId = oauth2User.getAttribute(userNameAttributeName);
+
+        // lookup or sign-up
+        User user = userRepo.findByProviderAndProviderId(registrationId, providerId)
+                .orElseGet(() -> firstTimeSignup(
+                        oauth2User, registrationId, providerId));
+
+        // now build a Spring Security user, supplying the *same* username-attr
+        return new AppOAuth2User(
+                user,
                 mapAuthorities(user.getRoles()),
-                googleUser.getAttributes(),
+                oauth2User.getAttributes(),
                 "sub");
+
     }
 
-    private User firstTimeSignup(OAuth2User oauth, String provider, String providerId) {
+    private User firstTimeSignup(OAuth2User oauth2User,
+                                 String provider,
+                                 String providerId) {
         User user = new User();
         user.setProvider(provider);
         user.setProviderId(providerId);
-        user.setEmail(oauth.getAttribute("email"));
-        user.setDisplayName(oauth.getAttribute("name"));
-        user.setPictureUrl(oauth.getAttribute("picture"));
+        user.setEmail(oauth2User.getAttribute("email"));
+        user.setDisplayName(oauth2User.getAttribute("name"));
+        user.setPictureUrl(oauth2User.getAttribute("picture"));
 
-        /*  SIMPLE ROLE STRATEGY
-            – first account becomes SUPER_ADMIN
-            – everyone else USER
-            – later you can import seeded ADMINs via data.sql / Flyway
-        */
+        RoleName roleName = userRepo.count() == 0
+                ? RoleName.SUPER_ADMIN
+                : RoleName.USER;
 
-        RoleName roleName = userRepo.count() == 0 ? RoleName.SUPER_ADMIN : RoleName.USER;
         user.getRoles().add(roleRepo.getReferenceById(roleName));
-
         return userRepo.save(user);
     }
 
-    private Collection<? extends GrantedAuthority> mapAuthorities(Set<Role> roles) {
+    private Collection<? extends GrantedAuthority> mapAuthorities(
+            Set<Role> roles
+    ) {
         return roles.stream()
                 .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getName()))
                 .toList();
     }
 }
+
+

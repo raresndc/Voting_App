@@ -19,8 +19,17 @@ import static jakarta.persistence.CascadeType.ALL;
 @NoArgsConstructor
 public class User {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(
+            name          = "users_seq_gen",
+            sequenceName  = "users_seq",
+            allocationSize= 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator= "users_seq_gen"
+    )
     private Long id;
+
 
     private String provider;        //GOOGLE, GITHUB, FACEBOOK
     private String providerId;      // sub / id from OAuth provider
