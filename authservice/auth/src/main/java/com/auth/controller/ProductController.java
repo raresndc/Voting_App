@@ -34,15 +34,16 @@ public class ProductController {
         return ResponseEntity.ok(productService.saveProduct(product));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @PreAuthorize(("hasRole('ADMIN')"))
     public ResponseEntity<?> updateProduct(@PathVariable Long id, @Valid @RequestBody Product product) {
+        product.setId(id);
         return ResponseEntity.ok(productService.saveProduct(product));
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> deleteProduct(Long id) {
+    public ResponseEntity<?> deleteProduct(@PathVariable Long id) {
         productService.deleteById(id);
         return ResponseEntity.ok("Product deleted successfully!");
     }

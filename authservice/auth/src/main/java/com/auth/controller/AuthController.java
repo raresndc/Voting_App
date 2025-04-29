@@ -1,6 +1,7 @@
 package com.auth.controller;
 
 import com.auth.dto.LoginRequest;
+import com.auth.dto.RefreshTokenRequest;
 import com.auth.dto.RegisterRequest;
 import com.auth.dto.TokenPair;
 import com.auth.service.AuthService;
@@ -33,6 +34,11 @@ public class AuthController {
         // return access + refresh token
         TokenPair tokenPair = authService.login(loginRequest);
         return ResponseEntity.ok(tokenPair);
+    }
 
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
+        TokenPair tokenPair = authService.refreshToken(request);
+        return ResponseEntity.ok(tokenPair);
     }
 }
