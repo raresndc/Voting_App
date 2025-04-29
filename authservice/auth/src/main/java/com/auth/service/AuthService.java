@@ -28,6 +28,7 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private UserDetailsService userDetailsService;
+    private EmailService emailService;
 
     @Transactional
     public void registerUser(RegisterRequest registerRequest) {
@@ -56,6 +57,12 @@ public class AuthService {
                 .build();
 
         userRepository.save(user);
+
+        String subject = "Account Created Successfully";
+        String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully created in our system. Welcome!";
+
+        // Send the email
+        emailService.sendEmail(user.getEmail(), subject, body);
     }
 
     private int calculateAge(LocalDate dob) {
