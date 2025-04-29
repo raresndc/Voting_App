@@ -1,6 +1,8 @@
 package com.auth.controller;
 
+import com.auth.dto.LoginRequest;
 import com.auth.dto.RegisterRequest;
+import com.auth.dto.TokenPair;
 import com.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +25,14 @@ public class AuthController {
 
         authService.registerUser(request);
         return ResponseEntity.ok("User registered successsfully!");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
+        // auth the user
+        // return access + refresh token
+        TokenPair tokenPair = authService.login(loginRequest);
+        return ResponseEntity.ok(tokenPair);
+
     }
 }
