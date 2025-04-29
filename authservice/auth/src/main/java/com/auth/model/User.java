@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -40,10 +42,90 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public User(String fullName, String username, String password, Role role) {
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String phoneNo;
+
+    @Column(
+            nullable = false
+    )
+    private String gender;
+
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String email;
+
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String personalIdNo;
+
+    @Column(
+            nullable = false
+    )
+    private String citizenship;
+
+    @Column(
+            nullable = false
+    )
+    private String country;
+
+    @Column(
+            nullable = false
+    )
+    private String county;
+
+    @Column(
+            nullable = false
+    )
+    private String city;
+
+    @Column(
+            nullable = false
+    )
+    private String address;
+
+    @Column(
+            nullable = false
+    )
+    private LocalDate dob;
+
+    private Integer age;
+
+    public User(String fullName,
+                String username,
+                String password,
+                Role role,
+                String phoneNo,
+                String gender,
+                String email,
+                String personalIdNo,
+                String citizenship,
+                String country,
+                String county,
+                String city,
+                String address,
+                LocalDate dob,
+                Integer age) {
         this.fullName = fullName;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.phoneNo = phoneNo;
+        this.gender = gender;
+        this.email = email;
+        this.personalIdNo = personalIdNo;
+        this.citizenship = citizenship;
+        this.country = country;
+        this.county = county;
+        this.city = city;
+        this.address = address;
+        this.dob = dob;
+        this.age = age;
     }
 }

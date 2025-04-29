@@ -17,6 +17,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.Period;
+
 @Service
 @AllArgsConstructor
 public class AuthService {
@@ -34,15 +37,29 @@ public class AuthService {
             throw new IllegalArgumentException("Username already exists!");
         }
 
-        User user = User
-                .builder()
+        User user = User.builder()
                 .fullName(registerRequest.getFullName())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(registerRequest.getRole())
+                .phoneNo(registerRequest.getPhoneNo())
+                .gender(registerRequest.getGender())
+                .email(registerRequest.getEmail())
+                .personalIdNo(registerRequest.getPersonalIdNo())
+                .citizenship(registerRequest.getCitizenship())
+                .country(registerRequest.getCountry())
+                .county(registerRequest.getCounty())
+                .city(registerRequest.getCity())
+                .address(registerRequest.getAddress())
+                .dob(registerRequest.getDob())
+                .age(calculateAge(registerRequest.getDob()))
                 .build();
 
         userRepository.save(user);
+    }
+
+    private int calculateAge(LocalDate dob) {
+        return Period.between(dob, LocalDate.now()).getYears();
     }
 
     public TokenPair login(LoginRequest loginRequest) {
