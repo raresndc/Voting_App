@@ -1,3 +1,0 @@
-database: votingApp
-schema: votingapp
-pass: Aa123456!
