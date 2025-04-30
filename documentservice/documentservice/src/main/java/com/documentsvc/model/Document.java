@@ -21,7 +21,6 @@ public class Document {
     @Column(columnDefinition = "bytea")
     private byte[] data;
 
-    @Lob
     @Column(columnDefinition = "text")
     private String textContent;
 

@@ -13,6 +13,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
@@ -74,11 +75,13 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Document> list(String username) {
         return repo.findAllByUploadedBy(username);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Document get(Long id, String username) {
         Document doc = repo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Document not found"));
