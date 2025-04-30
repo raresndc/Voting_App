@@ -3,6 +3,9 @@ package com.auth.service;
 import com.auth.dto.*;
 import com.auth.model.User;
 import com.auth.repository.UserRepository;
+import com.warrenstrange.googleauth.GoogleAuthenticator;
+import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,6 +33,7 @@ public class AuthService {
     private final JwtService jwtService;
     private UserDetailsService userDetailsService;
     private EmailService emailService;
+    private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Transactional
     public void registerUser(RegisterRequest registerRequest) {
@@ -155,4 +159,56 @@ public class AuthService {
         String accessToken = jwtService.generateAccessToken(authentication);
         return new TokenPair(accessToken, refreshToken);
     }
+
+    public Setup2FAResponse generate2FASetup(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user"));
+        GoogleAuthenticatorKey key = gAuth.createCredentials();
+        String secret = key.getKey();
+        String otpAuthUrl = GoogleAuthenticatorQRGenerator
+                .getOtpAuthURL("YourAppName", username, key);
+
+        user.setTwoFactorSecret(secret);
+        userRepository.save(user);
+
+        return new Setup2FAResponse(secret, otpAuthUrl);
+    }
+
+    // 2) Confirm the code & enable
+    public void confirm2FA(String username, int code) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user"));
+        if (!gAuth.authorize(user.getTwoFactorSecret(), code)) {
+            throw new IllegalArgumentException("Invalid 2FA code");
+        }
+        user.setTwoFactorEnabled(true);
+        userRepository.save(user);
+    }
+
+    // 3) During login, verify TOTP
+    public TokenPair loginWith2FA(String username, String rawPassword, int code) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("No user"));
+
+        if (!user.isTwoFactorEnabled() ||
+                !gAuth.authorize(user.getTwoFactorSecret(), code)) {
+            throw new IllegalArgumentException("Invalid 2FA code");
+        }
+
+        // re-authenticate username+password
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(username, rawPassword)
+        );
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        return jwtService.generateTokenPair(auth);
+    }
+
+    /**
+     * Issue a JWT pair from an already‐authenticated Authentication object.
+     */
+    public TokenPair issueTokenPair(Authentication authentication) {
+        return jwtService.generateTokenPair(authentication);
+    }
+
 }

@@ -107,6 +107,12 @@ public class User {
     @Column(name = "verification_expiry_date")
     private LocalDateTime verificationExpiryDate;
 
+    @Column(name = "two_factor_enabled")
+    private boolean twoFactorEnabled = false;
+
+    @Column(name = "two_factor_secret")
+    private String twoFactorSecret;
+
     public User(String fullName,
                 String username,
                 String password,
