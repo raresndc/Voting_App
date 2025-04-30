@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -97,6 +98,15 @@ public class User {
 
     private Integer age;
 
+    @Builder.Default
+    private boolean verified = false;
+
+    @Column(name = "verification_code")
+    private String verificationCode;
+
+    @Column(name = "verification_expiry_date")
+    private LocalDateTime verificationExpiryDate;
+
     public User(String fullName,
                 String username,
                 String password,
@@ -111,7 +121,8 @@ public class User {
                 String city,
                 String address,
                 LocalDate dob,
-                Integer age) {
+                Integer age,
+                boolean verified) {
         this.fullName = fullName;
         this.username = username;
         this.password = password;
@@ -127,5 +138,6 @@ public class User {
         this.address = address;
         this.dob = dob;
         this.age = age;
+        this.verified = verified;
     }
 }

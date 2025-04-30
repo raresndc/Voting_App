@@ -1,9 +1,6 @@
 package com.auth.controller;
 
-import com.auth.dto.LoginRequest;
-import com.auth.dto.RefreshTokenRequest;
-import com.auth.dto.RegisterRequest;
-import com.auth.dto.TokenPair;
+import com.auth.dto.*;
 import com.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +22,7 @@ public class AuthController {
         // save the new user into the database and return the response
 
         authService.registerUser(request);
-        return ResponseEntity.ok("User registered successsfully!");
+        return ResponseEntity.ok("User registered successsfully! Status: pending account");
     }
 
     @PostMapping("/login")
@@ -40,5 +37,11 @@ public class AuthController {
     public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         TokenPair tokenPair = authService.refreshToken(request);
         return ResponseEntity.ok(tokenPair);
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity<?> verifyUser(@Valid @RequestBody VerifyRequest request) {
+        authService.verifyUser(request);
+        return ResponseEntity.ok("User verified successfully! Status changed to verified account");
     }
 }

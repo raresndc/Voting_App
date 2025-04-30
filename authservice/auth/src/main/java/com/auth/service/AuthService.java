@@ -1,9 +1,6 @@
 package com.auth.service;
 
-import com.auth.dto.LoginRequest;
-import com.auth.dto.RefreshTokenRequest;
-import com.auth.dto.RegisterRequest;
-import com.auth.dto.TokenPair;
+import com.auth.dto.*;
 import com.auth.model.User;
 import com.auth.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -14,11 +11,15 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -58,18 +59,60 @@ public class AuthService {
 
         userRepository.save(user);
 
-        String subject = "Account Created Successfully";
-        String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully created in our system. Welcome!";
+//        String subject = "Account Created Successfully";
+//        String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully created in our system. Welcome!";
+        SecureRandom secureRandom = new SecureRandom();
+// produces a number from 0 to 9999, then pads to 4 digits (0000–9999)
+        String code = String.format("%04d", secureRandom.nextInt(10_000));
+        user.setVerificationCode(code);
+        user.setVerificationExpiryDate(LocalDateTime.now().plusHours(1));
 
-        // Send the email
+        userRepository.save(user);
+
+        // send code
+        emailService.sendVerificationEmail(user.getEmail(), code);
+    }
+
+    @Transactional
+    public void verifyUser(VerifyRequest request) {
+        User user = userRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if (user.isVerified()) {
+            throw new IllegalStateException("Account already verified");
+        }
+        if (!request.getVerificationCode().equals(user.getVerificationCode())) {
+            throw new IllegalArgumentException("Invalid verification code");
+        }
+        if (user.getVerificationExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Verification code expired");
+        }
+
+        user.setVerified(true);
+        user.setVerificationCode(null);
+        user.setVerificationExpiryDate(null);
+        userRepository.save(user);
+
+        // send completion email
+        String subject = "Registration Completed";
+        String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully verified. Welcome!";
         emailService.sendEmail(user.getEmail(), subject, body);
     }
+
 
     private int calculateAge(LocalDate dob) {
         return Period.between(dob, LocalDate.now()).getYears();
     }
 
     public TokenPair login(LoginRequest loginRequest) {
+
+        // ensure user exists and is verified
+        User user = userRepository.findByUsername(loginRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        if (!user.isVerified()) {
+            throw new IllegalStateException("Account not verified. Please check your email.");
+        }
+
         // auth the user
 
         Authentication authentication = authenticationManager.authenticate(
