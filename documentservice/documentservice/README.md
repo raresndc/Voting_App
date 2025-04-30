@@ -47,9 +47,11 @@ A Spring Boot microservice for uploading, storing, indexing, and retrieving PDF 
 ---
 
 ## 🏗 Architecture
+```
 
 <img src="./documentServiceArch.png" alt="Document Service Architecture" width="100%" style="max-width:800px; display:block; margin:auto;" />
 
+```
 1. **Auth Service** issues JWTs, stores users in the shared `auth_db`.
 2. **Document Service** validates tokens using shared secret—no HTTP calls.
 3. **DotenvLoader** loads environment variables from `.env` before Spring starts.
