@@ -44,19 +44,7 @@ A Spring Boot–based microservice for uploading, storing, indexing, and retriev
 
 ## Architecture
 
-```
-┌─────────────────┐      Bearer JWT      ┌──────────────────┐
-│   Client App    │ ───────────────────▶ │ Document Service │
-│ (Web / Mobile)  │  Authorization:     │   (Spring Boot)  │
-└─────────────────┘    “Bearer …”       └──────────────────┘
-│
-│ JDBC (Spring Data JPA)
-▼
-┌──────────────────┐
-│ PostgreSQL DB    │
-│   auth_db        │
-└──────────────────┘
-```
+![Document Service Architecture](documentServiceArch.png)
 
 1. **Auth Service** issues JWTs and stores user credentials in the same database (`auth_db`).
 2. **Document Service** verifies tokens locally (no additional HTTP calls) using the shared JWT secret.
