@@ -1,5 +1,6 @@
 package com.auth.service;
 
+import com.auth.audit.dto.Auditable;
 import com.auth.dto.*;
 import com.auth.model.User;
 import com.auth.repository.UserRepository;
@@ -22,7 +23,6 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -35,6 +35,7 @@ public class AuthService {
     private EmailService emailService;
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
+    @Auditable(action="REGISTER", targetType="User", targetIdArg="username")
     @Transactional
     public void registerUser(RegisterRequest registerRequest) {
         // check if user with the same username already exists
@@ -77,6 +78,7 @@ public class AuthService {
         emailService.sendVerificationEmail(user.getEmail(), code);
     }
 
+    @Auditable(action="VERIFY", targetType="User", targetIdArg="username")
     @Transactional
     public void verifyUser(VerifyRequest request) {
         User user = userRepository.findByUsername(request.getUsername())
@@ -108,6 +110,7 @@ public class AuthService {
         return Period.between(dob, LocalDate.now()).getYears();
     }
 
+    @Auditable(action="LOGIN", targetType="User", targetIdArg="username")
     public TokenPair login(LoginRequest loginRequest) {
 
         // ensure user exists and is verified
@@ -133,6 +136,7 @@ public class AuthService {
         return jwtService.generateTokenPair(authentication);
     }
 
+    @Auditable(action="REFRESH_TOKEN", targetType="User", targetIdArg="username")
     public TokenPair refreshToken(RefreshTokenRequest request) {
         // check if it is a valid refresh token
 
@@ -160,6 +164,7 @@ public class AuthService {
         return new TokenPair(accessToken, refreshToken);
     }
 
+    @Auditable(action="GENERATE_2FA_SETUP", targetType="User", targetIdArg="username")
     public Setup2FAResponse generate2FASetup(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user"));
@@ -175,6 +180,7 @@ public class AuthService {
     }
 
     // 2) Confirm the code & enable
+    @Auditable(action="CONFIRM_2FA", targetType="User", targetIdArg="username")
     public void confirm2FA(String username, int code) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user"));
@@ -186,6 +192,7 @@ public class AuthService {
     }
 
     // 3) During login, verify TOTP
+    @Auditable(action="LOGIN_WITH_2FA", targetType="User", targetIdArg="username")
     public TokenPair loginWith2FA(String username, String rawPassword, int code) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user"));

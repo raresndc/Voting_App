@@ -29,6 +29,7 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
+
     public void sendVerificationEmail(String recipientEmail, String code) {
         sendEmail(
                 recipientEmail,
