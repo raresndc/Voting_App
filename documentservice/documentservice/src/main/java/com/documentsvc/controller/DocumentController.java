@@ -19,11 +19,15 @@ public class DocumentController {
     private final DocumentService service;
 
     // Upload PDF
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Document upload(
             Authentication auth,
             @RequestPart("file") MultipartFile file
     ) throws Exception {
+        if (!MediaType.APPLICATION_PDF_VALUE.equals(file.getContentType())) {
+            throw new IllegalArgumentException("Only PDF files are allowed");
+        }
+
         return service.store(auth.getName(), file);
     }
 

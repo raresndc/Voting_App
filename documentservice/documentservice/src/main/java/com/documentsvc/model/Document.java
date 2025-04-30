@@ -17,9 +17,13 @@ public class Document {
 
     private String filename;
     private String contentType;
-    
+
     @Column(columnDefinition = "bytea")
     private byte[] data;
+
+    @Lob
+    @Column(columnDefinition = "text")
+    private String textContent;
 
     private LocalDateTime uploadedAt;
     private String uploadedBy;  // will store the JWT‐username
