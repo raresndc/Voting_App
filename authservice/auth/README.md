@@ -2,11 +2,12 @@
 
 This Auth Microservice provides:
 
-- **User Registration & Email Verification**: 4‑digit code emailed upon signup, accounts are pending until code confirmation.
+- **User Registration & Email Verification**: 4‑digit code emailed upon signup; accounts pending until code confirmation.
 - **JWT Authentication**: Access & refresh tokens with configurable lifetimes.
 - **Two‑Factor Authentication (2FA)**: Optional TOTP (Google Authenticator/Authy) flow.
 - **Role‑Based Access Control**: `ROLE_USER` and `ROLE_ADMIN` guard product endpoints.
 - **Product Management API**: CRUD operations for products (admin only for create/update/delete).
+- **Comprehensive Audit Logging**: Row-level JPA auditing plus business‑event logs in a dedicated `audit_logs` table, and security event tracing for login success/failure.
 
 ---
 
@@ -21,6 +22,7 @@ This Auth Microservice provides:
 7. [Authentication Flows](#authentication-flows)
 8. [Project Structure](#project-structure)
 9. [Customization](#customization)
+10. [Audit Logging](#audit-logging)
 
 ---
 
@@ -75,7 +77,7 @@ spring.mail.username=your_username
 spring.mail.password=your_password
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
-```
+```  
 
 > **Tip**: Replace placeholders with your credentials.
 
@@ -83,10 +85,11 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 ## Database Setup
 
-Tables are auto-created by Hibernate:
+Hibernate will auto-create/update tables:
 
-- **`app_users`**: Stores user profile, verification code & expiry, 2FA secret & enabled flag.
-- **`products`**: Stores product `id`, `name`, `price`.
+- **`app_users`**: Stores user profile data, verification code & expiry, 2FA secret & enabled flag, plus JPA audit columns (`created_by`, `created_date`, `last_modified_by`, `last_modified_date`).
+- **`products`**: Stores product `id`, `name`, `price`, plus the same JPA audit columns.
+- **`audit_logs`**: Custom table recording business events (REGISTER, VERIFY, LOGIN_SUCCESS, LOGIN_FAILURE, 2FA_SETUP, etc.).
 
 ---
 
@@ -106,30 +109,30 @@ java -jar target/auth-microservice.jar
 
 ### 1. Authentication
 
-| Endpoint                     | Method | Body                                         | Description                                                         |
-|------------------------------|--------|----------------------------------------------|---------------------------------------------------------------------|
-| `/api/auth/register`         | POST   | `RegisterRequest` JSON                      | Create pending user; sends 4‑digit verification code via email.     |
-| `/api/auth/verify`           | POST   | `VerifyRequest` `{ username, verificationCode }` | Confirms the code; marks account verified; sends confirmation email. |
-| `/api/auth/login`            | POST   | `LoginRequest` `{ username, password }`       | Verifies credentials; if 2FA off → returns tokens; if 2FA on → `{ needs2fa: true }`. |
-| `/api/auth/refresh-token`    | POST   | `RefreshTokenRequest` `{ refreshToken }`      | Issues new access token (same refresh token returned).             |
+| Endpoint                  | Method | Body                                          | Description                                                         |
+|---------------------------|--------|-----------------------------------------------|---------------------------------------------------------------------|
+| `/api/auth/register`      | POST   | `RegisterRequest` JSON                       | Create pending user; sends 4‑digit verification code via email.     |
+| `/api/auth/verify`        | POST   | `VerifyRequest` `{ username, verificationCode }`  | Confirms code; marks account verified; sends completion email.      |
+| `/api/auth/login`         | POST   | `LoginRequest` `{ username, password }`        | Validates credentials; if 2FA off → tokens; if 2FA on → `{ needs2fa:true }`. |
+| `/api/auth/refresh-token` | POST   | `RefreshTokenRequest` `{ refreshToken }`       | Issues new access token (same refresh token returned).              |
 
 ### 2. Two‑Factor Authentication (TOTP)
 
-| Endpoint                     | Method | Body                                        | Description                                                    |
-|------------------------------|--------|---------------------------------------------|----------------------------------------------------------------|
-| `/api/auth/2fa/setup`        | POST   | Query `{ username }`                        | Generates secret & QR‑URI for Google Authenticator provisioning. |
-| `/api/auth/2fa/confirm`      | POST   | `Confirm2FARequest` `{ username, code }`    | Verifies first TOTP; enables 2FA on user record.                |
-| `/api/auth/2fa/auth`         | POST   | `TwoFaLoginRequest` `{ username, password, code }` | Complete login when 2FA is enabled; returns tokens.            |
+| Endpoint               | Method | Body                                                  | Description                                                    |
+|------------------------|--------|-------------------------------------------------------|----------------------------------------------------------------|
+| `/api/auth/2fa/setup`  | POST   | Query `{ username }`                                  | Generates secret & QR‑URI for Google Authenticator.            |
+| `/api/auth/2fa/confirm`| POST   | `Confirm2FARequest` `{ username, code }`              | Verifies first TOTP; enables 2FA on user record.               |
+| `/api/auth/2fa/auth`   | POST   | `TwoFaLoginRequest` `{ username, password, code }`    | Completes login when 2FA is enabled; returns tokens.           |
 
 ### 3. Products
 
-| Endpoint                   | Method | Role       | Body           | Description                         |
-|----------------------------|--------|------------|----------------|-------------------------------------|
-| `/api/products`            | GET    | USER/ADMIN | —              | List all products.                  |
-| `/api/products/{id}`       | GET    | USER/ADMIN | —              | Get product by ID.                  |
-| `/api/products`            | POST   | ADMIN      | `Product` JSON | Create a new product.               |
-| `/api/products/{id}`       | PUT    | ADMIN      | `Product` JSON | Update existing product.            |
-| `/api/products/{id}`       | DELETE | ADMIN      | —              | Delete a product.                   |
+| Endpoint                 | Method | Role       | Body           | Description                         |
+|--------------------------|--------|------------|----------------|-------------------------------------|
+| `/api/products`          | GET    | USER/ADMIN | —              | List all products.                  |
+| `/api/products/{id}`     | GET    | USER/ADMIN | —              | Get product by ID.                  |
+| `/api/products`          | POST   | ADMIN      | `Product` JSON | Create a new product.               |
+| `/api/products/{id}`     | PUT    | ADMIN      | `Product` JSON | Update existing product.            |
+| `/api/products/{id}`     | DELETE | ADMIN      | —              | Delete a product.                   |
 
 ---
 
@@ -138,9 +141,9 @@ java -jar target/auth-microservice.jar
 ### A. Registration & Email Verification
 
 1. **Register** (`/api/auth/register`)
-    - User submits full profile + password.
-    - Service saves user with `verified=false` and `verificationCode` = random 4‑digit PIN.
-    - Sends email with PIN; code expires in 1 hour.
+    - User submits profile + password.
+    - Service saves user with `verified=false` and a 4‑digit PIN (expires in 1 hour).
+    - Sends verification email.
 2. **Verify** (`/api/auth/verify`)
     - User posts `{ username, verificationCode }`.
     - Service checks code & expiry, sets `verified=true`, clears code, sends completion email.
@@ -149,16 +152,16 @@ java -jar target/auth-microservice.jar
 
 1. **Login** (`/api/auth/login`)
     - Validates `username+password`.
-    - If user not verified → HTTP 400 `Account not verified`.
+    - If not verified → HTTP 400 `Account not verified`.
     - If 2FA **off** → returns `{ accessToken, refreshToken }`.
-    - If 2FA **on** → returns `{ needs2fa: true }` (no tokens).
+    - If 2FA **on** → returns `{ needs2fa:true }`.
 2. **2FA Login** (`/api/auth/2fa/auth`)
     - User posts `{ username, password, code }`.
-    - Service re‑authenticates and validates TOTP code.
+    - Service re‑authenticates and validates TOTP.
     - Returns `{ accessToken, refreshToken }`.
 3. **Refresh** (`/api/auth/refresh-token`)
     - User posts `{ refreshToken }`.
-    - Service validates it and issues a new access token.
+    - Service validates it and issues new access token.
 
 ---
 
@@ -166,11 +169,17 @@ java -jar target/auth-microservice.jar
 
 ```text
 src/main/java/com/auth/
+├── audit/
+│   ├── Auditable.java         # @interface for business events
+│   ├── AuditAspect.java       # AOP interceptor for service methods
+│   └── config/
+│       └── AuditConfig.java   # @EnableJpaAuditing + AuditorAware
 ├── config/
 │   └── SecurityConfig.java
 ├── controller/
-│   ├── AuthController.java      # registration, login, verify, 2FA endpoints
-│   └── ProductController.java   # CRUD operations
+│   ├── AuthController.java    # registration, login, verify, 2FA
+│   ├── ProductController.java # product CRUD
+│   └── AuditController.java   # (optional) GET /api/audit
 ├── dto/
 │   ├── LoginRequest.java
 │   ├── RefreshTokenRequest.java
@@ -182,30 +191,47 @@ src/main/java/com/auth/
 ├── filter/
 │   └── JwtAuthenticationFilter.java
 ├── model/
-│   ├── User.java                # +verification, 2FA fields
-│   └── Product.java
+│   ├── User.java              # +verification, 2FA fields, JPA audit
+│   ├── Product.java           # JPA audit columns
+│   └── AuditLog.java          # business event log entity
 ├── repository/
 │   ├── UserRepository.java
-│   └── ProductRepository.java
+│   ├── ProductRepository.java
+│   └── AuditLogRepository.java
 ├── service/
-│   ├── AuthService.java         # business logic for auth, verify, 2FA
-│   ├── EmailService.java        # send verification & confirmation emails
-│   ├── JwtService.java          # generate/validate tokens
-│   ├── CustomUserDetailsService.java
-│   └── ProductService.java
-└── Application.java
+│   ├── AuthService.java       # business logic: auth, verify, 2FA, audit annotations
+│   ├── EmailService.java      # send verification & confirmation emails
+│   ├── JwtService.java        # generate/validate tokens
+│   ├── ProductService.java
+│   └── CustomUserDetailsService.java
+└── Application.java           # @SpringBootApplication + @EntityScan (if needed)
 ```
 
 ---
 
 ## Customization
 
-- **Verification Code**: Default 4‑digit PIN; modify generator in `AuthService.registerUser`.
+- **Verification Code**: Default 4‑digit PIN; change in `AuthService.registerUser`.
 - **Code Expiry**: Default 1 hour; adjust `LocalDateTime.now().plusHours(x)` or externalize.
-- **2FA Settings**: TOTP via `com.warrenstrange:googleauth`; you can swap for SMS/email OTP easily.
-- **Token Lifetimes**: Change `app.jwt.expiration` and `app.jwt.refresh-expiration` in config.
-- **Email Templates**: Customize subjects/bodies or switch to HTML templates in `EmailService`.
-- **Roles & Permissions**: Update `SecurityConfig` to tweak endpoint access rules.
+- **2FA Settings**: Uses `com.warrenstrange:googleauth`; can swap for SMS/email OTP.
+- **Token Lifetimes**: Update `app.jwt.expiration` and `app.jwt.refresh-expiration`.
+- **Email Templates**: Customize in `EmailService` or switch to HTML/email templates.
+- **Roles & Permissions**: Tweak `SecurityConfig` for endpoint access rules.
+- **Audit Behavior**:
+    - Entity auditing via JPA (`@CreatedBy`, etc.)
+    - Business events logged via `@Auditable` + AOP into `audit_logs`
+    - Security events captured via Spring listener.
+
+---
+
+## Audit Logging
+
+This service records both data changes and business events:
+
+1. **Entity Auditing**: Every `User` and `Product` row has `created_by`, `created_date`, `last_modified_by`, and `last_modified_date`. Powered by Spring Data JPA Auditing.
+2. **Business-Event Logging**: Methods annotated with `@Auditable` are intercepted by an AOP aspect that writes to the `audit_logs` table. Events include `REGISTER`, `VERIFY`, `LOGIN_SUCCESS`, `LOGIN_FAILURE`, `2FA_SETUP`, `2FA_CONFIRM`, and `LOGIN_2FA`.
+3. **Security Events**: Listeners capture Spring Security login successes and failures and record them automatically.
+4. **Reviewing Logs**: Admins can fetch logs via a secured `/api/audit` endpoint or by querying the database directly.
 
 ---
 
