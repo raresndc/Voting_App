@@ -1,14 +1,14 @@
 # Auth Microservice
 
-This Auth Microservice provides user registration with email verification, JWT-based authentication (access and refresh tokens), and user management endpoints. It also includes basic product CRUD operations protected by user roles.
+This Auth Microservice provides:
 
-## Features
+- **User Registration & Email Verification**: 4‑digit code emailed upon signup, accounts are pending until code confirmation.
+- **JWT Authentication**: Access & refresh tokens with configurable lifetimes.
+- **Two‑Factor Authentication (2FA)**: Optional TOTP (Google Authenticator/Authy) flow.
+- **Role‑Based Access Control**: `ROLE_USER` and `ROLE_ADMIN` guard product endpoints.
+- **Product Management API**: CRUD operations for products (admin only for create/update/delete).
 
-- **User Registration**: Users can register with comprehensive profile data. Upon registration, a verification code is emailed, and accounts remain unverified until code confirmation.
-- **Email Verification**: Verification codes expire after a configurable duration (default: 1 hour). Verified accounts receive a registration completion email.
-- **JWT Authentication**: Implements stateless authentication using JWT access and refresh tokens.
-- **Role-Based Access Control**: Supports `ROLE_USER` and `ROLE_ADMIN`. Product management endpoints require admin privileges.
-- **Product Management API**: Create, read, update, and delete products (admin only for write operations).
+---
 
 ## Table of Contents
 
@@ -18,34 +18,40 @@ This Auth Microservice provides user registration with email verification, JWT-b
 4. [Database Setup](#database-setup)
 5. [Running the Application](#running-the-application)
 6. [API Endpoints](#api-endpoints)
-7. [Project Structure](#project-structure)
-8. [Customization](#customization)
+7. [Authentication Flows](#authentication-flows)
+8. [Project Structure](#project-structure)
+9. [Customization](#customization)
+
+---
 
 ## Prerequisites
 
 - Java 17+
 - Maven or Gradle
-- PostgreSQL (or any JPA-supported database)
-- SMTP server credentials for sending emails
+- PostgreSQL (or any JPA‑supported database)
+- SMTP credentials for sending emails
+
+---
 
 ## Installation
 
-1. **Clone the repository**
+1. **Clone**
    ```bash
    git clone https://github.com/your-repo/auth-microservice.git
    cd auth-microservice
    ```
-
 2. **Build**
    ```bash
    mvn clean install
-   # or using Gradle
+   # or
    gradle build
    ```
 
+---
+
 ## Configuration
 
-Configure application properties in `src/main/resources/application.properties` or `application.yml`:
+Configure in `src/main/resources/application.properties` or `application.yml`:
 
 ```properties
 # Server
@@ -58,98 +64,150 @@ spring.datasource.password=yourpassword
 spring.jpa.hibernate.ddl-auto=update
 
 # JWT
-app.jwt.secret=BASE64_ENCODED_SECRET_KEY
-app.jwt.expiration=3600000           # 1 hour in milliseconds
-app.jwt.refresh-expiration=86400000   # 24 hours in milliseconds
+app.jwt.secret=BASE64_SECRET
+app.jwt.expiration=3600000           # access token (ms)
+app.jwt.refresh-expiration=86400000  # refresh token (ms)
 
 # Email (SMTP)
 spring.mail.host=smtp.mailtrap.io
 spring.mail.port=2525
-spring.mail.username=your_smtp_username
-spring.mail.password=your_smtp_password
+spring.mail.username=your_username
+spring.mail.password=your_password
 spring.mail.properties.mail.smtp.auth=true
 spring.mail.properties.mail.smtp.starttls.enable=true
-```  
+```
 
-> **Note**: Replace all placeholder values with your actual configuration.
+> **Tip**: Replace placeholders with your credentials.
+
+---
 
 ## Database Setup
 
-- The application uses JPA/Hibernate to auto-create tables. Ensure the configured database is accessible.
-- Key tables:
-    - `app_users`: Stores user profiles, verification codes, and verification status.
-    - `products`: Stores products with name and price.
+Tables are auto-created by Hibernate:
+
+- **`app_users`**: Stores user profile, verification code & expiry, 2FA secret & enabled flag.
+- **`products`**: Stores product `id`, `name`, `price`.
+
+---
 
 ## Running the Application
 
 ```bash
-# Using Maven
-tomcat7:run
+# Maven:
+mvn spring-boot:run
 
-# Or
+# Or executable JAR:
 java -jar target/auth-microservice.jar
 ```
 
+---
+
 ## API Endpoints
 
-### Authentication
+### 1. Authentication
 
-| Endpoint                  | Method | Request Body                                   | Description                                                   |
-|---------------------------|--------|------------------------------------------------|---------------------------------------------------------------|
-| `/api/auth/register`      | POST   | `RegisterRequest` JSON                         | Registers a new user and sends a verification code by email. |
-| `/api/auth/verify`        | POST   | `VerifyRequest` `{ username, verificationCode }` | Verifies the user’s account and sends registration completion email. |
-| `/api/auth/login`         | POST   | `LoginRequest` `{ username, password }`         | Authenticates a verified user and returns access & refresh JWTs. |
-| `/api/auth/refresh-token` | POST   | `RefreshTokenRequest` `{ refreshToken }`        | Issues a new access token if the refresh token is valid.     |
+| Endpoint                     | Method | Body                                         | Description                                                         |
+|------------------------------|--------|----------------------------------------------|---------------------------------------------------------------------|
+| `/api/auth/register`         | POST   | `RegisterRequest` JSON                      | Create pending user; sends 4‑digit verification code via email.     |
+| `/api/auth/verify`           | POST   | `VerifyRequest` `{ username, verificationCode }` | Confirms the code; marks account verified; sends confirmation email. |
+| `/api/auth/login`            | POST   | `LoginRequest` `{ username, password }`       | Verifies credentials; if 2FA off → returns tokens; if 2FA on → `{ needs2fa: true }`. |
+| `/api/auth/refresh-token`    | POST   | `RefreshTokenRequest` `{ refreshToken }`      | Issues new access token (same refresh token returned).             |
 
-### Products
+### 2. Two‑Factor Authentication (TOTP)
 
-| Endpoint           | Method | Role Requirement | Request Body     | Description                  |
-|--------------------|--------|------------------|------------------|------------------------------|
-| `/api/products`    | GET    | `USER` or `ADMIN`| —                | Retrieves all products.      |
-| `/api/products/{id}` | GET  | `USER` or `ADMIN`| —                | Retrieves a single product.  |
-| `/api/products`    | POST   | `ADMIN`          | `Product` JSON   | Creates a new product.       |
-| `/api/products/{id}` | PUT  | `ADMIN`          | `Product` JSON   | Updates an existing product. |
-| `/api/products/{id}` | DELETE | `ADMIN`         | —                | Deletes a product.           |
+| Endpoint                     | Method | Body                                        | Description                                                    |
+|------------------------------|--------|---------------------------------------------|----------------------------------------------------------------|
+| `/api/auth/2fa/setup`        | POST   | Query `{ username }`                        | Generates secret & QR‑URI for Google Authenticator provisioning. |
+| `/api/auth/2fa/confirm`      | POST   | `Confirm2FARequest` `{ username, code }`    | Verifies first TOTP; enables 2FA on user record.                |
+| `/api/auth/2fa/auth`         | POST   | `TwoFaLoginRequest` `{ username, password, code }` | Complete login when 2FA is enabled; returns tokens.            |
+
+### 3. Products
+
+| Endpoint                   | Method | Role       | Body           | Description                         |
+|----------------------------|--------|------------|----------------|-------------------------------------|
+| `/api/products`            | GET    | USER/ADMIN | —              | List all products.                  |
+| `/api/products/{id}`       | GET    | USER/ADMIN | —              | Get product by ID.                  |
+| `/api/products`            | POST   | ADMIN      | `Product` JSON | Create a new product.               |
+| `/api/products/{id}`       | PUT    | ADMIN      | `Product` JSON | Update existing product.            |
+| `/api/products/{id}`       | DELETE | ADMIN      | —              | Delete a product.                   |
+
+---
+
+## Authentication Flows
+
+### A. Registration & Email Verification
+
+1. **Register** (`/api/auth/register`)
+    - User submits full profile + password.
+    - Service saves user with `verified=false` and `verificationCode` = random 4‑digit PIN.
+    - Sends email with PIN; code expires in 1 hour.
+2. **Verify** (`/api/auth/verify`)
+    - User posts `{ username, verificationCode }`.
+    - Service checks code & expiry, sets `verified=true`, clears code, sends completion email.
+
+### B. JWT Login & Refresh
+
+1. **Login** (`/api/auth/login`)
+    - Validates `username+password`.
+    - If user not verified → HTTP 400 `Account not verified`.
+    - If 2FA **off** → returns `{ accessToken, refreshToken }`.
+    - If 2FA **on** → returns `{ needs2fa: true }` (no tokens).
+2. **2FA Login** (`/api/auth/2fa/auth`)
+    - User posts `{ username, password, code }`.
+    - Service re‑authenticates and validates TOTP code.
+    - Returns `{ accessToken, refreshToken }`.
+3. **Refresh** (`/api/auth/refresh-token`)
+    - User posts `{ refreshToken }`.
+    - Service validates it and issues a new access token.
+
+---
 
 ## Project Structure
 
-```
+```text
 src/main/java/com/auth/
 ├── config/
 │   └── SecurityConfig.java
 ├── controller/
-│   ├── AuthController.java
-│   └── ProductController.java
+│   ├── AuthController.java      # registration, login, verify, 2FA endpoints
+│   └── ProductController.java   # CRUD operations
 ├── dto/
 │   ├── LoginRequest.java
 │   ├── RefreshTokenRequest.java
 │   ├── RegisterRequest.java
-│   ├── VerifyRequest.java        <-- Added
+│   ├── VerifyRequest.java
+│   ├── Confirm2FARequest.java
+│   ├── TwoFaLoginRequest.java
 │   └── TokenPair.java
 ├── filter/
 │   └── JwtAuthenticationFilter.java
 ├── model/
-│   ├── User.java                <-- Updated with verification fields
+│   ├── User.java                # +verification, 2FA fields
 │   └── Product.java
 ├── repository/
 │   ├── UserRepository.java
 │   └── ProductRepository.java
 ├── service/
-│   ├── AuthService.java         <-- Updated for verification logic
+│   ├── AuthService.java         # business logic for auth, verify, 2FA
+│   ├── EmailService.java        # send verification & confirmation emails
+│   ├── JwtService.java          # generate/validate tokens
 │   ├── CustomUserDetailsService.java
-│   ├── EmailService.java        <-- Updated with new methods
-│   ├── JwtService.java
 │   └── ProductService.java
 └── Application.java
 ```
 
+---
+
 ## Customization
 
-- **Verification Code Lifetime**: Adjust in `AuthService.verifyUser` via `LocalDateTime.now().plusHours(x)`, or externalize to config.
-- **Email Templates**: Enhance `EmailService` to use HTML templates or externalize subjects/bodies.
-- **Security Policies**: Modify `SecurityConfig` to tune permitted endpoints and session management.
+- **Verification Code**: Default 4‑digit PIN; modify generator in `AuthService.registerUser`.
+- **Code Expiry**: Default 1 hour; adjust `LocalDateTime.now().plusHours(x)` or externalize.
+- **2FA Settings**: TOTP via `com.warrenstrange:googleauth`; you can swap for SMS/email OTP easily.
+- **Token Lifetimes**: Change `app.jwt.expiration` and `app.jwt.refresh-expiration` in config.
+- **Email Templates**: Customize subjects/bodies or switch to HTML templates in `EmailService`.
+- **Roles & Permissions**: Update `SecurityConfig` to tweak endpoint access rules.
 
 ---
 
-*Please feel free to contribute enhancements or report issues on the project repository.*
+*Contributions welcome—feel free to open issues or pull requests!*
 
