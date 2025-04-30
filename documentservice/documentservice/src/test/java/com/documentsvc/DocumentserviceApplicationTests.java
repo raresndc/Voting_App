@@ -1,10 +1,10 @@
-package com.app.uploadservice;
+package com.documentsvc;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class UploadserviceApplicationTests {
+class DocumentserviceApplicationTests {
 
 	@Test
 	void contextLoads() {
