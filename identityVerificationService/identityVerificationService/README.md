@@ -7,6 +7,8 @@ A Spring Boot–based microservice for verifying user identity via face photo co
 
 ## Architecture Diagram
 
+---
+
 ```mermaid
 graph LR
   subgraph Client
@@ -67,7 +69,6 @@ graph LR
   K --> N
   L --> F
 ````
-
 ---
 
 ## Features
