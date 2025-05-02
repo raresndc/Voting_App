@@ -97,7 +97,7 @@ public class AuthService {
         userRepository.save(user);
 
         // send code
-        emailService.sendVerificationEmail(user.getEmail(), code);
+        emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), code);
     }
 
     //candidate
@@ -142,7 +142,7 @@ public class AuthService {
         candidateRepository.save(candidate);
 
         // send code
-        emailService.sendVerificationEmail(candidate.getEmail(), code);
+        emailService.sendVerificationEmail(candidate.getEmail(), candidate.getFullName(), code);
     }
 
     @Auditable(action="VERIFY", targetType="User", targetIdArg="username")
@@ -169,7 +169,8 @@ public class AuthService {
         // send completion email
         String subject = "Registration Completed";
         String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully verified. Welcome!";
-        emailService.sendEmail(user.getEmail(), subject, body);
+//        emailService.sendEmail(user.getEmail(), subject, body);
+        emailService.sendAccountVerifiedEmail(user.getEmail(), user.getFullName());
     }
 
     @Auditable(action="VERIFY", targetType="Candidate", targetIdArg="username")
@@ -196,7 +197,7 @@ public class AuthService {
 
         // send completion email
         String subject = "Registration Completed";
-        String body = "Dear " + candidate.getFullName() + ",\n\nYour account has been successfully verified. Welcome!";
+        String body = "Dear " + candidate.getFullName() + ",\n\nYour candidate account has been successfully verified. Welcome to VotingApp!";
         emailService.sendEmail(candidate.getEmail(), subject, body);
     }
 
