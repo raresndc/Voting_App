@@ -6,53 +6,7 @@ A Spring Boot–based microservice for verifying user identity via face photo co
 
 ## Architecture Diagram
 
-```mermaid
-graph LR
-  Client[User Agent]
-  JwtAuth[JwtAuthenticationFilter]
-  SecCtx[SecurityContext]
-  FacePhotoCtrl[FacePhotoController]
-  FaceCompareCtrl[FaceCompareController]
-  FaceExtractSvc[FaceExtractionService]
-  FaceCacheSvc[FacePhotoCacheService]
-  FaceCompareSvc[FaceComparisonService]
-  JwtSvc[JwtService]
-  JwtConfig[JwtDecoderConfig]
-  RedisCfg[RedisConfig]
-  OpenCvCfg[OpenCvConfig]
-  SecConfig[SecurityConfig]
-  Redis[Redis]
-  Cascade[haarcascade_frontalface_alt.xml]
-
-  Client -->|Authorization: Bearer…| JwtAuth
-  JwtAuth --> SecCtx
-
-  Client -->|POST /api/face-photo/{userId}| FacePhotoCtrl
-  Client -->|GET  /api/face-photo/{userId}| FacePhotoCtrl
-  Client -->|GET  /api/face-compare/{userId}| FaceCompareCtrl
-
-  FacePhotoCtrl --> FaceExtractSvc
-  FacePhotoCtrl --> FaceCacheSvc
-  FaceCompareCtrl --> FaceCompareSvc
-
-  FaceCompareSvc --> FaceExtractSvc
-  FaceCompareSvc --> Redis
-
-  FaceCacheSvc --> Redis
-  FaceExtractSvc --> Cascade
-
-  JwtAuth --> JwtSvc
-  JwtSvc --> JwtConfig
-
-  SecConfig --> JwtAuth
-  SecConfig --> JwtConfig
-  SecConfig --> JwtSvc
-  FacePhotoCtrl --> SecConfig
-  FaceCompareCtrl --> SecConfig
-
-  RedisCfg --> Redis
-  OpenCvCfg --> FaceExtractSvc
-```
+![Architecture Diagram](./architectureDiagram.svg)
 
 ---
 
