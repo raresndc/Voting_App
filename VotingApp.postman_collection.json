@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "authservice",
+			"name": "authService",
 			"item": [
 				{
 					"name": "getAllProducts",
@@ -147,7 +147,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"fullName\": \"Rares Nedelcu\",\r\n  \"username\": \"raresndc\",\r\n  \"password\": \"!Aa123456\",\r\n  \"role\": \"ROLE_ADMIN\",\r\n  \"phoneNo\": \"+40722794772\",\r\n  \"gender\": \"Male\",\r\n  \"email\": \"rares.ndc@gmail.com\",\r\n  \"personalIdNo\": \"5010217385588\",\r\n  \"citizenship\": \"Romanian\",\r\n  \"country\": \"Romania\",\r\n  \"county\": \"Bucuresti\",\r\n  \"city\": \"Bucuresti\",\r\n  \"address\": \"6 th District, Street Lavandei\",\r\n  \"dob\": \"2001-02-17\"\r\n}",
+							"raw": "{\r\n  \"fullName\": \"Rares Nedelcu\",\r\n  \"username\": \"raresndc_USER\",\r\n  \"password\": \"!Aa123456\",\r\n  \"role\": null,\r\n  \"phoneNo\": \"+40722794773\",\r\n  \"gender\": \"Male\",\r\n  \"email\": \"nedelcumihail20@stud.ase.ro\",\r\n  \"personalIdNo\": \"5010217385589\",\r\n  \"citizenship\": \"Romanian\",\r\n  \"country\": \"Romania\",\r\n  \"county\": \"Bucuresti\",\r\n  \"city\": \"Bucuresti\",\r\n  \"address\": \"6 th District, Street Lavandei\",\r\n  \"dob\": \"2001-02-17\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -165,6 +165,36 @@
 								"api",
 								"auth",
 								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registerSuperAdmin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fullName\": \"Rares Nedelcu\",\r\n  \"username\": \"raresndc\",\r\n  \"password\": \"!Aa123456\",\r\n  \"role\": null,\r\n  \"phoneNo\": \"+40722794772\",\r\n  \"gender\": \"Male\",\r\n  \"email\": \"rares.ndc@gmail.com\",\r\n  \"personalIdNo\": \"5010217385588\",\r\n  \"citizenship\": \"Romanian\",\r\n  \"country\": \"Romania\",\r\n  \"county\": \"Bucuresti\",\r\n  \"city\": \"Bucuresti\",\r\n  \"address\": \"6 th District, Street Lavandei\",\r\n  \"dob\": \"2001-02-17\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/register-super-admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"register-super-admin"
 							]
 						}
 					},
@@ -321,7 +351,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"raresndc\",\r\n    \"verificationCode\":\"5710\"\r\n}",
+							"raw": "{\r\n    \"username\":\"raresndc_USER\",\r\n    \"verificationCode\":\"1716\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -426,7 +456,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"username\":\"raresndc\",\r\n    \"password\":\"!Aa123456\",\r\n    \"code\":\"654120\"\r\n}",
+							"raw": "{\r\n    \"username\":\"raresndc\",\r\n    \"password\":\"!Aa123456\",\r\n    \"code\":\"011331\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -448,11 +478,84 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "registerCandidate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjIxNjA0MCwiZXhwIjoxNzQ2MjE5NjQwfQ.J6Oci75XjJuukqE378nhtRGCxSYKC6ksl7LC7vam0l0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"fullName\":\"Nedelcu Theodor Dragos\",\r\n    \"username\":\"theodornedelcu\",\r\n    \"password\":\"!Aa123456\",\r\n    \"gender\":\"male\",\r\n    \"email\":\"nedelcutheodor28@gmail.com\",\r\n    \"dob\":\"2008-01-10\",\r\n    \"politicalParty\":\"Partidul Romania Mare\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/register-candidate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"register-candidate"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "validateCandidate",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"theodornedelcu\",\r\n    \"verificationCode\":5454\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/auth/verify-candidate",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"verify-candidate"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
 		{
-			"name": "documentservice",
+			"name": "documentService",
 			"item": [
 				{
 					"name": "postDocument",
@@ -462,7 +565,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjAyMzQyMiwiZXhwIjoxNzQ2MDI3MDIyfQ.t2ZIfwKa5mx7cEXcizz4QPyS8oQXDkqaxsJdBxhlG-w",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjAyODI2NywiZXhwIjoxNzQ2MDMxODY3fQ.nvlafP5mO9Tj_-sfbbJ4gc6H_piP75k4Qia1QTeFaoA",
 									"type": "string"
 								}
 							]
@@ -473,7 +576,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "",
+									"key": "file",
 									"type": "file",
 									"src": "/D:/Eu/Carte de Identitate Nedelcu Mihail Rares.pdf"
 								}
@@ -496,6 +599,16 @@
 				{
 					"name": "getAllDocuments",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjAyODI2NywiZXhwIjoxNzQ2MDMxODY3fQ.nvlafP5mO9Tj_-sfbbJ4gc6H_piP75k4Qia1QTeFaoA",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -515,10 +628,13 @@
 				{
 					"name": "getOneDocument",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:8081/api/documents",
+							"raw": "localhost:8081/api/documents?id=1",
 							"host": [
 								"localhost"
 							],
@@ -526,6 +642,12 @@
 							"path": [
 								"api",
 								"documents"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
 							]
 						}
 					},
@@ -535,17 +657,20 @@
 					"name": "postIdDocument",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjE4Mjg0MywiZXhwIjoxNzQ2MTg2NDQzfQ.RjvAfhlLDzf4OmxqbD3v10WaxsoSDHrccWKP8dOtEyg",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/Eu/Carte de Identitate Nedelcu Mihail Rares.pdf"
+								}
+							]
+						},
 						"url": {
 							"raw": "localhost:8081/api/id-photo/652",
 							"host": [
@@ -565,14 +690,7 @@
 					"name": "getIdPhoto",
 					"request": {
 						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjE4Mjg0MywiZXhwIjoxNzQ2MTg2NDQzfQ.RjvAfhlLDzf4OmxqbD3v10WaxsoSDHrccWKP8dOtEyg",
-									"type": "string"
-								}
-							]
+							"type": "noauth"
 						},
 						"method": "GET",
 						"header": [],
@@ -586,6 +704,103 @@
 								"api",
 								"id-photo",
 								"652"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "identityVerificationService",
+			"item": [
+				{
+					"name": "postSelfie",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/Eu/eu.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8082/api/face-photo/652",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"face-photo",
+								"652"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSelfie",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8082/api/face-photo/652",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"face-photo",
+								"652"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "compareFaces",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjE5OTMzNywiZXhwIjoxNzQ2MjAyOTM3fQ.fCLrFQsKg15hEB5IJUCvXJ76lds4TFcYRgIlp_wBTac",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8082/api/face-compare/652?threshold=100",
+							"host": [
+								"localhost"
+							],
+							"port": "8082",
+							"path": [
+								"api",
+								"face-compare",
+								"652"
+							],
+							"query": [
+								{
+									"key": "threshold",
+									"value": "100"
+								}
 							]
 						}
 					},
