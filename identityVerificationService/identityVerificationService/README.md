@@ -1,4 +1,3 @@
-````markdown
 # Identity Verification Microservice
 
 A Spring Boot–based microservice for verifying user identity via face photo comparison. It provides endpoints to upload/cache a live face photo, retrieve cached photos, and compare a live photo against a stored ID photo using OpenCV’s LBPH algorithm and Redis for caching.
