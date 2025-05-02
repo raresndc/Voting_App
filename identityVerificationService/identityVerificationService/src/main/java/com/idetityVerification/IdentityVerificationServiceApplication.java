@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class IdentityVerificationServiceApplication {
 
 	public static void main(String[] args) {
+		DotenvLoader.loadEnv();
+
 		SpringApplication.run(IdentityVerificationServiceApplication.class, args);
 	}
 
