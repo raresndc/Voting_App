@@ -1,262 +1,292 @@
-Absolutely! Here's a cleaner, more polished version of your `README.md` with improved structure, formatting, and properly embedded image support.
+# Document Service Microservice
+
+This README provides a comprehensive overview of the **Document Service** microservice, including its architecture, configuration, setup, and usage. This service is responsible for:
+
+* Securely storing and retrieving PDF documents along with their extracted text content.
+* Performing OCR on scanned PDFs when text extraction fails.
+* Extracting face photos from uploaded documents and caching them in Redis.
 
 ---
 
-```markdown
-# 📄 Document Service
+## Table of Contents
 
-A Spring Boot microservice for uploading, storing, indexing, and retrieving PDF documents. It securely integrates with an external authentication service via JWT, shares a PostgreSQL database, and extracts text using PDFBox or Tesseract OCR.
+1. [Architecture & Components](#architecture--components)
+2. [Prerequisites](#prerequisites)
+3. [Configuration](#configuration)
+4. [Building & Running](#building--running)
+5. [Environment Variables](#environment-variables)
+6. [API Endpoints](#api-endpoints)
+7. [Implementation Details](#implementation-details)
 
----
-
-## 📚 Table of Contents
-
-- [Features](#features)  
-- [Architecture](#architecture)  
-- [Prerequisites](#prerequisites)  
-- [Getting Started](#getting-started)  
-  - [Clone the Repository](#clone-the-repository)  
-  - [Configure Environment Variables](#configure-environment-variables)  
-  - [Build & Run](#build--run)  
-- [Configuration](#configuration)  
-- [API Reference](#api-reference)  
-  - [Upload Document](#upload-document)  
-  - [List Documents](#list-documents)  
-  - [Download Document](#download-document)  
-- [Security](#security)  
-- [Data Model](#data-model)  
-- [Dependencies](#dependencies)  
-- [Contributing](#contributing)  
-- [License](#license)  
+    * [JWT Security](#jwt-security)
+    * [Document Handling](#document-handling)
+    * [OCR Fallback](#ocr-fallback)
+    * [Photo Extraction & Caching](#photo-extraction--caching)
+8. [Data Model](#data-model)
+9. [Logging & Monitoring](#logging--monitoring)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
-## 🚀 Features
+## Architecture & Components
 
-- **PDF Upload**: Accepts PDF files only (`application/pdf`).
-- **Text Extraction**:  
-  - **Primary**: Apache PDFBox  
-  - **Fallback**: Tesseract OCR via Tess4J
-- **Storage**:  
-  - PDF stored as `bytea` in PostgreSQL  
-  - Extracted text stored in a `TEXT` column  
-  - Metadata includes filename, content type, timestamp, and uploader username
-- **Secure Access**: JWT-based authentication via shared secret (no roundtrips to Auth service)
-- **Multi-Tenant**: Users can only access their own uploaded documents
-
----
-
-## 🏗 Architecture
+```mermaid
+graph TB
+    A[Client] --> B[Spring Boot App]
+    subgraph Spring Boot App
+        B1[DocumentserviceApplication]
+        B2[DotenvLoader]
+        B3[SecurityConfig]
+        B4[JwtAuthenticationFilter]
+        B5[JwtService]
+        B6[DocumentController]
+        B7[IdPhotoController]
+        B8[DocumentServiceImpl]
+        B9[PhotoExtractionService]
+        B10[IdPhotoCacheService]
+        B11[DocumentRepository]
+    end
+    subgraph External Systems
+        C1[(PostgreSQL)]
+        C2[(Redis)]
+        C3[Tesseract OCR]
+        C4[OpenCV Haarcascade]
+    end
+    B --> B1
+    B1 --> B2
+    B1 --> B3
+    B3 --> B4
+    B4 --> B5
+    B1 --> B6
+    B1 --> B7
+    B6 --> B8
+    B8 --> B11
+    B11 --> C1
+    B8 --> C3
+    B7 --> B9
+    B9 --> C4
+    B9 --> B10
+    B10 --> C2
 ```
 
-<img src="./documentServiceArch.png" alt="Document Service Architecture" width="100%" style="max-width:800px; display:block; margin:auto;" />
+* **Spring Boot Application** (`DocumentserviceApplication.java`): Initializes the service and loads environment variables. citeturn0file0
+* **Security Layer**:
 
-```
-1. **Auth Service** issues JWTs, stores users in the shared `auth_db`.
-2. **Document Service** validates tokens using shared secret—no HTTP calls.
-3. **DotenvLoader** loads environment variables from `.env` before Spring starts.
-4. **PDF Processing Pipeline**:
-  - Tries PDFBox
-  - Falls back to Tesseract OCR if necessary (make sure `TESSDATA_PREFIX` is set)
+    * `SecurityConfig.java`: Configures stateless JWT authentication and secures `/api/documents/**` endpoints. citeturn0file5
+    * `JwtAuthenticationFilter.java`: Extracts and validates JWT tokens from `Authorization` headers. citeturn0file6
+    * `JwtService.java`: Verifies token signature and extracts the username claim. citeturn0file1
+* **Persistence**:
 
----
+    * PostgreSQL via Spring Data JPA (`DocumentRepository.java`). citeturn0file7
+    * Redis for caching ID photos (`RedisConfig.java`, `IdPhotoCacheService.java`). citeturn0file9turn0file15
+* **Document Processing**:
 
-## ⚙ Prerequisites
+    * `DocumentServiceImpl.java`: Stores binary data and text, uses PDFBox and Tess4J for OCR if needed. citeturn0file12
+* **Photo Extraction**:
 
-- Java 17+  
-- Maven 3.6+ (or use included wrapper)  
-- PostgreSQL 12+ (running on `localhost:5432`, DB: `auth_db`)  
-- Tesseract OCR installed and configured  
-- `.env` file in project root:
+    * `PhotoExtractionService.java`: Uses OpenCV and PDFBox to detect and crop faces. citeturn0file13
+* **Controllers**:
 
-```dotenv
-SPRING_DATASOURCE_USERNAME=your_db_user
-SPRING_DATASOURCE_PASSWORD=your_db_pass
-APP_JWT_SECRET=<Base64-encoded-HMAC-SHA-key>
-TESSDATA_PREFIX=/path/to/tessdata_parent
-```
+    * `DocumentController.java`: CRUD endpoints for documents. citeturn0file10
+    * `IdPhotoController.java`: Upload and retrieve ID photos. citeturn0file11
+* **Utilities**:
+
+    * `DotenvLoader.java`: Loads `.env` variables into system properties before Spring starts. citeturn0file4
 
 ---
 
-## 🧪 Getting Started
+## Prerequisites
 
-### 🔽 Clone the Repository
-
-```bash
-git clone https://github.com/your-org/document-service.git
-cd document-service
-```
-
-### 🛠 Configure Environment Variables
-
-Create a `.env` file in the root directory as described above.
-
-### 🚀 Build & Run
-
-**Using Maven Wrapper**
-
-```bash
-./mvnw clean package
-java -jar target/documentservice-0.1.0.jar
-```
-
-**Or Directly**
-
-```bash
-mvn clean install
-mvn spring-boot:run
-```
-
-The app will start on **port 8081**.
+* Java 17+ JDK
+* Maven (or use the included Maven Wrapper)
+* PostgreSQL database
+* Redis server
+* Tesseract OCR data (`tessdata`) installed locally
+* `.env` file at the project root containing required secrets
 
 ---
 
-## ⚙ Configuration
+## Configuration
 
-All settings are in `src/main/resources/application.properties`:
+The project reads external configuration from `src/main/resources/application.properties`:
 
 ```properties
 spring.application.name=documentservice
 server.port=8081
 
+# PostgreSQL
 spring.datasource.url=jdbc:postgresql://localhost:5432/auth_db
 spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
 
+# JPA
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.show-sql=true
 
+# JWT
 app.jwt.secret=${APP_JWT_SECRET}
 app.jwt.expiration=3600000
+
+# Redis
+spring.redis.host=localhost
+spring.redis.port=6379
 ```
 
-The `DotenvLoader` loads `.env` variables before Spring starts.
+Additionally, environment variables are loaded via `DotenvLoader`. The following keys **must** be present in your `.env`:
+
+* `SPRING_DATASOURCE_USERNAME`
+* `SPRING_DATASOURCE_PASSWORD`
+* `APP_JWT_SECRET` (Base64-encoded signing key, shared with Auth service)
+* `TESSDATA_PREFIX` (path to Tesseract `tessdata` directory)
 
 ---
 
-## 📡 API Reference
+## Building & Running
 
-All endpoints require:
+1. **Clone the repository**
 
-```
-Authorization: Bearer <JWT_TOKEN>
-```
+   ```bash
+   ```
 
-### 📤 Upload Document
+git clone <repo-url>
+cd documentservice
 
-- **POST** `/api/documents`
-- Accepts: `multipart/form-data`
-- Field: `file` (PDF)
-- Response: JSON with metadata and extracted `textContent`
+````
+
+2. **Create `.env` file** (root directory):
+```dotenv
+SPRING_DATASOURCE_USERNAME=your_db_user
+SPRING_DATASOURCE_PASSWORD=your_db_pass
+APP_JWT_SECRET=Base64EncodedKey
+TESSDATA_PREFIX=/path/to/tessdata
+````
+
+3. **Build**
+
+   ```bash
+   ```
+
+./mvnw clean package
+
+````
+
+4. **Run**
+```bash
+java -jar target/documentservice-0.0.1-SNAPSHOT.jar
+````
+
+The service will start on `http://localhost:8081`.
+
+---
+
+## Environment Variables
+
+| Variable                     | Description                                     |
+| ---------------------------- | ----------------------------------------------- |
+| `SPRING_DATASOURCE_USERNAME` | PostgreSQL username                             |
+| `SPRING_DATASOURCE_PASSWORD` | PostgreSQL password                             |
+| `APP_JWT_SECRET`             | JWT HMAC secret (Base64-encoded)                |
+| `TESSDATA_PREFIX`            | Absolute path to Tesseract `tessdata` directory |
+
+---
+
+## API Endpoints
+
+### Document Endpoints (`/api/documents`)
+
+| Method | Path    | Description           | Auth Required |
+| ------ | ------- | --------------------- | ------------- |
+| POST   | `/`     | Upload a PDF          | Yes           |
+| GET    | `/`     | List user’s documents | Yes           |
+| GET    | `/{id}` | Download by ID        | Yes           |
+
+**Upload example:**
 
 ```bash
-curl -X POST http://localhost:8081/api/documents \
-  -H "Authorization: Bearer $JWT_TOKEN" \
-  -F file=@/path/to/file.pdf
+curl -X POST "http://localhost:8081/api/documents" \
+  -H "Authorization: Bearer <token>" \
+  -F file=@/path/to/document.pdf
 ```
 
----
+### ID Photo Endpoints (`/api/id-photo`)
 
-### 📄 List Documents
+| Method | Path        | Description                            | Auth Required |
+| ------ | ----------- | -------------------------------------- | ------------- |
+| POST   | `/{userId}` | Extract & cache face photo from upload | No            |
+| GET    | `/{userId}` | Retrieve cached photo (PNG)            | No            |
 
-- **GET** `/api/documents`
-- Response: Array of your uploaded documents
+**Photo upload example:**
 
 ```bash
-curl http://localhost:8081/api/documents \
-  -H "Authorization: Bearer $JWT_TOKEN"
+curl -X POST "http://localhost:8081/api/id-photo/123" \
+  -F file=@/path/to/id_document.pdf
 ```
 
 ---
 
-### 📥 Download Document
+## Implementation Details
 
-- **GET** `/api/documents/{id}`
-- Response: PDF with `Content-Disposition: attachment`
+### JWT Security
 
-```bash
-curl http://localhost:8081/api/documents/123 \
-  -H "Authorization: Bearer $JWT_TOKEN" \
-  --output downloaded.pdf
-```
+* **Filter**: `JwtAuthenticationFilter` intercepts each request, extracts `Bearer` token, and validates it via `JwtService`. On success, populates `SecurityContext` with a `UsernamePasswordAuthenticationToken`. citeturn0file6turn0file1
+* **Config**: `SecurityConfig` disables CSRF, enforces stateless sessions, and secures `/api/documents/**`. citeturn0file5
 
----
+### Document Handling
 
-## 🔐 Security
+* **Service**: `DocumentServiceImpl` saves raw bytes and text. Uses PDFBox (`PDDocument`, `PDFTextStripper`) for text extraction. citeturn0file12
+* **Fallback OCR**: If extracted text is blank, falls back to Tess4J OCR at 300 DPI using the provided `TESSDATA_PREFIX`. citeturn0file12
 
-- **JWT Only**: No sessions/cookies
-- **Spring Security Filter Chain**:
+### OCR Fallback
 
-```java
-http
-  .csrf().disable()
-  .sessionManagement().sessionCreationPolicy(STATELESS)
-  .authorizeHttpRequests()
-    .requestMatchers("/api/documents/**").authenticated()
-    .anyRequest().permitAll()
-  .and()
-  .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-```
+* Iterates pages, renders each to `BufferedImage`, and runs `Tesseract.doOCR`. Logs warnings on failures.
 
-- Token validation and user extraction in `JwtService`
+### Photo Extraction & Caching
+
+* **Extractor**: `PhotoExtractionService` loads OpenCV (`haarcascade_frontalface_alt.xml`) and extracts the first image or page from PDF. Detects face, crops, converts to PNG. citeturn0file13
+* **Cache**: `IdPhotoCacheService` stores PNG bytes in Redis under key `idPhoto:{userId}` with 24-hour TTL. citeturn0file15
 
 ---
 
-## 🧬 Data Model
+## Data Model
 
 ```java
 @Entity
 @Table(name = "documents")
 public class Document {
-  @Id @GeneratedValue
-  private Long id;
-  private String filename;
-  private String contentType;
-
-  @Column(columnDefinition = "bytea")
-  private byte[] data;
-
-  @Lob
-  @Column(columnDefinition = "text")
-  private String textContent;
-
-  private LocalDateTime uploadedAt;
-  private String uploadedBy; // JWT subject
+    @Id @GeneratedValue
+    Long id;
+    String filename;
+    String contentType;
+    @Column(columnDefinition = "bytea")
+    byte[] data;
+    @Lob @Column(columnDefinition = "text")
+    String textContent;
+    LocalDateTime uploadedAt;
+    String uploadedBy; // JWT username
 }
 ```
 
 ---
 
-## 📦 Dependencies
+## Logging & Monitoring
 
-- Spring Boot Web / Data JPA / Security
-- PostgreSQL Driver
-- Apache PDFBox
-- Tess4J (Tesseract OCR)
-- Lombok
-- Dotenv for Java (`io.github.cdimascio:dotenv-java`)
+* **SQL**: Enabled via `spring.jpa.show-sql=true`.
+* **Hibernate**: Set `logging.level.org.hibernate=DEBUG` for deeper insights.
+* **Service Logs**: Uses Lombok’s `@Slf4j` in services to log key events and warnings.
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit changes: `git commit -am 'Add your feature'`
-4. Push branch: `git push origin feature/your-feature`
-5. Open a Pull Request
-
-Please follow code style and add unit tests where applicable.
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature/foo`).
+3. Commit your changes (`git commit -am 'Add foo'`).
+4. Push to the branch (`git push origin feature/foo`).
+5. Open a Pull Request.
 
 ---
 
-## 📄 License
+## License
 
-This project is licensed under the [MIT License](LICENSE).
-```
-
----
-
-✅ **Your PNG** (`documentServiceArch.png`) is correctly referenced with a relative path that will work on GitHub or Markdown viewers that support embedded local images.
-
-Would you like me to generate a visual version (e.g., styled HTML or PDF) of this README?
+This project is licensed under the MIT License.© 2025
