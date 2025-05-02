@@ -3,12 +3,14 @@ package com.auth.controller;
 import com.auth.dto.*;
 import com.auth.model.Role;
 import com.auth.model.User;
+import com.auth.repository.CandidateRepository;
 import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,7 @@ public class AuthController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CandidateRepository candidateRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -36,6 +39,14 @@ public class AuthController {
 
         authService.registerUser(request);
         return ResponseEntity.ok("User registered successsfully! Status: pending account");
+    }
+
+    @PreAuthorize("hasRole('SUPER_USER') or hasRole('SUPER_ADMIN')")
+    @PostMapping("/register-candidate")
+    public ResponseEntity<String> registerCandidate(@RequestBody @Valid RegisterCandidateRequest request) {
+
+        authService.registerCandidate(request);
+        return ResponseEntity.ok("Candidate registered successfully! Status: pending account");
     }
 
     @PostMapping("/register-super-admin")
@@ -130,6 +141,12 @@ public class AuthController {
     public ResponseEntity<?> verifyUser(@Valid @RequestBody VerifyRequest request) {
         authService.verifyUser(request);
         return ResponseEntity.ok("User verified successfully! Status changed to verified account");
+    }
+
+    @PostMapping("/verifyCandidate")
+    public ResponseEntity<?> verifyCandidate(@Valid @RequestBody VerifyRequest request) {
+        authService.verifyCandidate(request);
+        return ResponseEntity.ok("Candidate verified successfully! Status changed to verified account");
     }
 
     @PostMapping("/2fa/setup")

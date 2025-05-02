@@ -2,8 +2,10 @@ package com.auth.service;
 
 import com.auth.audit.dto.Auditable;
 import com.auth.dto.*;
+import com.auth.model.Candidate;
 import com.auth.model.Role;
 import com.auth.model.User;
+import com.auth.repository.CandidateRepository;
 import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
@@ -37,6 +39,7 @@ public class AuthService {
     private UserDetailsService userDetailsService;
     private EmailService emailService;
     private final RoleRepository roleRepository;
+    private final CandidateRepository candidateRepository;
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Auditable(action="REGISTER", targetType="User", targetIdArg="username")
@@ -97,6 +100,51 @@ public class AuthService {
         emailService.sendVerificationEmail(user.getEmail(), code);
     }
 
+    //candidate
+
+    @Auditable(action="REGISTER", targetType="Candidate", targetIdArg="username")
+    @Transactional
+    public void registerCandidate(RegisterCandidateRequest registerRequest) {
+        // check if user with the same username already exists
+
+        if(candidateRepository.existsByUsername(registerRequest.getUsername())) {
+            throw new IllegalArgumentException("Username already exists!");
+        }
+
+        if (candidateRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new IllegalArgumentException("Email already exists!");
+        }
+
+        Role candidateRole = roleRepository.findByName("ROLE_CANDIDATE")
+                .orElseThrow(() -> new RuntimeException("Candidate role not found"));
+
+        Candidate candidate = Candidate.builder()
+                .fullName(registerRequest.getFullName())
+                .username(registerRequest.getUsername())
+                .password(passwordEncoder.encode(registerRequest.getPassword()))
+                .gender(registerRequest.getGender())
+                .email(registerRequest.getEmail())
+                .dob(registerRequest.getDob())
+                .age(registerRequest.getAge())
+                .role(candidateRole)
+                .politicalParty(registerRequest.getPoliticalParty())
+                .verified(false)
+                .votes(0L)
+                .build();
+
+        candidateRepository.save(candidate);
+
+        SecureRandom secureRandom = new SecureRandom();
+        String code = String.format("%04d", secureRandom.nextInt(10_000));
+        candidate.setVerificationCode(code);
+        candidate.setVerificationExpiryDate(LocalDateTime.now().plusHours(1));
+
+        candidateRepository.save(candidate);
+
+        // send code
+        emailService.sendVerificationEmail(candidate.getEmail(), code);
+    }
+
     @Auditable(action="VERIFY", targetType="User", targetIdArg="username")
     @Transactional
     public void verifyUser(VerifyRequest request) {
@@ -124,6 +172,33 @@ public class AuthService {
         emailService.sendEmail(user.getEmail(), subject, body);
     }
 
+    @Auditable(action="VERIFY", targetType="Candidate", targetIdArg="username")
+    @Transactional
+    public void verifyCandidate(VerifyRequest request) {
+
+        Candidate candidate = candidateRepository.findByUsername(request.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("Candidate not found"));
+
+        if (candidate.isVerified()) {
+            throw new IllegalStateException("Account already verified");
+        }
+        if (!request.getVerificationCode().equals(candidate.getVerificationCode())) {
+            throw new IllegalArgumentException("Invalid verification code");
+        }
+        if (candidate.getVerificationExpiryDate().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Verification code expired");
+        }
+
+        candidate.setVerified(true);
+        candidate.setVerificationCode(null);
+        candidate.setVerificationExpiryDate(null);
+        candidateRepository.save(candidate);
+
+        // send completion email
+        String subject = "Registration Completed";
+        String body = "Dear " + candidate.getFullName() + ",\n\nYour account has been successfully verified. Welcome!";
+        emailService.sendEmail(candidate.getEmail(), subject, body);
+    }
 
     private int calculateAge(LocalDate dob) {
         return Period.between(dob, LocalDate.now()).getYears();
