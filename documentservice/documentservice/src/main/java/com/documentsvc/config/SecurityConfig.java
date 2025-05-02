@@ -4,6 +4,7 @@ import com.documentsvc.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -24,12 +25,11 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/documents/**").authenticated()
+                        .requestMatchers("/api/id-photo/**").authenticated()
                         .anyRequest().permitAll()
                 )
-                .httpBasic(basic -> basic.disable())
-                .formLogin(login -> login.disable())
-                // note: you can leave anonymous enabled, or disable–either is fine once your filter is wired
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // enable JWT-based auth
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }

@@ -4,6 +4,8 @@ import com.idetityVerification.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -18,18 +20,19 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                // we’re stateless, so disable CSRF
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // require JWT on our face-photo endpoints
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/documents/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,   "/api/face-photo/**").authenticated()
+                        .requestMatchers(HttpMethod.GET,    "/api/face-photo/**").authenticated()
+                        // allow anything else (e.g. health check, swagger, etc.)
                         .anyRequest().permitAll()
                 )
-                .httpBasic(basic -> basic.disable())
-                .formLogin(login -> login.disable())
-                // note: you can leave anonymous enabled, or disable–either is fine once your filter is wired
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // enable JWT-based auth
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()));
 
         return http.build();
     }
