@@ -33,7 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> getAuthority(User user) {
-        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().name());
+        GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().getName());
 
         return List.of(authority);
     }
