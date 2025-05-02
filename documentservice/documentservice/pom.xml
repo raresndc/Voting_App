@@ -108,6 +108,32 @@
 			<version>5.15.0</version>
 		</dependency>
 
+		<!-- Redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- PDF image extraction -->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.27</version>
+		</dependency>
+
+		<!-- OpenCV for face‐detection cropping -->
+<!--		<dependency>-->
+<!--			<groupId>org.openpnp</groupId>-->
+<!--			<artifactId>opencv</artifactId>-->
+<!--			<version>4.5.1-2</version>-->
+<!--		</dependency>-->
+
+		<dependency>
+			<groupId>org.openpnp</groupId>
+			<artifactId>opencv</artifactId>
+			<version>4.9.0-0</version>
+		</dependency>
+
 
 	</dependencies>
 
