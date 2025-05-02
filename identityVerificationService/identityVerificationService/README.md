@@ -45,6 +45,7 @@ graph LR
 
   A -->|Authorization: Bearer…| B
   B --> C
+
   A -->|POST /api/face-photo/{userId}| D
   A -->|GET  /api/face-photo/{userId}| D
   A -->|GET  /api/face-compare/{userId}| E
@@ -63,11 +64,12 @@ graph LR
   M --> B
   M --> J
   M --> I
-  D & E --> M
+  D --> M
+  E --> M
   J --> I
   K --> N
   L --> F
-````
+```
 ---
 
 ## Features
