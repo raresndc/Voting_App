@@ -143,7 +143,7 @@ public class AuthController {
         return ResponseEntity.ok("User verified successfully! Status changed to verified account");
     }
 
-    @PostMapping("/verifyCandidate")
+    @PostMapping("/verify-candidate")
     public ResponseEntity<?> verifyCandidate(@Valid @RequestBody VerifyRequest request) {
         authService.verifyCandidate(request);
         return ResponseEntity.ok("Candidate verified successfully! Status changed to verified account");
