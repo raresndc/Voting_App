@@ -166,10 +166,6 @@ public class AuthService {
         user.setVerificationExpiryDate(null);
         userRepository.save(user);
 
-        // send completion email
-        String subject = "Registration Completed";
-        String body = "Dear " + user.getFullName() + ",\n\nYour account has been successfully verified. Welcome!";
-//        emailService.sendEmail(user.getEmail(), subject, body);
         emailService.sendAccountVerifiedEmail(user.getEmail(), user.getFullName());
     }
 
@@ -195,10 +191,7 @@ public class AuthService {
         candidate.setVerificationExpiryDate(null);
         candidateRepository.save(candidate);
 
-        // send completion email
-        String subject = "Registration Completed";
-        String body = "Dear " + candidate.getFullName() + ",\n\nYour candidate account has been successfully verified. Welcome to VotingApp!";
-        emailService.sendEmail(candidate.getEmail(), subject, body);
+        emailService.sendAccountVerifiedEmail(candidate.getEmail(), candidate.getFullName());
     }
 
     private int calculateAge(LocalDate dob) {
