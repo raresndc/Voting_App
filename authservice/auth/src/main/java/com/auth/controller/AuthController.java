@@ -1,7 +1,9 @@
 package com.auth.controller;
 
 import com.auth.dto.*;
+import com.auth.model.Role;
 import com.auth.model.User;
+import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.auth.service.AuthService;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -24,6 +27,8 @@ public class AuthController {
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -31,6 +36,47 @@ public class AuthController {
 
         authService.registerUser(request);
         return ResponseEntity.ok("User registered successsfully! Status: pending account");
+    }
+
+    @PostMapping("/register-super-admin")
+    public ResponseEntity<String> registerSuperAdmin(@RequestBody @Valid RegisterRequest registerRequest) {
+        // Check if the super admin already exists by username or email (you can add more checks as needed)
+        if (userRepository.findByUsername(registerRequest.getUsername()).isPresent()) {
+            return ResponseEntity.badRequest().body("Username is already taken");
+        }
+
+        if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
+            return ResponseEntity.badRequest().body("Email is already registered");
+        }
+
+        // Fetch the SUPER_ADMIN role from the Role repository
+        Role superAdminRole = roleRepository.findByName("ROLE_SUPER_ADMIN")
+                .orElseThrow(() -> new RuntimeException("Super Admin role not found"));
+
+        // Map the RegisterRequest to a User entity
+        User superAdmin = new User(
+                registerRequest.getFullName(),
+                registerRequest.getUsername(),
+                passwordEncoder.encode(registerRequest.getPassword()),
+                superAdminRole, // Assign the SUPER_ADMIN role
+                registerRequest.getPhoneNo(),
+                registerRequest.getGender(),
+                registerRequest.getEmail(),
+                registerRequest.getPersonalIdNo(),
+                registerRequest.getCitizenship(),
+                registerRequest.getCountry(),
+                registerRequest.getCounty(),
+                registerRequest.getCity(),
+                registerRequest.getAddress(),
+                registerRequest.getDob(),
+                registerRequest.getAge(),
+                true // Verified by default for super admin
+        );
+
+        // Save the super admin user to the database
+        userRepository.save(superAdmin);
+
+        return ResponseEntity.ok("Super Admin registered successfully");
     }
 
 //    @PostMapping("/login")

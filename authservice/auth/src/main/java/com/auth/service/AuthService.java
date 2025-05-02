@@ -2,13 +2,16 @@ package com.auth.service;
 
 import com.auth.audit.dto.Auditable;
 import com.auth.dto.*;
+import com.auth.model.Role;
 import com.auth.model.User;
+import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,6 +36,7 @@ public class AuthService {
     private final JwtService jwtService;
     private UserDetailsService userDetailsService;
     private EmailService emailService;
+    private final RoleRepository roleRepository;
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Auditable(action="REGISTER", targetType="User", targetIdArg="username")
@@ -44,11 +48,26 @@ public class AuthService {
             throw new IllegalArgumentException("Username already exists!");
         }
 
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+            throw new IllegalArgumentException("Email already exists!");
+        }
+
+        if (userRepository.existsByPersonalIdNo(registerRequest.getEmail())) {
+            throw new IllegalArgumentException("Personal Id Number already exists!");
+        }
+
+        if (userRepository.existsByPhoneNo(registerRequest.getEmail())) {
+            throw new IllegalArgumentException("Phone number already exists!");
+        }
+
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("User role not found"));
+
         User user = User.builder()
                 .fullName(registerRequest.getFullName())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
-                .role(registerRequest.getRole())
+                .role(userRole)
                 .phoneNo(registerRequest.getPhoneNo())
                 .gender(registerRequest.getGender())
                 .email(registerRequest.getEmail())
