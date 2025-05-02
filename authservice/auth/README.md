@@ -26,6 +26,12 @@ This Auth Microservice provides:
 
 ---
 
+## Architecture Diagram
+
+![Architecture Diagram](./architectureDiagram.png)
+
+---
+
 ## Prerequisites
 
 - Java 17+
