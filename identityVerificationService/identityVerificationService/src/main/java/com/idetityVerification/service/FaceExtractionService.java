@@ -57,4 +57,40 @@ public class FaceExtractionService {
         buf.get(out);
         return out;
     }
+
+    public Mat cropFaceMat(byte[] imageBytes) throws IOException {
+        // decode into a Mat
+        Mat image = opencv_imgcodecs.imdecode(
+                new Mat(imageBytes),
+                opencv_imgcodecs.IMREAD_COLOR
+        );
+
+        // detect faces
+        RectVector faces = new RectVector();
+        detector.detectMultiScale(image, faces);
+        if (faces.size() == 0) {
+            throw new IllegalArgumentException("No face detected");
+        }
+
+        // pick largest
+        Rect best = faces.get(0);
+        long maxArea = best.width() * best.height();
+        for (int i = 1; i < faces.size(); i++) {
+            Rect r = faces.get(i);
+            long area = (long) r.width() * r.height();
+            if (area > maxArea) {
+                best = r;
+                maxArea = area;
+            }
+        }
+
+        // crop & optionally normalize size
+        Mat cropped = new Mat(image, best);
+        // if you wanted to resize here, you could:
+        // Mat tmp = new Mat();
+        // opencv_imgproc.resize(cropped, tmp, new Size(200,200));
+        // return tmp;
+
+        return cropped;
+    }
 }
