@@ -37,18 +37,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
 
-    @Value("${app.jwt.reset-expiration-ms}")
-    private long resetExpirationMs;
-
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
-    private UserDetailsService userDetailsService;
-    private EmailService emailService;
+    private final UserDetailsService userDetailsService;
+    private final EmailService emailService;
     private final RoleRepository roleRepository;
     private final CandidateRepository candidateRepository;
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
+
+    @Value("${app.jwt.reset-expiration-ms}")
+    private long resetExpirationMs;
 
     @Auditable(action="REGISTER", targetType="User", targetIdArg="username")
     @Transactional
@@ -312,18 +312,27 @@ public class AuthService {
     }
 
     public void forgotPassword(ForgotPasswordRequest req) {
-        userRepository.findByEmail(req.getEmail())
-                .ifPresent(user -> {
-                    // Build an Authentication object for JWT generation
-                    Authentication auth = new UsernamePasswordAuthenticationToken(
-                            user.getUsername(), null, List.of()
-                    );
-                    String resetToken = jwtService.generatePasswordResetToken(auth, resetExpirationMs);
+        userRepository.findByEmail(req.getEmail()).ifPresent(user -> {
+            // 1) Load the real UserDetails
+            UserDetails userDetails =
+                    userDetailsService.loadUserByUsername(user.getUsername());
 
-                    String link = "https://your-domain.com/reset-password?token=" + resetToken;
-                    emailService.sendPasswordResetEmail(user.getEmail(), link);
-                });
-        // Always return 200 to avoid leaking which e-mails exist
+            // 2) Create an Authentication whose principal is that UserDetails
+            UsernamePasswordAuthenticationToken auth =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            // 3) Generate the JWT reset token
+            String resetToken =
+                    jwtService.generatePasswordResetToken(auth, resetExpirationMs);
+
+            // 4) Send the email
+            String link = "https://your-domain.com/reset-password?token=" + resetToken;
+            emailService.sendPasswordResetEmail(user.getEmail(), link);
+        });
     }
 
     public void resetPassword(ResetPasswordRequest req) {
