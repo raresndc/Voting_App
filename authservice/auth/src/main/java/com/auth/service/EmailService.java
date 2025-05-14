@@ -142,4 +142,18 @@ public class EmailService {
             // handle or log
         }
     }
+
+    public void sendPasswordResetEmail(String to, String resetLink) {
+        String subject = "VotingApp • Reset Your Password";
+        String body = new StringBuilder()
+                .append("Hello,\n\n")
+                .append("We received a request to reset your password. ")
+                .append("Click the link below (or paste it in your browser) within 30 minutes:\n\n")
+                .append(resetLink).append("\n\n")
+                .append("If you didn’t request a reset, just ignore this email.\n\n")
+                .append("— The VotingApp Team")
+                .toString();
+
+        sendEmail(to, subject, body);
+    }
 }

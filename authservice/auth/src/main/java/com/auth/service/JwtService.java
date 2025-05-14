@@ -123,4 +123,48 @@ public class JwtService {
                 .signWith(getSignInKey())
                 .compact();
     }
+
+    public String generatePasswordResetToken(Authentication authentication, long ttlMs) {
+        Map<String, String> claims = new HashMap<>();
+        claims.put("purpose", "password_reset");
+
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + ttlMs);
+
+        // We reuse the same signing key
+        return Jwts.builder()
+                .header().add("typ", "JWT")
+                .and()
+                .setSubject(((UserDetails)authentication.getPrincipal()).getUsername())
+                .addClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(getSignInKey())
+                .compact();
+    }
+
+    /**
+     * Validate that the token is a well-formed JWT, not expired,
+     * signed correctly, and carries the expected "purpose" claim.
+     */
+    public boolean validatePasswordResetToken(String token) {
+        try {
+            Claims claims = extractAllClaims(token);
+            return "password_reset".equals(claims.get("purpose"))
+                    && claims.getExpiration().after(new Date());
+        } catch (JwtException | IllegalArgumentException ex) {
+            log.warn("Invalid password-reset token: {}", ex.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * (Optional) Revoke a JWT by its "jti" claim. Requires storing
+     * blacklisted JTIs server-side and checking in your filter.
+     */
+    public void revokeToken(String token) {
+        Claims claims = extractAllClaims(token);
+        String jti = claims.getId();
+        // persist jti into a blacklist store
+    }
 }

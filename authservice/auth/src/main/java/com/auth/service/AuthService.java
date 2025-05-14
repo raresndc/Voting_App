@@ -3,6 +3,7 @@ package com.auth.service;
 import com.auth.audit.dto.Auditable;
 import com.auth.dto.*;
 import com.auth.model.Candidate;
+import com.auth.model.PasswordResetToken;
 import com.auth.model.Role;
 import com.auth.model.User;
 import com.auth.repository.CandidateRepository;
@@ -13,6 +14,8 @@ import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,10 +31,15 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthService {
+
+    @Value("${app.jwt.reset-expiration-ms}")
+    private long resetExpirationMs;
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -301,6 +309,37 @@ public class AuthService {
 
     public void logout(RefreshTokenRequest request) {
         SecurityContextHolder.clearContext();
+    }
+
+    public void forgotPassword(ForgotPasswordRequest req) {
+        userRepository.findByEmail(req.getEmail())
+                .ifPresent(user -> {
+                    // Build an Authentication object for JWT generation
+                    Authentication auth = new UsernamePasswordAuthenticationToken(
+                            user.getUsername(), null, List.of()
+                    );
+                    String resetToken = jwtService.generatePasswordResetToken(auth, resetExpirationMs);
+
+                    String link = "https://your-domain.com/reset-password?token=" + resetToken;
+                    emailService.sendPasswordResetEmail(user.getEmail(), link);
+                });
+        // Always return 200 to avoid leaking which e-mails exist
+    }
+
+    public void resetPassword(ResetPasswordRequest req) {
+        String token = req.getToken();
+        if (!jwtService.validatePasswordResetToken(token)) {
+            throw new IllegalArgumentException("Invalid or expired reset token");
+        }
+        // Optionally revoke so it can’t be reused
+        jwtService.revokeToken(token);
+
+        String username = jwtService.extractUsernameFromToken(token);
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setPassword(passwordEncoder.encode(req.getNewPassword()));
+        userRepository.save(user);
     }
 
     /**
