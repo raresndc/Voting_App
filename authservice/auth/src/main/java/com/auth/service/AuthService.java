@@ -299,6 +299,10 @@ public class AuthService {
         return jwtService.generateTokenPair(auth);
     }
 
+    public void logout(RefreshTokenRequest request) {
+        SecurityContextHolder.clearContext();
+    }
+
     /**
      * Issue a JWT pair from an already‐authenticated Authentication object.
      */

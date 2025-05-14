@@ -162,4 +162,10 @@ public class AuthController {
         authService.confirm2FA(req.getUsername(), req.getCode());
         return ResponseEntity.ok(Map.of("message","2FA enabled"));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logout(@Valid @RequestBody RefreshTokenRequest request) {
+        authService.logout(request);
+        return ResponseEntity.ok("Logged out successfully!");
+    }
 }
