@@ -331,7 +331,7 @@ public class AuthService {
 
             // 4) Send the email
             String link = "https://your-domain.com/reset-password?token=" + resetToken;
-            emailService.sendPasswordResetEmail(user.getEmail(), link);
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), link);
         });
     }
 

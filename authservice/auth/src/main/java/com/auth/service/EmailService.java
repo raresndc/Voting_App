@@ -143,17 +143,60 @@ public class EmailService {
         }
     }
 
-    public void sendPasswordResetEmail(String to, String resetLink) {
-        String subject = "VotingApp • Reset Your Password";
-        String body = new StringBuilder()
-                .append("Hello,\n\n")
-                .append("We received a request to reset your password. ")
-                .append("Click the link below (or paste it in your browser) within 30 minutes:\n\n")
-                .append(resetLink).append("\n\n")
-                .append("If you didn’t request a reset, just ignore this email.\n\n")
-                .append("— The VotingApp Team")
-                .toString();
+    public void sendPasswordResetEmail(String to, String fullName, String resetLink) {
+        try {
+            MimeMessage msg = javaMailSender.createMimeMessage();
+            // true = multipart (for inline), "UTF-8" charset
+            MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
+            helper.setFrom(email, "VotingApp Support");
+            helper.setTo(to);
+            helper.setSubject("VotingApp • Reset Your Password");
 
-        sendEmail(to, subject, body);
+            // 1) Plain-text fallback
+            String textBody = String.format(
+                    "Hello %s,%n%n" +
+                            "We received a request to reset your password. " +
+                            "Click the link below within 30 minutes to set a new password:%n%n" +
+                            "%s%n%n" +
+                            "If you didn’t request this, you can safely ignore this email or reach out to our support team.%n%n" +
+                            "— The VotingApp Team%n" +
+                            "support@votingapp.com | +40 712 345 678%n" +
+                            "https://www.votingapp.com",
+                    fullName, resetLink
+            );
+
+            // 2) HTML body
+            String htmlBody = """
+          <html>
+            <body style="font-family:Arial, sans-serif; line-height:1.5;">
+              <h2>Hello %s,</h2>
+              <p>We received a request to reset your password. Click the button below within <strong>30 minutes</strong>:</p>
+              <p>
+                <a href="%s"
+                   style="background:#007bff; color:#ffffff; padding:10px 20px;
+                          text-decoration:none; border-radius:5px; display:inline-block;">
+                  Reset Password
+                </a>
+              </p>
+              <p>If you didn’t request this, you can safely ignore this email or contact our support team.</p>
+              <hr style="margin:30px 0;"/>
+              <p style="font-size:0.9em; color:#555;">
+                The VotingApp Team<br/>
+                <a href="mailto:support@votingapp.com">support@votingapp.com</a> |
+                +40 712 345 678<br/>
+                <a href="https://www.votingapp.com">www.votingapp.com</a>
+              </p>
+            </body>
+          </html>
+          """.formatted(fullName, resetLink);
+
+            helper.setText(textBody, htmlBody);
+            javaMailSender.send(msg);
+
+        } catch (MessagingException | UnsupportedEncodingException e) {
+            // log or rethrow as appropriate
+            throw new RuntimeException("Failed to send password-reset email", e);
+        }
     }
+
 }
