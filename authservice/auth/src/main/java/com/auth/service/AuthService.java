@@ -307,10 +307,12 @@ public class AuthService {
         return jwtService.generateTokenPair(auth);
     }
 
+    @Auditable(action="LOGOUT", targetType="User", targetIdArg="request.refreshToken")
     public void logout(RefreshTokenRequest request) {
         SecurityContextHolder.clearContext();
     }
 
+    @Auditable(action="FORGOT_PASSWORD", targetType="User", targetIdArg="req.email")
     public void forgotPassword(ForgotPasswordRequest req) {
         userRepository.findByEmail(req.getEmail()).ifPresent(user -> {
             // 1) Load the real UserDetails
@@ -335,6 +337,7 @@ public class AuthService {
         });
     }
 
+    @Auditable(action="RESET_PASSWORD", targetType="User", targetIdArg="req.token")
     public void resetPassword(ResetPasswordRequest req) {
         String token = req.getToken();
         if (!jwtService.validatePasswordResetToken(token)) {
