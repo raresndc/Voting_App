@@ -1,0 +1,591 @@
+\documentclass[a4paper,10pt]{report}
+
+% Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{setspace}
+\usepackage{graphicx}
+\onehalfspacing
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage{tocloft}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{array} % for p{} column formatting
+\usepackage{caption}
+\usepackage{times}            % Loads Times font (closest to Times New Roman)
+\usepackage{setspace}         % For controlling line spacing
+\usepackage{parskip}          % Prevents indent and adds space between paragraphs (optional)
+\usepackage[margin=1in]{geometry} % Optional: set margins
+
+\setstretch{1.0}  
+
+\renewcommand{\cftchapdotsep}{\cftdotsep}
+\renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
+
+\titleformat{\chapter}[hang]{\normalfont\huge\bfseries}{\thechapter.}{1em}{}
+
+\title{\textbf{DISSERTATION THESIS}}
+\author{
+\textbf{Graduate} \\ Mihail Rareș NEDELCU \\[0.5cm]
+\textbf{Coordinator} \\ Ph.D. Cristian TOMA
+}
+\date{Bucharest, 2025}
+
+\begin{document}
+
+% Cover page
+\begin{titlepage}
+\centering
+
+\includegraphics[width=0.3\textwidth]{Logo-ISM_medium.png}\\[0.3cm]
+
+{\large Bucharest University of Economic Studies}\\[0.3cm]
+{\large The Faculty of Economic Cybernetics, Statistics and Informatics}\\[0.3cm]
+{\large IT\&C Security Master}\\[3cm]
+
+{\Huge\thetitle}
+\noindent\rule{\linewidth}{0.4pt} \\[3cm]
+{\large\theauthor}\\[2cm]
+
+{\large\thedate}
+\end{titlepage}
+
+% Title Page
+\title{\textbf{E-VOTING APP BASED ON BLOCKCHAIN} \\[1cm] }
+\author{
+\textbf{Graduate} \\ Mihail Rareș NEDELCU \\[0.5cm]
+\textbf{Coordinator} \\ Ph.D. Cristian TOMA
+}
+\date{Bucharest, 2025}
+
+% \begin{document}
+
+% Cover page
+\begin{titlepage}
+\centering
+
+\includegraphics[width=0.3\textwidth]{Logo-ISM_medium.png}\\[0.3cm]
+
+{\large Bucharest University of Economic Studies}\\[0.3cm]
+{\large The Faculty of Economic Cybernetics, Statistics and Informatics}\\[0.3cm]
+{\large IT\&C Security Master}\\[3cm]
+
+{\Huge\thetitle}
+\noindent\rule{\linewidth}{0.4pt} \\[3cm]
+{\large\theauthor}\\[2cm]
+
+{\large\thedate}
+\end{titlepage}
+
+\newpage
+
+% Statement of originality
+\section*{Statement regarding the originality of the content}
+
+I hereby declare that the results presented in this paper are entirely the result of my own creation unless reference is made to the results of other authors. I confirm that any material used from other sources (magazines, books, articles, and Internet sites) is clearly referenced in the paper and is indicated in the bibliographic reference list.
+
+\vspace{2cm}
+
+\noindent Signature: \dotfill\\
+Date: \dotfill
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+% Introduction
+\chapter{Introduction}
+
+We all desired to grow up and participate in the voting process since we were kids.  It seems to have been a very mature action with considerable force and a great deal of judgment.  As we've matured, it is now apparent that a vote places a tremendous lot of burden on both us as voters and the persons in charge of the process's general administration.  To achieve a seamless voting process, entire institutions must be put up as effectively as practical.  After each voter's identification and eligibility to vote are validated, they are given their ballot and stamp, allowing them to approach the voting booth and select their preferred selections.  It's a difficult method that needs a lot of time, personnel resources, and organizational talents.
+
+ In contemporary democracies, the public trust in electoral outcomes weakens, and people start to truly challenge the existing infrastructure and its legitimacy.  The vote-counting system has slipped behind, despite the fact that our world has become so digitally advanced.  We depend on many people to work hard to deliver statistics to the public after they cast their ballots.
+
+ With an emphasis on how new technologies could benefit democratic processes by minimizing identity fraud and enhancing confidence in digital voting, this dissertation analyzes the architecture and implementation of a voter authentication system.
+
+ A possible alternative for trustworthy and secure electronic voting systems is blockchain technology.  By harnessing the decentralization, immutability, and transparency of blockchain technology, electronic voting systems can improve voter anonymity, minimize fraud and manipulation, and increase confidence in the election process.  Additionally, blockchain-based electronic voting systems can save time and money when compared to conventional voting approaches.
+
+ Conventional voting procedures sometimes depend on centralized institutions, which can introduce flaws like fraudulent voting or result manipulation.  A potential remedy for the limitations of conventional and other e-voting techniques is provided by the decentralized and irreversible qualities of blockchain technology.  It can provide a transparent and impregnable framework for electronic voting.  By mixing consensus protocols and cryptographic techniques, blockchain-based electronic voting systems offer safe, verifiable and auditable voting processes.
+ 
+ Traditional paper-based voting procedures are still vulnerable to fraud, human error and inefficiency in many political systems, which is why authorities and business organizations are looking into digital alternatives.  However, there has been question regarding the reliability of these digital undertakings, especially in the aftermath of high-profile data integrity problems and cybersecurity assaults.  This misunderstanding underscores how crucial it is to have an electronic voting system that increases security safeguards while also maintaining user accessibility.  A promising answer for this lack of faith is blockchain technology, which consists of a series of blocks that use consensus algorithms to continuously record every transaction.
+ The distributed and append-only aspects of blockchain are what make it so useful in the electoral setting.  Vote manipulation is reduced since votes recorded on a blockchain are nearly hard to change after the fact.  Alongside this immutability, blockchain-based systems commonly use cryptographic methods to secure the confidentiality and authenticity of voter data, including hashing and public/private key encryption.  However, there are still concerns surrounding the most effective approach to check voter IDs prior to allowing people to vote on the blockchain.  Thus, verification becomes a critical feature that guarantees every vote is cast by a legal, registered vote.  E-voting systems may guarantee that only allowed voters participate in the election process by applying advanced identity verification and biometric matching procedures. 
+ 
+ The urgent demand to reconcile the potential of blockchain’s security characteristics with the real-world difficulties of certifying a regularly huge and diverse electorate is what inspires this research.  By automating voter verification, blockchain technology combined with trustworthy authentication can minimize administrative expenses, boost public faith in electronic voting and lessen the likelihood of fraudulent ballots or repeated voting.  Furthermore, by allowing independent auditors and election authorities to certify results using cryptographic proofs rather that proprietary, opaque software, such a system might increase transparency and traceability.
+ 
+ The inherent features of blockchain technology for safe data processing encourage the idea to base electronic voting on it.  Because blockchain is a ledger, the votes that are recorded are safeguarded from tampering, making it impossible for bad actors to edit, remove, or fabricate records without being caught.  Because it provides an auditable ballot trail that is consistent throughout the network of participating nodes, this feature is vital for maintaining election integrity.
+ 
+ Importantly, the importance of solid authentication systems is also underlined in this research.  Blockchain can give consensus-driven validation and maintain data integrity, but it is unable to independently validate a voter’s identity.  The authenticity of blockchain’s unchangeable record is rendered irrelevant if an unauthorized person succeeds to access the system; the ledger will still record an illegitimate vote.  In order to bridge this gap, the study looks into how blockchain technology can be coupled with biometric or multi-factor authentication systems, giving a comprehensive defense against impersonation and unlawful access.  The suggested method tries to find a balance between user-friendliness and severe security techniques, such as facial matching and government-issued ID card analysis.
+ 
+ The dissertation combines interdisciplinary insights from identity verification, distributed computing and cryptography in picking this technique.  The cornerstone of an electronic voting application might theoretically be various technologies, but blockchain is the only one that combines distributed consensus, transparency and cryptographic security in a way that fits the essential criteria of a democratic election.  The method attempts to establish a dependable system where stakeholders may verify the procedure and the outcomes without depending on the internal records of a central authority when combined with strong authentication.
+ 
+ This dissertation’s focus is on a thorough investigation of the usefulness and security of a blockchain-based electronic voting system that incorporates robust user authentication.  Although this study’s foundation is informed by past research on blockchain applications and digital identity verification, the current study concentrates on a particular area: maintaining vote integrity in a safe online setting.  Thus, the following key areas are investigated in this dissertation.
+ 
+ It begins by addressing the theoretical underpinnings and real-world uses of blockchain technology in e-voting contexts, with a focus on the system’s potential to sustain integrity, transparency and auditability.  Second, it explores how sophisticated user identification systems, especially those that employ biometric information, might authenticate voters’ identities prior to providing them access to the blockchain, decreasing the potential of multiple votes or impersonation by the same person.  The study focuses into the cryptographic safeguards for identity data as well as the effects incorporating such measures into an election process has on user experience.
+ 
+ The dissertation also examines the system’s performance under normal election loads, highlighting the ways in which network latency, blockchain throughput and cryptographic calculations affect the sustainability of wider deployments.  A crucial component of this effort covers security challenges, such as handling anonymised data and endurance of denial-of-service assaults.  The study assesses how well a blockchain-based electronic voting system with strong authentication procedures operates in real-world operational settings by putting these variables into reality in test or simulated conditions.
+ 
+ While considering that real-world adoption also depends on policy, legal frameworks and public approval, the dissertation concentrates on conceptual and technical validations of blockchain security and authentication efficacy in identifying its limitations.  Despite note being the main focus, these social and legal factors are considered as having a substantial impact on future scalability and useful implementation.  The ultimate purpose of this work is to clarify how e-voting may promote the goal of safe, transparent and reliable elections in the digital age by examining the intricacies of blockchain protocols and cutting-edge authentication mechanisms.
+
+ \chapter{Theoretical Background}
+
+ \section{E-Voting Systems}
+
+ \subsection{History and Evolution of E-Voting}
+
+The concept of employing technology to cast and count votes extends back over a century.  Mechanical voting machines were initially conceived in the 19th century—well before the Internet era—as early attempts to automate voting in legislative chambers \cite{aceproject}.  These early machines were ultimately rejected by lawmakers of the period, who were afraid of disrupting established voting methods \cite{aceproject}.  By the mid-20th century, however, electromechanical and computer-assisted voting began to take root.  In 1959, the Norden firm introduced a mark-sense ballot scanner to electronically tally paper ballots, and by 1965 the first optical mark reader (“Votronic”) was designed to identify pencil-marked ballots \cite{aceproject}.  Around the same period, punch-card voting systems (such the Votomatic) became popular and were used for several decades, until high-profile issues—such as the contentious U.S. 2000 election’s punch-card problems—led to their downfall \cite{aceproject}.
+
+ The direct-recording electronic (DRE) voting machine made its debut in 1974, when the first DRE was utilized in a binding U.S. election \cite{aceproject}.  This was a key milestone: votes could now be entered on a machine (e.g., via pushbuttons or touchscreens) and saved in computer memory without any intermediate paper ballot.
+
+ Entering the late 20th and early 21st century, e-voting technologies advanced in line with the expansion of digital networks.  Electronic voting in polling stations employing DREs or optical scanners became routine in many places, and some countries sought remote Internet voting for better accessibility.  Brazil was a pioneer in large-scale electronic voting, conducting its first broad electronic election in 1996 \cite{aceeeo}.  Soon after, Brazil shifted to nationwide usage of electronic voting machines, eliminating paper votes in its elections.  Other countries followed with their individual efforts.  For example, India used a specific DRE-based electronic voting machine for its elections in the 2000s, replacing millions of paper votes with simple push-button devices.
+
+ By the mid-2000s, Internet voting pilots emerged: Estonia implemented a nationwide i-voting system in 2005 (following a 2004 trial in a local election), becoming the first country to offer legally binding elections over the Internet \cite{aceproject}.  Similarly, Switzerland trialed online voting in certain cantons in 2003–2004 \cite{aceproject}, and numerous smaller pilots were done in the UK, Canada, and other nations during the 2000s.  Today, the growth of e-voting encompasses paper-assisted electronic systems (optical scan ballots), stand-alone electronic machines in polling sites, and fully online voting platforms.  This historical trajectory demonstrates a clear motivation: to make voting faster, more efficient, and increasingly accessible—albeit with new problems introduced at each stage.
+
+\subsection{Existing Solutions and Limitations}
+
+Modern electronic voting solutions can be classified into a few basic types: optical scan paper-ballot systems, direct-recording electronic (DRE) voting machines, and internet voting systems.   Each offers various benefits and has specific limitations:
+
+  \begin{itemize} \item \textbf  {Optical Scan Systems:}   Voters stamp paper ballots by hand (or using a ballot marking machine), and an optical scanner counts the results electronically.   This method delivers a real paper trail for audits, which is a crucial security advantage.   Election security specialists commonly view hand-marked paper ballots with optical scan counting as a gold standard for robustness, since the paper records allow audits and recounts \cite{brookings}.   The largest problem is logistical: handling and protecting vast reams of paper is labor-intensive, and counting can be sluggish (though scanners boost tabulation speed).   Paper votes are also prone to traditional fraud (e.g., ballot stuffing or inaccurate counting) if the chain-of-custody is interrupted.   However, good procedures and audits (such as risk-limiting audits) help lower these threats.   Overall, optical scan systems balance efficiency with openness, but they rely on faith in election officials to safeguard the ballots’ integrity between voting and counting.
+
+      \item \textbf  {Direct-Recording Electronic (DRE) Machines:}   DRE voting equipment (e.g., touchscreen or push-button terminals) register votes directly into electronic memory.   Voters have an engaging experience, and results can be computed very rapidly after polls shut.   DREs eliminate invalid marks or confusing ballots and allow accessibility features.   Despite these benefits, DRE systems have well-documented security and trust concerns.   Early paperless DREs provided no independent record of votes, leaving manual recounts or verification impossible.   Studies have proven that paperless DREs are among the most susceptible voting systems \cite{brookings}.   For instance, a 2006 Princeton investigation revealed that the Diebold AccuVote-TS may be infiltrated with self-propagating malware despite implementing encryption \cite{felten2006}.   Similarly, a 2012 University of Connecticut assessment revealed “serious security vulnerabilities” in most DRE terminals assessed \cite{uconn2012_combined}.   While some machines have now added voter-verifiable paper audit trails (VVPATs), not all do, and software flaws or viruses can still misrecord votes.   Moreover, the “black box” nature of DREs, employing proprietary software, limits transparency.   In response to these concerns, countries like the Netherlands and Germany phased out paperless DREs and switched to paper ballots in the late 2000s.
+
+      \item \textbf  {Online Voting Systems:}   With increased Internet connectivity, there is considerable interest in facilitating remote voting via personal computers or smartphones.   Online voting seeks to enhance turnout (especially among abroad voters) and minimize long-term costs.   Estonia, for instance, permits national i-voting with government-issued digital IDs.   Swiss cantons, Canada, the U.S., and others have trialed internet voting.   Benefits include convenience, accessibility, and rapid tallying.   However, internet voting includes major security trade-offs.   Malware on a voter's device or attacks in transit could impact votes.   A 2010 public test in Washington, D.C., exposed this vulnerability when researchers thoroughly entered the system within 48 hours, edited all votes, and revealed ballots—without detection for two days \cite{springer2010}.   Additionally, compromised personal devices can discreetly modify votes before transmission.   Ensuring both vote secrecy and accurate authentication/tallying demands advanced cryptographic techniques.   While systems like Helios provide end-to-end verifiability via mix-nets and homomorphic encryption, they require certain trust models and are rarely utilized in official elections.   Many experts argue that internet voting remains premature with today’s technology.
+  \end{itemize}
+
+  To sum up, current electronic voting systems vary from methods that rely on paper to fully electronic and online options.   Each has trade-offs: paper-based systems are audit-friendly but sluggish; electronic machines are fast but vulnerable; and online platforms offer convenience at the cost of significant security issues.   These limits have prompted investigation into new paradigms, such as blockchain-based voting, which promises to combine transparency, integrity, and efficiency.
+
+\section{Blockchain Technology}
+
+\subsection{Fundamentals of Blockchain}
+
+Blockchain is basically a form of distributed ledger technology that enables a network of users to preserve a shared, tamper-evident record of transactions without a central authority.   Technically, a blockchain is an ever-growing chain of data blocks, each block having a bundle of transactions and a cryptographic hash connecting it to the preceding block \cite{pmc2020}.   The blocks are secured using cryptographic processes (e.g., hashing and digital signatures) such that once a block is added to the chain, its contents cannot be altered retrospectively without disrupting the link to later blocks—thus reaching immutability \cite{mdpi2020}.
+
+  New transactions are gathered into a pending block, and network nodes gain a consensus on whether to append that block to the chain.   This consensus is established by protocols like Proof-of-Work (as used in Bitcoin), Proof-of-Stake, or other approaches that promote honest involvement.   When consensus is established, the new block is inserted, and all nodes update their copy of the ledger.
+
+  Multiple core characteristics define a blockchain system: it is decentralized (no single entity controls the ledger; authority is distributed among nodes), transparent (in public blockchains, every participant can typically see all transactions, although the identities may be pseudonymous), and secure through cryptography (each transaction is digitally signed, and linking blocks by hashes makes tampering computationally infeasible) \cite{linkedin2022}.   The combination of cryptographic integrity and distributed consensus implies that participants can trust the ledger’s content without trusting any single intermediary.   In essence, the blockchain operates as a trust machine—it replaces the requirement for a trusted central database with a system enforced by software and the collective permission of nodes.
+
+  Blockchain technology initially established as the backbone of the cryptocurrency Bitcoin in 2009, disclosed by Satoshi Nakamoto.   Bitcoin’s architecture revealed how a decentralized ledger could enable financial transactions safely.   Later, platforms like Ethereum augmented blockchain with smart contracts—programs recorded on the blockchain that execute automatically when specified criteria are met.   Smart contracts enable intricate reasoning (beyond basic payments) to be carried out on the blockchain, opening the door to applications in many areas, including voting.
+
+  Nowadays, one can think of a blockchain system as comprising the fundamental elements that follow: a peer-to-peer network of nodes, a consensus algorithm that nodes use to agree on new blocks, the data structure of linked blocks, and typically public-key cryptography to authenticate transactions and identities \cite{pmc2020}.   These properties combined provide a system where data can be added (as new blocks) in a manner that is append-only and very resistant to tampering or unauthorized alteration.
+
+\subsection{Types of Blockchains (Public, Private, Hybrid)}
+
+Not all blockchains work in the same way or serve the same purpose.   Broadly, blockchain networks can be classed into public (permissionless), private (permissioned), or hybrid/consortium blockchains, based on who is allowed to participate and how consensus is governed \cite{linkedin2022blocktypes}.
+
+  \textbf  {Public Blockchains:}   These are open networks that anyone can join and participate in the consensus process.   Bitcoin and Ethereum are prime cases of public blockchains—any anyone in the world can run a node, validate transactions, or propose new blocks.   Public blockchains are decentralized and trustless, meaning they rely on cryptographic proof and economic incentives rather than any one administration.   They commonly use consensus mechanisms like Proof-of-Work or Proof-of-Stake to agree on the ledger state.   Public chains offer high transparency (all transactions are visible to everyone) and durability (many distributed nodes make them hard to shut down), but they often have scalability restrictions (throughput and latency concerns) and may require substantial resources (e.g., mining power).   In the context of voting, a public blockchain could allow open auditability of the tally, but the openness presents difficulties of voter privacy and system control, which we will discuss later.
+
+  \textbf  {Private Blockchains:}   A private blockchain is restricted to a certain group of participants—for example, an internal blockchain within one corporation or a network of known entities.   These are also termed permissioned blockchains since one needs permission (usually an invitation or verification by a network administrator) to read or write to the chain.   Private blockchains do not require energy-intensive consensus algorithms; provided members are known and trusted to some degree, more efficient alternatives (like Practical Byzantine Fault Tolerance or simple voting protocols) can be implemented.   The network is centrally managed or governed by a consortium, hence it trades some decentralization in exchange for performance and access control.   Private blockchains can process transactions faster and maintain confidentiality (data can even be encrypted so only specified parties view it).   In a voting setting, a private blockchain might be controlled by an electoral authority or a group of authorities.   It would function more like a secure distributed database where only approved nodes (e.g., government servers or independent observers’ servers) are nodes on the network.   The gain is greater control and privacy; the downside is that voters must trust the operators of the private chain—it is not totally trustless.
+
+  \textbf  {Hybrid / Consortium Blockchains:}   These proposals seek to mix components of public and private blockchains.   A consortium blockchain is permissioned but with a multi-organization governance structure—no single body controls it.   Instead, a number of independent groups individually control nodes and share in consensus (for example, a consortium of election commissions or civil society observers might jointly run a voting blockchain).   This can improve trust, as no single party can simply corrupt the ledger without collusion.   Hybrid blockchains may also allow certain data to be public and other data to remain private.   For instance, the aggregate vote total might be posted to a public blockchain for transparency, while specific vote records are retained on a private ledger visible only to authorized auditors \cite{linkedin2022blocktypes}.   Hybrid models attempt to get the “best of both worlds”: the openness and integrity assurance of a public network with the privacy and control of a private network.   In reality, establishing a hybrid blockchain for voting would need careful partitioning of data and roles—ensuring voters’ names and ballots remain secret (private aspect) while posting proofs or aggregate results publicly for verification (public aspect).
+
+  In e-voting systems, there are trade-offs between security, trust, scalability, and privacy when deciding between public, private, or hybrid models.   While private blockchains offer efficiency and privacy at the expense of requiring trust in the operator, public blockchains maximize decentralization and auditability but exacerbate performance and confidentiality issues; hybrid models can be complicated but may find a balance appropriate for national elections where secrecy and transparency are both crucial.
+
+\subsubsection{Advantages and Limitations in Voting Context}
+
+Blockchain technology has various theoretical benefits for voting systems, although important restrictions and obstacles must also be addressed.
+
+ \textbf{Potential Advantages:}  
+ with concept, a blockchain-based e-voting system might alleviate some of the long-standing challenges with electronic voting by exploiting blockchain’s properties:
+
+ \begin{itemize} \item \textbf{Integrity and Immutability:}  Blockchain ensures votes cannot be edited or deleted undetectably, keeping a permanent and verifiable record through cryptographic hashing and distributed consensus \cite{mdpi2020}, \cite{pmc2020_access}.
+
+   \item \textbf {Decentralization and Trust Reduction:}  By dispersing trust across several independent nodes, blockchain eliminates single points of failure and minimizes risks of centralized fraud or insider manipulation, boosting election legitimacy \cite{pmc2020_access}.
+
+   \item \textbf {Transparency and Auditability:}  Blockchain’s public ledger offers transparent and independent verification of election results, giving end-to-end verifiability while safeguarding voter anonymity with suitable cryptographic safeguards  \cite{linkedin2021}.
+
+   \item \textbf {Availability and Fault Tolerance:}  Decentralized networks decrease the risks of outages or data loss, preserving operational continuity even if individual nodes fail \cite{pmc2020_access}.
+
+   \item \textbf {Voter Empowerment and Participation:}  Secure blockchain-based remote voting may expand accessibility, enabling broader voter participation including expatriates and those with impairments, potentially raising voter turnout \cite{mdpi2020}.
+ \end{itemize}
+
+ \textbf{Limitations and Challenges:}  
+ Despite these benefits, blockchain voting faces considerable hurdles.  It is not a panacea and may introduce new complexities  \cite{medium2022}, \cite{grimsbycitizens}.
+
+ \begin{itemize} \item \textbf{Voter Privacy:}  Blockchain’s inherent transparency undermines ballot secrecy, needing advanced cryptographic methods (e.g., zero-knowledge proofs, homomorphic encryption) to guarantee anonymity without compromising auditability \cite{arxiv2021}.
+
+   \item \textbf {Scalability and Performance:}  Existing blockchain platforms suffer transaction throughput restrictions, perhaps unsuitable for national elections unless optimized or complemented by scalable architectures or layer-2 solutions \cite{mdpi2020}. 
+
+   \item \textbf {Complexity and Reliability:}  High technical complexity limits openness to the general population.  Smart contract vulnerabilities, node collusion, and governance issues demand rigorous supervision and security measures \cite{pmc2020_access}. 
+
+   \item \textbf {Cost and Resource Overhead:}  Implementing blockchain involves extensive infrastructure, development, and continuing operating expenditures, requiring thorough cost-benefit analysis against traditional approaches \cite{mdpi2020}. 
+
+   \item \textbf {User Trust and Adoption:}  Public acceptability may erode if blockchain solutions appear opaque or overly technical.  Remote voting poses concerns surrounding coercion or vote-selling, needing careful design and user education \cite{mdpi2020}.
+ \end{itemize}
+
+ In conclusion, blockchain offers promising features—immutability, decentralization, transparency—that correspond with certain voting needs such as integrity and auditability \cite{mdpi2020}, \cite{pmc2020_access}.  However, considerable obstacles remain before it can completely meet national election expectations.  Blockchain is not a turnkey solution but a growing technology requiring cryptographic protocols and extensive evaluation.  The next section will cover important security concepts for e-voting systems, emphasizing blockchain’s fit and gaps.
+
+\section{Security Aspects in E-Voting}
+
+\subsection{Authentication, Integrity, Confidentiality, Non-Repudiation}
+
+Secure e-voting systems must respect the same key security principles found in other secure transaction systems, often summarized as: authentication, integrity, confidentiality, and non-repudiation.   Each plays a vital function in elections:
+
+  \begin{itemize} \item \textbf  {Authentication:}   Ensures only legitimate voters can vote, and only once.   This requires authenticating voter identity and eligibility, occasionally through registration databases and credentials like digital certificates or biometric verification.   Strong authentication minimizes fraudulent votes and ensures one-person-one-vote restrictions, ideally while keeping voter secrecy by separating identification from ballot casting \cite{mdpi2020}.
+    
+      \item \textbf  {Integrity:}   Guards the correctness and completeness of votes and end counts.   Votes have to be reported precisely as intended with no alteration or deletion.   This requires cryptographic hashes, secure logging, and audit trails to identify manipulation.   End-to-end verifiable systems allow voters or auditors to ensure votes were successfully counted, guaranteeing reported results are reproducible and auditable \cite{mdpi2020}.
+    
+      \item \textbf  {Confidentiality (Ballot Secrecy):}   Protects voter privacy by breaking any connection between voter identification and ballot.   Techniques such as blind signatures, mix-nets, and separation of authentication and casting phases ensure votes stay secret and discourage coercion or vote-selling.   Confidentiality systems must mix anonymity with auditability utilizing cryptographic methods \cite{mdpi2020}.
+    
+      \item \textbf  {Non-Repudiation:}   Provides certification that votes were cast and counted, so election authorities cannot refuse real votes, and voters cannot falsely deny participation.   Systems use digital signatures, receipts, and public evidence to guarantee accountability while maintaining voter privacy.   Proper design avoids receipts from disclosing vote substance, hence avoiding coercive risks   \cite{arxiv2021}. \end{itemize}
+
+  These ideas are connected and complex to accomplish concurrently.   For example, robust authentication can clash with anonymity, but anonymization after authentication addresses this.   End-to-end verifiable protocols use cryptography to reconcile integrity, confidentiality, and non-repudiation.   The success of any e-voting strategy, including blockchain-based systems, hinges on satisfying these core security requirements \cite{mdpi2020, arxiv2021}.
+  
+\subsubsection{Common Security Vulnerabilities and Issues}
+
+Despite best attempts to develop safe e-voting systems, several documented defects and failure circumstances have occurred in real-world implementations. Understanding these widespread security flaws is crucial to creating future systems. Some frequent concerns and limitations in electronic voting include:
+
+\begin{itemize}
+\item \textbf {Insider Threats and Administrative Errors:}  One of the most serious hazards in any voting system comes from insiders---election officials, hardware engineers, or those with privileged access.  Insiders can actively influence software or results, or unintentionally create weaknesses.  Neumann notes that insider misuse and errors have historically been responsible for many election problems \cite{neumann1996computer}.  For example, a technician with access to a DRE machine’s memory card could install fake firmware that skews results.  The sophistication of e-voting technology can increase the amount of insiders (vendors, contractors, etc.) that require access, widening the attack surface.  Strict procedural controls (dual controls, audits) and system designs that minimize trust in any single people are important.  However, insider threats remain a primary concern—even encrypted blockchain ledgers can not help if initial software writing votes to the ledger was manipulated by an insider.
+    
+     \item \textbf {Software Vulnerabilities and Malware:}  Like any software, voting system software might include defects that create security weaknesses.  Past assessments showed buffer overflows, weak cryptography implementations, and other vulnerabilities in voting machine software \cite{burr2011analysis}.  Attackers can use these issues to inject malware that secretly edits or deletes votes or creates backdoors.  Voting systems are especially vulnerable since they generally employ proprietary code and are used sporadically (e.g., on election days), so significant problems may remain unnoticed for years.  Malware insertion might occur during storage or in the supply chain.  For instance, viruses spreading via memory cards or USB sticks have been demonstrated \cite{uconn2012_combined}.  Updating software is an issue, as many machines use obsolete operating systems, making them susceptible.  Open-source software advocates push for public review to increase security, while this is not yet conventional.
+    
+     \item \textbf {Physical Tampering and Supply Chain Attacks:}  Voting equipment can be physically tampered with, including picking locks to install hardware intercepts or replacing components with malicious ones \cite{uconn2012_combined}.  For example, the Hursti attack showed how a Diebold optical scanner’s memory card could be altered to alter results with no trace due to insufficient physical and software security \cite{uconn2012_combined}.  Supply chain security is also critical: penetrating manufacturers or distributors can enable pre-installed malware or faulty components.  Mitigations include tamper-evident seals, secure storage, bipartisan chains-of-custody, and parallel testing on election day.
+    
+     \item \textbf {Lack of End-to-End Verifiability:}  Many traditional e-voting systems (DREs, etc.) do not allow voters or observers a mechanism to independently verify that votes were recorded and counted correctly.  This “black box” counting is a weakness in itself---if something does go wrong, it might go undiscovered.  End-to-end verifiable (E2E-V) voting systems address this by offering each voter a means to check that their vote is in the final total (without exposing their choice) and allowing anybody to verify the validity of the overall count via public data.  The absence of verifiability means that software faults can create erroneous results and only a robust audit (assuming paper records exist) might catch it.  A frequent recommendation is to employ voter-verified paper audit trails (VVPAT) for DREs and to perform random audits comparing paper to electronic results \cite{brookings2017audits}.  In practice, not all countries enforce audits, and some paperless systems still in use make verification impossible.  This issue emphasizes a security principle: a system should ideally not demand blind trust in its right operation.
+    
+     \item \textbf {Denial-of-Service (DoS) Attacks:}  An attacker can seek not to steal votes, but to disrupt the voting process.  For online voting, this might be done by flooding the network or servers with traffic (DDoS attack) to render the system unreachable when voters try to check in.  Such an attack might depress turnout or cast doubt on the election’s impartiality.  Even in precinct-based electronic voting, a malevolent actor might disable power or jam the electronic systems.  If numerous voting machines malfunction on election day, it might lead to long queues, disenfranchising voters who leave in despair.  DoS attacks can potentially target supporting infrastructure—e.g., taking out the voter registration verification system.  Decentralized designs (like blockchain networks) may offer some improvement but remain prone to network bottlenecks.  Governments must establish powerful network defenses and contingency plans such resorting to paper ballots \cite{dos_attack_electronics}.
+    
+     \item \textbf {Client-Side Vulnerabilities (for Remote Voting):}  When voters cast ballots from personal devices (PCs or smartphones), endpoint security becomes vital.  A voter’s device might be hacked with spyware or voting-specific malware that modifies the vote before encryption and transmission.  This “virus on the voter’s platform” problem is difficult for authorities to detect or prevent \cite{dc_voting_trial}.  Proposed alternatives include safe voting apps or bootable secure OS, however none are foolproof if the device itself is compromised.  Phishing or social engineering can also lure voters onto bogus voting websites, stealing votes or credentials.  Remote voting presents a huge attack surface substantially beyond election system control.
+    
+     \item \textbf {Weak Cryptography or Protocols:}  If an e-voting system uses cryptographic protocols for authentication or encryption, the strength of these methods is crucial.  Weak encryption or inadequate random number generation can undermine confidentiality or integrity.  For example, the 2019 Moscow internet voting system employed encryption with too-short keys; a researcher cracked it in roughly 20 minutes \cite{moscow2019crypto}.  Protocol design weaknesses can facilitate replay or man-in-the-middle attacks.  Cryptographic components must be extensively analyzed and preferably publicly reviewed, utilizing mature, standard algorithms and verified protocols.
+    
+     \item \textbf {Human Factors and Operational Security:}  Not all weaknesses are technical—the human aspect and procedures can compromise security.  Poll workers poorly trained on security procedures may unwittingly overcome safeguards, e.g., by connecting voting devices to insecure networks \cite{estonia2017report}.  Social engineering can target staff to get access.  Transparency is vital; if the public or observers are kept in the dark about machine certification or result aggregation, it can lose trust.  Thus, strong operational rules, training, and oversight must accompany technical safeguards.
+\end{itemize}
+
+In short, the security risks in e-voting span software, hardware, network, and human concerns.   Even trivial flaws, such as default hardcoded passwords on admin panels, have allowed result manipulation in the past \cite{neumann1996computer}.   Addressing these vulnerabilities needs defense-in-depth: numerous security layers, independent audits, and fail-safes such paper backups \cite{neumann1996computer}.   Blockchain-based voting aims to ease some dangers through decentralization and auditability but creates its own obstacles and does not fix issues like client-side malware or poor authentication.   Any solution must be tested against this known list of vulnerabilities.   The next chapter will analyze how traditional, electronic, and blockchain-based voting methods perform in practice and highlight weaknesses future research intends to solve.
+
+\chapter{Analysis of Existing Solutions}
+
+\section{Traditional Voting Methods}
+
+\subsection{Paper-Based Voting}
+
+The oldest and most frequent voting mechanism is the paper ballot system.   In a normal paper-based election, voters write their choices on paper ballots (by hand or with a stamp), which are then gathered in sealed boxes and then counted, either manually or by optical scanners.   This system has been the backbone of democratic elections for centuries and remains in use globally due to its simplicity and transparency.
+
+  \textbf  {Strengths:}   The primary strength of paper voting is its tangibility and verifiability.   Each vote is a lasting physical document that may be examined and recounted if needed.   This generates a natural audit trail and renders the system impervious to cyber attacks -- you cannot hack a paper ballot that’s sitting in a sealed box.   Paper votes are also easily understood by voters; there is inherent transparency in viewing a count by hand, for example.   Moreover, individual mistakes (like a misprinted ballot or a small batch of missing ballots) frequently do not have systemic influence; they may be identified and remedied in one precinct without impacting others.   Another advantage is that paper voting requires little technology, which is perfect in regions with poor infrastructure or where inserting complicated gear could arouse suspicions.   Election authorities frequently mention the motto: ``paper is sturdy and hard to hack.''   Indeed, amid worries about electronic voting, numerous experts have urged a return to paper-based systems or at least the use of voter-verified paper backups as the safest approach~\cite{brookings2018paper}.   Paper ballots, when complemented with stringent procedures (like signature verification for postal ballots or permanent ink to prevent multiple voting in person), can achieve high integrity and inclusiveness.
+
+  \textbf  {Challenges:}   Despite their advantages, paper-based systems are not without challenges.   One difficulty is manual handling and human error: during counting, especially in large elections, humans might make mistakes tallying results or interpreting voter markings (e.g., what makes a valid mark can be subjective -- as evidenced in the notorious ``hanging chads'' from punch-card votes in 2000).   Counting millions of ballots by hand is time-consuming and can delay results.   Even with optical scanners speeding up counts, those scanners must be well-calibrated and tested (they too could err or misread ambiguous marks).   Another challenge is security and chain-of-custody: ballots must be protected from the moment they are cast until the final count is certified.   There have been incidents of voting boxes being ``stuffed'' with fraudulent ballots, or lawful ballots being lost, destroyed, or manipulated by unscrupulous officials.   In other words, while you cannot hack a piece of paper remotely, fraud can occur by physical means -- ballot stuffing, ballot theft, or swapping valid ballots with forgeries.   Robust election procedures and monitoring are required to mitigate this; for example, requiring that members of political parties accompany all ballot transfers, placing tamper-evident seals on ballot boxes, and criminal penalties for intervention.   In situations with inadequate rule of law, paper ballots alone do not ensure fair elections -- they might be prone to old-fashioned kinds of cheating.   Additionally, entirely paper systems can be less accessible for voters with certain disabilities (though many places incorporate resources like braille ballots or assistance in the voting booth).   For remote voters (e.g., individuals abroad), paper voting often entails postal voting, which can be slow and adds dependency on postal services.
+
+  \textbf  {Current Use and Trend:}   Many countries that experimented with entirely electronic voting have reverted to paper-based ballots (often with machine counting) to harness the reliability of a tangible record.   For instance, Germany’s Supreme Court decided in 2009 that voting must be clear to the normal voter, thereby supporting paper over sophisticated technology.   The consensus among many professionals today is that paper ballots, along with current technology for counting and auditing, strike a wise compromise between security and efficiency~\cite{brookings2018paper}.   They are not immune to fraud or error, but the techniques of fraud in paper systems (stuffing, etc.) typically leave evidence or involve large-scale conspiracies that are impossible to execute without exposure~\cite{sri2010paper}.   This fundamental security through transparency is a primary reason paper ballots are still considered a benchmark, and why even modern systems like voting machines are advised to generate voter-verifiable paper trails as a check on the electronic count.
+
+\subsection{Electronic Voting Machines}
+
+Electronic Voting Machines (EVMs) refer broadly to devices that electronically record and count votes. This category includes Direct-Recording Electronic (DRE) machines with touchscreens or buttons, as well as electronic ballot markers that assist voters in making selections which are then printed or stored. EVMs are used in polling stations to streamline the voting process by eliminating manual ballot marking and directly capturing voter choices in digital form.
+
+\textbf {Operation:} A typical DRE machine presents the ballot to the voter via a screen. The voter makes selections, for example by touching candidate names or pressing buttons next to options. The machine may provide a summary screen for review and then a “Cast Vote” button. Once cast, the vote is recorded to the machine’s memory (often redundant memory, e.g. internal flash and a removable memory card). In older DREs, that was the end of it – the digital records were the official votes. Newer or updated machines often also print a paper record (VVPAT) that the voter can review through a window. That paper record is kept in the machine and can be used for audits or recounts. At the end of the day, the machine tallies all votes and produces results, either displayed on-screen, printed on a results tape, or transmitted electronically to a central tabulator. EVMs can also include optical scan machines (where the voter marks a paper and feeds it into a scanner). Here, we focus on direct-entry machines which remove the need for a physical ballot filled out by the voter.
+
+\textbf {Advantages:} The appeal of EVMs lies in their speed and convenience. They can reduce the number of spoiled ballots because the interface can prevent over-votes (choosing too many candidates) or warn about under-votes (if a race was left blank). They can accommodate multiple languages and accessibility features, ensuring voters with disabilities can vote independently (audio prompts for blind voters, sip-and-puff interfaces for voters with limited mobility, etc.). EVMs also produce immediate counts: as soon as the polls close, results can be computed at the touch of a button, significantly faster than manual counting. This quick reporting is often cited as a benefit in large elections with complex ballots. Additionally, they eliminate certain costs like printing large numbers of paper ballots for every election (though this cost may be replaced by technology procurement and maintenance costs). In places like India, a simplified EVM (battery-powered device with buttons) has drastically reduced the logistical burden of conducting huge elections, as the devices are lighter and easier to transport than millions of paper ballots, and counting is completed within hours instead of days.
+
+Furthermore, when properly designed, EVMs can reduce some human errors. For example, in jurisdictions with instant-runoff voting or complex vote tally rules, software can ensure the calculations are done exactly to specification, avoiding potential mistakes in manual tallies. From the voter’s perspective, the experience can be more straightforward (touching a name instead of correctly filling a small oval). EVMs also can enforce one person, one vote within each machine by not accepting a second ballot without authorization (though that is also easily done with paper by procedures).
+
+\textbf {Security Concerns:} Despite these advantages, EVMs have significant weaknesses, particularly in security and transparency, as discussed in Chapter 2. A major problem is that the ordinary voter or observer cannot directly see what the machine is doing internally. If a paper ballot is hand-counted in front of observers, there’s little doubt as to the result. But if an EVM says Candidate A got 100 votes and Candidate B 80 votes, one must trust that the machine recorded those correctly. Any software bug or malicious code could undetectably alter the count. In the 2000s, studies famously demonstrated that some DREs could be hacked to swap votes between candidates or to mis-record a percentage of votes, all while presenting a normal interface to the voter \cite{uconnEVM}. Without a paper trail, such attacks might never be uncovered. This led to a strong push for VVPAT printers on machines. However, not all voters carefully verify the paper record, and recounts are rare unless a result is contested or very close, so even VVPAT is not a perfect safeguard.
+
+Another security issue is that many EVMs were built on outdated software platforms with poor security hardening. Investigations have found instances of factory-default passwords, unsecured ports, and unsigned firmware updates in machines, allowing relatively unsophisticated attackers to gain control \cite{uconnEVM}. If attackers can get physical access (or in some cases, remote access if machines transmit data), they could manipulate results or install malware that spreads, as noted earlier. Modern EVMs are improving on this (with encryption, secure boot, etc.), but older models in use may remain vulnerable.
+
+\textbf {Transparency and Trust:} Because of these concerns, public trust in EVMs can be fragile. Notably, after observing problems and potential hacks, the Netherlands and Ireland scrapped their DRE voting machines around 2007, returning to paper ballots. In the United States, after the 2004 and 2006 elections saw controversies with paperless DREs, many states moved to require paper trails or switched to optical scan systems. Essentially, officials realized that any purely electronic count should be verifiable by a parallel independent record. The ongoing consensus is that if EVMs are to be used, they must produce a voter-verified paper audit trail and those paper records should be used in random audits to double-check the electronic results \cite{brookingsEVM}.
+
+\textbf {Operational Issues:} Beyond security, EVMs introduce other challenges. Machines can malfunction – e.g., touchscreens misalign (causing “vote flipping” where touching near one candidate selects another), or memory can fail. There have been instances of machines not starting up on election morning, causing delays. With paper ballots, a contingency is straightforward (use reserve paper ballots if a scanner fails); with DREs, if the machine fails, voting at that station stops unless backup machines are available or paper emergency ballots are provided. Thus, contingency planning is crucial.
+
+Additionally, EVMs can be costly. They require storage in secure facilities, regular maintenance, pre-election testing (logic and accuracy tests), and often per-machine or per-district programming to configure ballots. These all introduce administrative complexity and potential points of failure (e.g., if the wrong ballot file is loaded, a machine could present incorrect contests to voters).
+
+\subsection{Online Voting}
+
+Online voting (remote internet voting) allows voters to cast ballots from their own computers or mobile devices, transmitting their choices over the internet to election servers. Unlike polling-place e-voting (which is supervised), online voting typically happens in an unsupervised setting – e.g., a voter at home or abroad logs into a web portal or app to vote. This method has been implemented in a limited number of cases around the world and remains the subject of considerable debate.
+
+\textbf {Implementation and Examples:} The most notable government implementation is in Estonia, which has offered internet voting (i-voting) in national elections since 2005. Estonian voters authenticate using a government-issued digital ID card or mobile ID, then cast their vote via a secure website; the system encrypts the vote and the voter can even change their online vote multiple times (only the last one counts, to mitigate coercion) until the online voting period ends \cite{jhalderm}. Switzerland has also trialed online voting for expatriates in several cantons, using systems developed in partnership with private providers. Canada has seen municipal elections (e.g., some Ontario towns) with optional online voting. In the United States, outright online voting for public offices is rare (due to security warnings), but some states have allowed email return of ballots for military voters or small-scale blockchain-based pilots for overseas voters (e.g., West Virginia’s 2018 pilot for military voters using a blockchain app). Additionally, many non-governmental elections (unions, university councils, corporate shareholder votes) have adopted online voting platforms.
+
+\textbf {Advantages:} The primary driver for online voting is convenience and accessibility. It enables people to vote from anywhere in the world without needing to travel to a polling station or mail a ballot. This is particularly attractive for voters abroad, military personnel, or homebound individuals. By lowering the barrier to voting, online systems aim to increase turnout. Estonia, for instance, has consistently seen about 30\% of votes cast online in recent elections, suggesting many voters prefer that option for its ease. Online voting can also be more efficient for administrators in certain ways: no physical ballot printing, automated tallying, and instant preliminary results once polls close. Costs for ballot handling and staffing polling sites might be reduced (though these savings could be offset by IT and security costs). Another advantage is timely delivery of ballots – overseas voters using postal mail often face delays, whereas an online system can make ballots available instantly and receive them back in seconds, eliminating issues like mail reliability. Furthermore, online voting can incorporate real-time checks – for example, if a voter has already voted, the system can prevent double voting (similar to an e-pollbook in precincts), or if a voter is not eligible for a certain contest, the software can enforce that. In theory, advanced cryptographic systems for online voting could provide end-to-end verifiability, allowing voters to confirm their vote was counted without revealing the vote itself. However, such systems are still mostly experimental.
+
+\textbf {Security Concerns and Criticisms:} Despite its appeal, online voting is often described by experts as high-risk given today’s cybersecurity landscape. The main challenge is the lack of a trusted voting environment. Voters use personal devices that may be compromised with malware or spyware, and connect via insecure networks. An attacker controlling a voter’s device could alter their vote before submission, or intercept the transmission. Because votes are transmitted over the internet, servers and transmission paths become targets for denial-of-service attacks or intrusions. Without a reliable independent paper record, verifying that votes were recorded as cast and counted as recorded is difficult. Moreover, anonymity must be preserved alongside verifiability, adding complexity.
+
+Many security experts argue that current technology cannot guarantee both voter privacy and election integrity simultaneously in online voting. A 2015 report by the U.S. Association for Computing Machinery concluded that internet voting should not be used in public elections until robust end-to-end verifiable voting systems are available \cite{acm2015_report}. Others have highlighted risks that elections could be influenced by state-level actors or cybercriminal groups.
+
+Several incidents illustrate these vulnerabilities. Trials in Switzerland and Canada have been halted after security flaws were found, including software bugs and potential vote alteration risks. Attempts to run online voting pilots in the United States have faced strong opposition from cybersecurity experts. In 2018, West Virginia’s blockchain voting pilot was restricted to overseas military voters, partly because it was recognized that scaling such systems securely is challenging.
+
+\textbf {Blockchain Voting:} In recent years, some have proposed using blockchain technology as a solution for online voting, arguing that the decentralized ledger could provide transparency and tamper resistance. While blockchain can offer a verifiable audit trail and reduce the need for centralized trust, it does not solve many core problems: compromised voter devices, denial-of-service attacks, and the difficulty of secret ballot protections remain unsolved. Blockchain voting systems also tend to be complex, with few real-world implementations at scale. A 2020 analysis concluded that blockchain does not eliminate the core threats of internet voting and could add complexity without substantially improving security \cite{grimsby2020}.
+
+\section{Review of Blockchain-Based Voting Systems}
+
+In recent years, various blockchain-based voting systems have been proposed -- and a few have been deployed -- with the goal of combining the integrity and transparency of blockchain with the voting process.  In this part, we cover some of the significant projects and deployments of blockchain voting, assessing their structures, usage, and performance (where data is provided).
+
+\textbf {Architecture Overview:}  Most blockchain voting systems feature a common high-level architecture: voters utilize a client application (mobile app or web interface) which communicates with a blockchain network to store votes as transactions.  The blockchain can be public or private (as mentioned in Chapter 2).  Often, a smart contract is used for representing the election on the blockchain -- it might retain the list of candidates or options and accept “vote” transactions from valid addresses.  Voter eligibility might be addressed by a pre-registration process where voters are issued cryptographic keys or tokens allowing them to vote on the blockchain.  For instance, a system could produce a unique token for every voter and solely allow each token to be used once while casting a vote ( guaranteeing one vote per person) \cite{narayanan2016bitcoin}.  The vote itself might be maintained in plaintext on the blockchain for transparency, or it might be encrypted to protect confidentiality (with decryption done later by authorized parties or via homomorphic tallying) \cite{bonneau2015sok}.  After voting, the blockchain holds either the final tally (if it’s updated in real time by a smart contract) or a list of encrypted votes that may be tallied by reading the chain. D ue to the immutable and time-stamped nature of blockchain transactions, an audit of all votes can be performed by inspecting the ledger state at the end of the election, and any observer with access to the blockchain can confirm that those votes were indeed recorded and not altered or removed \cite{zhang2019blockchain}.
+
+ Many blockchain voting solutions also provide voters with a mechanism to authenticate their vote on the blockchain.  Typically, the client software will show the voter a transaction ID or a unique ballot identifier after casting.  Voters can later look this up on a blockchain explorer for verifying their vote is present.  If votes are encrypted, only the voter may know which one is theirs (by the identification), therefore this protects secrecy while yet allowing personal verification \cite{bonneau2015sok,chaum2004secret}.
+
+\textbf{Notable Systems and Deployments:}
+
+\begin{itemize}
+  \item \textbf{Voatz}: Voatz is a U.S.-based firm that built a mobile voting application using blockchain as a backend.  It was tried in numerous official pilots, most memorably in West Virginia’s 2018 primary and general election for military voters overseas \cite{voatz2018pilot}.  Voatz’s solution uses a mobile app where voters login (using ID and biometric verification), then cast ballots which are recorded both on a blockchain and in an offline paper ballot printed at a server center for audits.  The Voatz blockchain is a private, permissioned ledger among a collection of trusted nodes (including cloud servers and potentially auditors).  The rationale was to use blockchain to make sure an immutable record of votes and to distribute trust among many parties.  Reported results from the West Virginia pilot were modest (fewer than 200 ballots cast), but it demonstrated the convenience of mobile voting for those users \cite{voatz2018pilot,mit2020voatz}.  However, Voatz became contentious when security experts from MIT investigated the app in 2020 and identified flaws that may allow servers to be compromised or ballots to be manipulated, as well as significant privacy issues \cite{mit2020voatz}.  Voatz contested several findings, however the incident underlined the problems of safeguarding the entire system (software and blockchain).
+  
+  \item \textbf{Follow My Vote}: This was an open-source project trying to construct a transparent online voting infrastructure using blockchain and Elliptic Curve cryptography.  Follow My Vote’s design prioritized end-to-end verifiability and anonymity.  Each voter would get a token and cast an encrypted vote via a public blockchain (at the time, they contemplated utilizing BitShares or other platforms).  The method would enable anyone to independently count the votes from the blockchain (after a public decryption process at the end, done by combining keys from several trustees).  A novel component was that voters could log in and really see that their vote (encrypted) is present in the ledger – hence the name “follow my vote” – and even amend their vote until the due date (only the final vote for each voter token would count).  This project exhibited a prototype during the 2016 presidential election in the United States (non-binding demo) but did not advance past the pilot stage.  It remains a reference point for a blockchain voting system emphasizing on verifiability and anonymity \cite{followmyvote2016}.  The code was open source, and it provided a valuable case study on how to solve certain difficulties (they employed homomorphic encryption to allow tallying without disclosing individual votes).  No large-scale performance measurements were given, however as it was on a public blockchain, scaling would depend on underlying chain throughput.
+
+  \item \textbf{Democracy Earth (Sovereign)}: Democracy Earth is a non-profit effort that produced Sovereign, a blockchain-based election and governance platform.  It’s focused more at communal decision-making and civic orgs than government elections.  Sovereign has experimented with liquid democracy (delegated voting) and leverages tokens on blockchains (like Ethereum) to allow votes on ideas.  One intriguing deployment was a 2018 campaign where Democracy Earth partnered to let Colombians abroad to “vote” symbolically on a peace deal referendum via its platform, showcasing how diaspora may be engaged.  The votes were taken on a public blockchain (with the identity of every individual verified through a known identity provider).  Democracy Earth stresses accessibility and inclusivity, aiming to remove barriers for everyone to have a say in diverse decisions \cite{democracyearth2018}.  It’s part of a bigger trend of blockchain being utilized in community governance, such as within blockchain projects themselves (for example, many cryptocurrency communities employ on-chain voting for protocol decisions).  While these are not governmental elections, they offer experience in safe ballot casting using blockchain.
+
+  \item \textbf{Horizon State}: An Australian-based firm (now defunct as of 2021) that promised a blockchain voting platform for organizational elections and community polls.  Horizon State’s platform was utilized by entities like the Australian Democratic Party for internal votes and certain community consultations in New Zealand.  The system employed a permissioned blockchain to record votes and stressed tamper-proof records and auditability \cite{horizonstate2020}.  It was deployed in circumstances like a municipal community budget vote, apparently with a few thousand participants, who could vote via a web interface and observe results in real time.  Horizon State stopped down due to commercial concerns, although during operation it was considered one of the more practical, user-friendly applications of blockchain voting in civic contexts.
+
+  \item \textbf{Polys by Kaspersky Lab}: Polys is a blockchain-based voting method developed by the cybersecurity firm Kaspersky Lab.  It’s an online voting platform that employs a private blockchain for saving votes.  Polys is renowned for focusing on educational facilities, companies, and political party primaries as application cases.  It provides a full stack: voter authentication (typically by email invites or codes), an election configuration interface, and finally vote casting and tallying with blockchain underlying the back-end \cite{polys2020}.  Kaspersky reported many test initiatives, including a 2018 Russian university student council campaign.  They highlight security (supported by Kaspersky’s expertise) and that even if their servers were attacked, the distributed ledger across numerous nodes would maintain the votes.  The Polys network uses nodes managed by independent parties (such universities in some circumstances) to improve trust.  In terms of performance, they claim the system can expand to tens of thousands of voters easily on their infrastructure; nevertheless, big government-scale elections have not been held on Polys.
+
+   \item \textbf {Academic Prototypes:}  Beyond these “product” solutions, a number of research projects have constructed blockchain voting prototypes.  For instance, researchers in Spain produced TIVI and Votoscope; a team in South Korea established a system on Hyperledger Fabric for local elections; and the EU’s Horizon research program financed a project called Pnyx studying blockchain voting with privacy.  These often try to demonstrate feasibility and measure performance.  Many employ permissioned blockchains for greater throughput and to address privacy (because permissioned ledgers can restrict data visibility).  Some academic evaluations demonstrate that with a consortium blockchain (running e.g. PBFT consensus), a network of, say, 4–10 nodes can manage the voting traffic of a medium-sized city election satisfactorily, providing that voting is not a high-frequency transaction compared to, say, financial trading.  The burden of even a million votes during a 12-hour voting session is around 23 votes per second on average, which numerous systems can manage.  The question is more about peak loads (many people tend to vote in the last hour, for example) and maintaining low latency so voters aren’t kept waiting.  So far, in the limited genuine testing, blockchain systems have coped, but again those were modest (a few thousand votes at most concurrently).  Simulations and experiments in research imply that with suitable network scaling (and maybe layer-2 solutions or sharding for public chains), the technical performance can fulfill criteria \cite{academicblockchain2020}.
+ \end{itemize}
+
+ To date, no national election for a head of state or legislature has been run wholly on a blockchain system.  The deployments have been in controlled circumstances (municipal or organizational voting, or limited subsets of voters like overseas military).  These installations generally report positive results in terms of voter use and the basic functioning of the system.  For example, West Virginia’s pilot was declared effective in that the targeted voters were able to vote and the results were accurately recorded (there were paper printouts to verify later) \cite{voatz2018pilot}.  However, there is limited data on how these systems will work at a wider scale and under active attack by sophisticated opponents.  One worry is that many existing solutions rely on mobile apps and normal web tech for the user side, which inherit all the vulnerabilities of those platforms (as the MIT study of Voatz highlighted) \cite{mit2020voatz}.
+
+ There are also legal and regulatory barriers.  In many countries, election rules require paper ballots or paper records; blockchain solutions need to provide a mechanism to establish such verifiable paper audit trails (or be acknowledged as legally equivalent).  Additionally, transparency and privacy must be handled carefully, which can be problematic in a blockchain since all transactions are public or semi-public.
+
+\section{Comparative Analysis}
+
+To better understand how traditional, electronic, and blockchain-based voting systems stack up against each other, we present a comparative SWOT analysis. This analysis highlights the Strengths, Weaknesses, Opportunities, and Threats associated with each category of voting system:
+
+\begin{longtable}{|p{3cm}|p{4cm}|p{4cm}|p{4cm}|}
+\caption{Comparative SWOT Analysis of Voting Systems} \label{tab:voting_swot} \\
+\hline
+\textbf{Aspect} & \textbf{Traditional Paper-Based} & \textbf{Electronic Voting Machines} & \textbf{Blockchain-Based Voting} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Aspect} & \textbf{Traditional Paper-Based} & \textbf{Electronic Voting Machines} & \textbf{Blockchain-Based Voting} \\
+\hline
+\endhead
+
+\hline
+\multicolumn{4}{r}{\textit{Continued on next page}} \\
+\endfoot
+
+\hline
+\endlastfoot
+
+\textbf{Strengths} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Tangible audit trail
+  \item Resistant to cyber attacks
+  \item Easy public understanding
+  \item Human oversight
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Fast, efficient tallying
+  \item Accessibility support
+  \item Voter-verified paper trails possible
+  \item Handles complex tabulations
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Immutable, tamper-evident ledger
+  \item Distributed trust and transparency
+  \item End-to-end cryptographic verification
+  \item Enables remote voting
+\end{itemize}
+\end{minipage} \\ \hline
+
+\textbf{Weaknesses} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Slow and labor-intensive
+  \item Vulnerable to physical fraud
+  \item Logistical challenges
+  \item Limited remote voting options
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Low transparency to voters
+  \item Potential software bugs or malware
+  \item Expensive and can malfunction
+  \item High-value target for attacks
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Privacy and anonymity challenges
+  \item Internet dependency and device risks
+  \item Complexity limits adoption
+  \item Digital divide risks disenfranchisement
+\end{itemize}
+\end{minipage} \\ \hline
+
+\textbf{Opportunities} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Optical scanners and audits
+  \item Improved accessibility devices
+  \item Hybrid paper-electronic systems
+  \item Better training and ballot design
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Open-source software
+  \item Cryptographic receipts
+  \item Enhanced UI/UX and hardware security
+  \item Dynamic, multilingual ballots
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Secure remote voting for expatriates
+  \item Engage younger voters via smartphones
+  \item Decentralized election oversight
+  \item Cost reduction and new civic engagement
+\end{itemize}
+\end{minipage} \\ \hline
+
+\textbf{Threats} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Ballot fraud and tampering
+  \item Logistical disruptions
+  \item Natural disasters affecting voting
+  \item Erosion of trust due to slow process
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Cybersecurity threats and insider attacks
+  \item Denial of service or glitches
+  \item Loss of voter confidence
+  \item Vendor lock-in and aging hardware
+\end{itemize}
+\end{minipage} &
+\begin{minipage}[t]{\linewidth}
+\begin{itemize}[leftmargin=*]
+  \item Security failures and protocol flaws
+  \item Consensus attacks and bugs
+  \item Regulatory/legal uncertainties
+  \item Political misinformation and distrust
+\end{itemize}
+\end{minipage} \\ \hline
+
+\end{longtable}
+
+\section{Gaps in Current Solutions}
+
+Having examined the landscape of existing voting methods, it is evident that no current solution perfectly satisfies all security and practicality criteria. There are several gaps and unresolved issues in contemporary systems, where improvements are needed. In this section, we discuss these gaps, with a focused case study on the Estonian e-voting system --- often cited as a leading example of online voting --- to illustrate how even the most advanced implementations have room for enhancement.
+
+\subsection{General Gaps in Current Voting Systems}
+
+\begin{enumerate}
+    \item \textbf{End-to-End Verifiability:} Most current voting systems, whether paper-based or electronic, lack true end-to-end verifiability. Paper ballots allow outcome audits but offer no way for individuals to confirm their vote was counted. Many electronic systems also lack robust cryptographic methods for independent verification. As a result, errors or fraud may go undetected, and close elections can lack conclusive evidence. While academics advocate for end-to-end verifiable systems using methods like receipts or public ledgers, such approaches remain rare in governmental elections \cite{brookings_paper_voting, arxiv_blockchain}.
+    
+    \item \textbf{Balancing Security and Accessibility:} Traditional voting offers strong security (e.g., in-person authentication and secret ballots) but limits accessibility, especially for remote voters. Conversely, online voting improves access but compromises some security. This unresolved trade-off is clear in how countries manage overseas voting—some permit risky methods like email, while others exclude voters due to security concerns. Bridging this gap drives interest in blockchain and advanced ID verification, though no widely adopted solution yet exists \cite{mdpi_blockchain_voting, pmc_ncbi}.
+    
+    \item \textbf{Secure Voter Authentication for Remote Voting:} A key challenge in remote voting is secure, convenient voter authentication. Estonia's digital ID system offers a strong solution, but most countries lack such infrastructure. Instead, many rely on weak methods like passwords or personal data, which are prone to hacking and identity theft. There's a clear need for scalable, privacy-preserving authentication—ideally using cryptographic proofs or biometrics. Without it, remote voting remains vulnerable to unauthorized access \cite{uconn_voter, linkedin_blockchain}.
+    
+    \item \textbf{Transparency vs. Secrecy – Trust Gap:} Modern voting systems often trade off between transparency and ballot secrecy. Paper-based voting ensures secrecy but lacks public verifiability, while full transparency risks revealing voter choices. Blockchain-based systems can publish encrypted votes, but decryption requires trusted authorities. The key gap is achieving transparent results without compromising anonymity. Techniques like mixnets or homomorphic tallying show promise, but practical, user-friendly implementations remain limited \cite{arxiv_blockchain, pmc_ncbi}.
+    
+    \item \textbf{Software Independence:} “Software independence” means verifying election results without trusting the software itself. Paper ballots meet this standard, but many DRE and online systems do not. Some progress has been made through voter-verified paper trails or cryptographic proofs, yet many jurisdictions still use unauditable systems. Closing this gap is critical for trust in future voting systems \cite{brookings_paper_voting, pmc_ncbi}.
+\end{enumerate}
+
+\subsection{Case Study -- Estonia’s I-Voting System}
+
+Estonia’s Internet voting system is often held up as an example, as it’s one of the few in continuous use for government elections.  It indeed contains new aspects (such allowing re-voting to prevent coercion, and adopting a type of decentralized oversight with multiple authorities sharing cryptographic keys).  However, a 2014 independent security analysis of Estonia’s system by international researchers discovered many weaknesses that are instructive \cite{jhalderm_website}:
+
+  \textbf  {Architectural Limitations:}   The analysis revealed that Estonia’s system, as designed in 2013, had a high reliance on a central server architecture.  If that central back- end were attacked (by malware or an insider), attackers might conceivably alter votes or leak votes without the outside world knowing.  In other words, the system lacked a truly distributed trust model — a gap that a blockchain-based redesign 30might solve by decentralizing the record of votes.  At the time, the Estonian team responded by asserting their procedural precautions (examination of servers, etc.) were sufficient, but the reality remains that a single point of attack existed \cite{jhalderm_website}.
+
+  \textbf  {Procedural Gaps:}   The observers noticed operational concerns, such as insufficient controls on the build and update process of the voting software.  For example, they pointed out that the team designing the voting program could theoretically insert harmful code and it might not be noticed.  There were also issues about the environment in which votes were counted (one issue mentioned was that the vote- counting servers weren’t operating on fresh, constantly secured machines – there was a possibility of infections remaining).  Essentially, while the system had robust crypto, the procedures around it had gaps that might be abused.  This shows that even if the software and algorithms are excellent, the implementation process must be airtight – a lesson for any future blockchain system as well (e.g., who has access to the nodes?  how are updates done?)  \cite{jhalderm_website}.
+
+  \textbf  {Transparency and Audit:}   The 2014 research also highlighted the absence of transpar- ent, independent audit of the i-voting process.  While Estonia did disclose statistics and had some observers, there was no means for outside parties to verify the correctness of the outcome independently.  In response, Estonia later provided a partial measure: they allowed voters to download an application to verify that their vote was cast as intended (basically a device to check that the vote on the server matched what they transmitted, using the voter’s ID card to decrypt a confirmation).
+ They also started publishing the hash of the vote logs and utilizing the Estonian KSI blockchain (a form of hash ledger) to timestamp the data, to identify any subsequent tampering \cite{mdpi_blockchain_voting}.   These procedures enhanced transparency slightly (now a voter could personally verify their vote), but a full public verifiability (where anybody can audit the count) is still not present due to the need to keep votes encrypted.  This indicates a gap between what is now done and an ideal verifiable system — a gap that future research (including in blockchain voting) hopes to bridge with techniques like universal verifiability.
+
+  \textbf  {Reliance on Client Security:}   The Estonian approach, like any remote voting, ultimately relies on the voter’s own gadget being trustworthy at voting time.
+ The 2014 research illustrated how client-side malware may defeat Estonia’s safe- guards (for instance, by waiting until after the voter verification software ran, then al- tering the vote).  Estonia has acknowledged this is a difficult problem and largely relies on the overall security of Estonians’ computers (which are obliged to have up-to-date ID card software, etc.).  This remains a gap — there is no entirely effective countermeasure if a voter’s PC is corrupted.  The lesson here is that any internet- based voting, blockchain or otherwise, must grapple with the endpoint security problem – one of the hardest gaps to overcome
+  Despite developments including threshold cryptographic key management and independent code audits, Estonia maintains cautious use—capping i-voting times and fostering optionality.   As the Estonian Electoral Commission acknowledges, i-voting is a continuous difficulty, with the 2014 vulnerabilities underscoring major security dangers \cite{jhalderm_website}.
+
+  Despite these shortcomings, Estonia continues to employ i-voting, but they handle it with cau- tion.  They cap the period of i-voting (advance voting days only), and they emphasize it’s voluntary.  They have improved certain areas: for example, distributing cryptographic keys among different officials so no single insider may decrypt votes (threshold decryption), and encouraging regular independent audits of the system’s code.  Yet, as the Estonian Elec- toral Commission itself observes, i-voting is a work in progress, not a solved problem.  The 2014 results “potentially jeopardizing the integrity of elections” \cite{jhalderm_website} were a wake-up call illustrating that even a relatively mature system had substantial vulnerabilities.
+
+ As of 2025, no country has fully accepted blockchain voting for national elections, precisely because these shortcomings are known.  Pilot initiatives and theoretical approaches (in- cluding this thesis work) are seeking to explain how we could close these gaps.  For instance, one might propose a hybrid voting model: cast votes via blockchain and generate a paper receipt that is mailed in separately — then the blockchain provides a quick preliminary tally and the paper provides an audit later.  That answers some shortcomings (transparency and physical backup) but complicates others (like process complexity).
+
+ \chapter{Used Technologies}
+
+ The robustness, security, and scalability required by contemporary electronic voting and digital identity systems cannot be met by any one technology alone. Because of its tamper-evident ledger and decentralized trust mechanism, blockchain technology has become a popular platform for these kinds of applications. Because a blockchain is meant to keep an unchangeable record of transactions scattered among several nodes, it is highly tough to falsify data on a broad scale, including votes or identity records \cite{jafar2021blockchain}.
+
+ This chapter covers the integrated architecture of a blockchain-based system, focusing on the major technologies that function in concert to provide safe identity verification and e-voting.  We introduce the principles of blockchain ledgers, stressing smart contracts and transactions as programmable, self-executing agreements on the ledger.  We then analyze Hyperledger Fabric, a permissioned blockchain technology well-suited for commercial and governmental applications, demonstrating how it maintains identities and transactions in a restricted network.  Next, we cover the function of traditional databases like MySQL and in-memory stores like Redis within decentralized apps — explaining how off-chain data management complements on-chain data for performance and scalability.  To safeguard user interactions, we explore authentication and authorization protocols (JWT and OAuth2) that can be connected with blockchain systems to ensure only authorized participants can submit transactions or votes.  We also analyze the deployment infrastructure, notably NGINX as a web server and load balancer, which provides a solid interface and distribution layer for blockchain-based services.  Finally, we discuss AI-powered tools – Tesseract OCR and Amazon Rekognition – used for identity verification and document digitalization, and explain their vital role in authenticating voter identities and documents before tying that information to blockchain records.
+
+\section{Blockchain Fundamentals: Transactions and Smart Contracts}
+\subsection{Blockchain Transactions}
+Blockchain transactions are the elementary units of record-keeping, signifying transfers of value or state changes that users initiate and authorize through digital signatures \cite{yaga2018nist}. The signed transaction propagates via the peer-to-peer network, where each node confirms its legitimacy (e.g., checking the signature and protocol rules) \cite{christidis2016iot}. Valid transactions are subsequently collected into a new block by a selected node (a miner or validator) according to the network’s consensus rules \cite{christidis2016iot}. Each block comprises a cryptographic hash of the previous block, joining blocks in an immutable chain so that any tampering with a past record invalidates all subsequent blocks \cite{yaga2018nist}. Consensus methods ensure that every node agree on the blockchain’s configuration and the sequence of transactions. Proof-of-Work (PoW, used in Bitcoin) requires miners to solve cryptographic puzzles – secure but energy-intensive – whereas Proof-of-Stake (PoS) awards block validation privileges based on coin ownership, lowering energy use but risking centralization by major stakeholders \cite{hussein2023consensus}.
+
+\subsection{Smart Contracts}
+
+Smart contracts constitute self-executing programs on the blockchain that autonomously enforce the conditions of an agreement. A smart contract (code along with data) is posted to the blockchain via a transaction \cite{yaga2018nist}. Once deployed, the contract’s code is put on the distributed ledger and performed by all participating nodes, ensuring that every node achieves the same results and that outcomes (new state or asset transfers) can be tracked on-chain \cite{yaga2018nist}. Because the code remains on the blockchain, it becomes tamper-resistant and transparent, effectively operating as an autonomous agent that executes predetermined actions whenever criteria are met \cite{yaga2018nist}. Participants activate smart contracts by calling their functions through transactions, which trigger the programmed actions. By eliminating middlemen, smart contracts can dramatically lower transaction expenses and counterparty risk in digital agreements \cite{yaga2018nist}.
+
+\subsection{Security Considerations}
+
+Blockchain systems use encryption and decentralization to provide robust security assurances. Transactions are digitally signed with private keys, assuring authenticity and non-repudiation \cite{yaga2018nist}. Confirmed blocks are chained via cryptographic hashes, so any alteration of a past block is detected and rejected by the network consensus \cite{yaga2018nist}. The distributed consensus and public openness of the ledger ensure no single party can secretly alter records, and participants may independently verify the integrity of all transactions \cite{hussein2023consensus}. 
+
+However, blockchains are not immune to attacks. A notable vulnerability is the 51\% attack: if a malicious party gains majority control of the network’s mining or staking capacity, it might alter the transaction history and double-spend cryptocurrencies \cite{yaga2018nist}. Such attacks are infeasible on large, well-decentralized networks but highlight the reliance on globally distributed consensus for security. 
+
+Smart contracts also present risks, as faults or logical weaknesses in contract code can be exploited to cause unintended behavior \cite{atzei2017ethereum}. For example, a vulnerability in the Ethereum “DAO” contract (2016) was exploited to steal about \$50 million in ether \cite{atzei2017ethereum}. Because smart contract code is often immutable, faults are difficult to patch, emphasizing the importance of thorough security auditing and formal verification before deployment. 
+
+In summary, while blockchain technology provides a stable platform for secure transactions and automation, ongoing vigilance is essential to address emerging vulnerabilities.
+
+
+\section{Hyperledger Fabric as a Permissioned Blockchain System}
+
+Hyperledger Fabric is an open-source, enterprise-grade permissioned blockchain technology designed for modularity and flexibility.  It is one of the Hyperledger projects maintained by the Linux Foundation, focused at enterprise applications that require trust among known organizations.  Fabric’s design is largely modular, allowing components such as consensus techniques or identity services to be plug-and-play, so the platform may be adapted to varied use cases and trust models \cite{androulaki2018fabric}.  Unlike public blockchains, Fabric does not rely on cryptocurrencies or proof-of-work; instead, it uses a permissioned architecture where participants have cryptographic identities governed by a Membership Service Provider (MSP) \cite{androulaki2018fabric}.  This strategy makes Fabric ideal for enterprise applications, offering excellent performance (reported in thousands of transactions per second in benchmarks) and low latency as well as a comprehensive security model \cite{androulaki2018fabric}.  The design approach emphasizes scalability, confidentiality, and fine-grained access control, distinguishing Fabric as a leading corporate blockchain solution for consortium networks.
+
+\subsection{Key Components}
+
+Hyperledger Fabric’s network is built of several important components that communicate to conduct and validate transactions in a safe manner.  Peers are the essential nodes that keep the ledger and implement smart contracts (called chaincode in Fabric).  There are different peer roles: endorsing peers mimic transaction proposals by running chaincode and issuing endorsements (digital signatures), while committing peers check endorsements and alter the ledger state \cite{androulaki2018fabric}.  Each peer keeps two elements of the ledger: the blockchain (an append-only log of blocks) and the global state (a database snapshot of current key-value data).  The service that places orders is a distributed cluster of nodes (orderers) that collaboratively establish a total order of transactions for consistency across the network.  Fabric’s ordering service is conceptually isolated from the peers; it packs endorsed transactions into blocks and disseminates them to peers, ensuring all peers receive blocks in the same order \cite{androulaki2018fabric}.  The ordering service can be implemented in several ways (e.g., a crash-fault tolerant cluster or a Byzantine-fault tolerant protocol, as explained below).  The Membership Service Provider (MSP) manages identity management: it connects each organization’s members (peers and client users) with cryptographic identities (e.g., X.509 certificates issued by a certificate authority), thus enforcing the permissioned nature of the network \cite{androulaki2018fabric}.  Identities and MSPs offer role-based access control and trust inside the consortium.  Ultimately, chaincode refers to the smart contract programs implemented on the Fabric network.  Chaincode runs within Docker containers on endorsing peers for isolation and may be written in general-purpose languages (such as Go or Java), allowing developers to create business logic without understanding domain-specific languages \cite{androulaki2018fabric}.  Chaincode functions are invoked by client applications to conduct transactions, and endorsement policies can be set to determine which organizations’ peers must approve a transaction.
+
+\subsection{Consensus Mechanism}
+
+Hyperledger Fabric offers a unique execute-order-validate transaction flow that separates transaction execution from consensus ordering \cite{androulaki2018fabric}.  This architecture differs with the typical “order-execute” model of older blockchains and addresses performance issues by allowing simultaneous execution and fine-grained trust assumptions for distinct transactions.  In Fabric, transactions are first endorsed (performed on chosen peers), then ordered by the ordering service, and finally validated on all peers.  The pluggable consensus architecture means that Fabric can support alternative consensus mechanisms based on the deployment’s requirements.  For Byzantine fault tolerance, Fabric has supported consensus methods based on Practical Byzantine Fault Tolerance (PBFT) \cite{castro2002pbft}.  Early versions (v0.6) implemented a PBFT-style protocol to tolerate malicious nodes, exhibiting Fabric’s ability to reach Byzantine consensus among a set of identified participants \cite{androulaki2018fabric}.  However, PBFT and comparable BFT protocols incur significant communication overhead, impacting scalability as network capacity expands.  In fact, many Fabric installations choose for crash fault-tolerant ordering services for increased throughput under the assumption that participants are benign but might fail.  For example, Fabric v1.x provided a Kafka-based ordering service (crash fault tolerant via Apache Kafka and ZooKeeper), and later versions migrated to the Raft consensus method as the recommended default \cite{brotsis2020fabric}.  Raft provides leader-based log replication with fault tolerance to crashes, delivering a solid blend of efficiency and consistency for corporate application.  The choice of consensus has effects on performance and security: a BFT protocol (like PBFT) can tolerate byzantine members (up to $f$ malicious out of $3f+1$ nodes) at the expense of greater latency and message complexity \cite{castro2002pbft}, while a crash fault-tolerant protocol (like Raft) compromises byzantine robustness for simpler and faster agreement under a more trusted model.  Thanks to its modular design, Fabric allows companies to select an ordering service that matches their trust assumptions, whether demanding enhanced adversarial resilience or optimizing transaction throughput \cite{androulaki2018fabric,brotsis2020fabric}.
+
+\section{Off-Chain Data Management with Redis and PostgreSQL in Decentralized Apps}
+
+\subsection{Rationale for Off-Chain Data Management}
+Decentralized apps (dApps) generally limit on-chain storage to vital data due to blockchain performance and cost limitations.  Public blockchains provide immutability and integrity on-chain, but they suffer from high transaction costs and limited throughput, resulting in them being unsuitable for large-scale or high-frequency data storage \cite{eren2025storage}.  Off-chain data management addresses scalability by processing bulk data and frequent reads/writes in conventional databases or caches, which offer lower latency and operating expense than on-chain storage \cite{eren2025storage}.  By storing non-essential or voluminous data off-chain, dApps can improve efficiency and user experience while avoiding costly on-chain operations, whilst anchoring critical hashes or references on-chain to retain verifiability \cite{lopez2019health, helmer2018ethernitydb}.
+
+\subsection{Redis in Off-Chain Storage}
+Redis is an open-source in-memory data store extensively used as a cache layer and message broker in distributed applications.  Operating purely in memory, it delivers sub-millisecond data access and can manage on a scale of millions of read and write operations every second on a single node \cite{aws2017redis}.  These properties make Redis appropriate for off-chain caching in dApps, where it can temporarily store state data, query responses, or session information to offload demand off the blockchain or core database.  Its single-threaded design with numerous data structures (e.g., hash maps, lists, sorted sets) and support for clustering provides real-time processing and pub/sub communication for dApp features such as live updates and notifications.  By storing frequent queries and current blockchain states, Redis avoids repeated expensive calls to the blockchain or a disk-based database, hence boosting throughput and response times for dApp users \cite{ibm2021redis, aws2017redis}.  In reality, Redis is commonly implemented with a persistent store to enable fast, ephemeral access to data while the authoritative records stay in a database or on-chain ledger.
+
+\subsection{PostgreSQL in Off-Chain Storage}
+PostgreSQL is a powerful open-source relational database management system (RDBMS) recognized for its ACID-compliance, comprehensive SQL query abilities, and strong data integrity features.  In off-chain storage for dApps, PostgreSQL acts as a durable backend for structured data, providing complicated queries, joins, and indexing that are infeasible to execute on-chain.  It can enforce schemas, constraints, and transactions to guarantee consistency of application data (e.g. user profiles, transaction information) off-chain \cite{helmer2018ethernitydb, thegraph2023}.  Using PostgreSQL allows developers to use decades of database study for secure and efficient data management: for example, guaranteeing referential integrity and conducting analytical queries on dApp data without burdening the blockchain.  The dependability and scalability (via replication or sharding) of PostgreSQL make it suited for long-term storing of off-chain state that has to stay consistent with on-chain events.  Indeed, it is often chosen as the structured off-chain database in blockchain systems to store transactional and state data that complement the on-chain records \cite{marinho2020ehealth}.
+
+\subsection{Integration with Blockchain}
+Maintaining consistency across on-chain and off-chain components needs careful design.  Typically, smart contracts hold references (such as cryptographic hashes or unique IDs) that link to off-chain data, allowing verification of integrity avoiding on-chain bulk storage \cite{lopez2019health, helmer2018ethernitydb}.  When on-chain events (e.g. a token transfer or status change) occur, off-chain services (or oracles) propagate these events to update the Redis cache and PostgreSQL database therefore, ensuring the off-chain data represents the latest on-chain state.  Methods like SQL-Middleware and EthernityDB indicate how blockchain along with databases can be fused: in one case, a middleware records each smart contract call as a relational database entry for queryability \cite{tong2021sqlmiddleware}, and in another, a blockchain is extended with a MongoDB-like interface to support familiar database operations off-chain \cite{helmer2018ethernitydb}.  Such integration patterns permit dApps to enjoy both the trust and transparency of blockchain and the efficiency of traditional databases.  Consistency is maintained via anchoring periodic hashes of the off-chain database state on-chain or by utilizing audit techniques that cross-validate off-chain data against on-chain logs \cite{helmer2018ethernitydb}.
+
+\subsection{Security Considerations}
+Off-chain data management introduces additional security requirements to uphold the trust model of decentralized applications. Data stored in Redis or PostgreSQL must be protected through encryption (both at-rest and in-transit) to preserve confidentiality, since off-chain servers do not benefit from the intrinsic cryptographic security of the blockchain. Strong access control mechanisms (e.g., role-based access control or attribute-based access control) are implemented to ensure that only authorized entities can read or modify off-chain data, mirroring the permission constraints of smart contracts \cite{eren2025storage, eren2025storage}. Integrity validation is paramount: the dApp should regularly verify that off-chain records have not been tampered with. This is commonly achieved by storing cryptographic hashes or digital signatures of the off-chain data on the blockchain, so that any retrieval of off-chain data can be checked against the on-chain hash for authenticity \cite{lopez2019health, eren2025storage}. Additionally, audit trails and consensus-driven oracles can be employed to cross-verify off-chain database transactions. By combining these measures—encryption, fine-grained access control, and on-chain hashing or attestation—developers ensure that off-chain storage with Redis and PostgreSQL does not become a weak link in the overall security of the decentralized application \cite{lopez2019health}.
+
+\section{Secure Authentication and Authorization: JWT and OAuth2 Integration}
+
+OAuth 2.0 is a widely used authorization system that allows a user (resource owner) to authorize a third-party application (client) delegated access to protected resources without exposing the user's credentials.  It defines roles (client, resource owner, resource server, authorization server) and standard routines for getting access tokens as credentials \cite{hardt2012oauth}.  JSON Web Token (JWT) is an open standard token format (RFC 7519) that exposes claims as a JSON object, encoded and digitally signed (or encrypted) for integrity and authenticity \cite{bradley2015jwt}.  A JWT is self-contained, meaning it encodes user identification and authorization claims (e.g., user ID, roles, scope, expiration time) in a short, URL-safe string \cite{bradley2015jwt}.  JWTs serve as bearer tokens in online authentication/authorization, allowing stateless verification of the token by any party holding the signature key \cite{bradley2015jwt}.  In current web applications, OAuth 2.0 provides the technique for getting and managing tokens, whereas JWT provides a standard for delivering the authorization and identity information securely.
+
+\subsection{Integration Mechanism}
+
+JWT and OAuth 2.0 function together by employing JWTs as the format for OAuth 2.0 tokens, so combining OAuth’s delegation concept with JWT’s stateless nature.  In a typical OAuth 2.0 flow, when the user authenticates and consents, the authorization server issues an access token (and typically a refresh token) to the client \cite{hardt2012oauth}.  When JWT is used as the access token format, the token has embedded claims such as the issuer (iss), topic (sub), audience (aud), scope, and expiration time (exp) \cite{bradley2015jwt, bertocci2021rfc9068}.  The authorization server signs the JWT with a secret or private key, and the client then delivers this JWT to the resource server with each request (typically in the HTTP Authorization header as a Bearer token).  The resource server separately validates the JWT by confirming the signature (using the authorization server’s public key for asymmetric signing) and verifying assertions like aud and exp before granting access.  This integration reduces the requirement for the resource server to query the authorization server on each request, as the JWT is a self-contained evidence of authentication and authorization \cite{solapurkar2016healthcare}.  The technique is currently standardized by the IETF; for example, RFC 9068 provides a JWT profile for OAuth 2.0 access tokens to guarantee interoperability in how token claims and signatures are structured \cite{bertocci2021rfc9068}.  An further layer, OpenID Connect (built on OAuth 2.0), further highlights this connection by providing JWT-based ID Tokens that carry user authentication info with OAuth 2.0 access tokens, enabling federated identification and single sign-on in a unified flow.
+
+\subsection{Security Considerations}
+
+Integrating JWT with OAuth 2.0 requires careful adherence to security best practices to mitigate vulnerabilities. Token expiration is a crucial mechanism – each JWT access token includes an exp claim defining its expiry, after which it is invalid \cite{bradley2015jwt}. Short-lived tokens are recommended to limit the window for replay attacks if a token is compromised, with OAuth 2.0 refresh tokens used to obtain new JWTs for long sessions \cite{lodderstedt2013revocation}. Unlike opaque tokens, JWTs are stateless and cannot be revoked by the resource server once issued, so an OAuth 2.0 implementation should either keep JWT lifetimes short or employ a revocation list and/or introspection mechanism if immediate revocation is required \cite{lodderstedt2013revocation}. The OAuth 2.0 token revocation specification (RFC 7009) provides an endpoint for clients to request invalidation of tokens at the authorization server \cite{lodderstedt2013revocation}, though propagation of revocation to resource servers remains an issue for self-contained tokens. Token storage on the client side must be secured to prevent theft: for example, in browser-based apps, JWTs should be stored in HttpOnly cookies or secure storage to guard against JavaScript access (mitigating XSS), and all token transport must occur over TLS to prevent eavesdropping \cite{hardt2012oauth}. The integration is vulnerable to typical token attacks, so robust validation is mandatory. To prevent replay attacks, every request should be over HTTPS and include only recently issued tokens (with nonce or one-time-use patterns if applicable). To prevent token substitution, the resource server must strictly check the token’s audience and issuer—accepting a token only if it is intended for that server and is issued by the trusted authority \cite{sheffer2020jwtbcp}. This ensures a JWT issued for one context cannot be used in another (for example, an access token for Service A cannot be replayed to Service B). Furthermore, JWT implementation best practices (RFC 8725) stipulate that algorithms must be verified and not blindly trusted from the token header to avoid forgery; for instance, the server should never accept an alg: none token and must reject tokens with unexpected or weak algorithms \cite{sheffer2020jwtbcp}. By enforcing strong signature verification and claim validation, and by using secure token lifecycle management (issuance, refresh, and revocation), an OAuth 2.0 + JWT system can achieve robust authentication and authorization with minimal attack surface.
+
+\section{AI-Based Identity Verification: Tesseract OCR and Amazon Rekognition in Blockchain Systems}
+
+\subsection{Tesseract OCR for Text Extraction}
+
+Tesseract OCR is an open-source text recognition engine (originally developed at HP Labs and later maintained by Google) known for its high accuracy in extracting printed text from images \cite{smith2007tesseract}. It is commonly used to digitize information from identity documents (e.g., passports or driver’s licenses) as a preprocessing step in verification systems, thereby reducing manual effort and errors in Know-Your-Customer (KYC) processes \cite{atkar2025aiblockchain}. The extracted text can be validated against expected formats or official records and then utilized in the blockchain verification pipeline – for example, by hashing and storing identity attributes on-chain for later cross-checking \cite{atkar2025aiblockchain}.
+
+\subsection{Amazon Rekognition for Facial Verification}
+
+Amazon Rekognition is a cloud-based computer vision service that provides advanced facial analysis and recognition for identity verification. It can detect faces and analyze attributes (such as whether eyes are open or the image brightness) to ensure a selfie is of suitable quality \cite{aws2023rekognition}. Critically, Rekognition offers a liveness detection feature that determines whether the user is physically present, helping to thwart spoof attempts using photographs, video replays, or masks \cite{aws2023rekognition}. Rekognition also performs face matching by comparing a live selfie to the face on an identity document and returning a similarity score to confirm if they belong to the same person \cite{aws2023rekognition}. These capabilities allow decentralized applications to automatically verify that the person presenting an ID is its legitimate holder, strengthening user identity checks in a blockchain context.
+
+\subsection{Integration with Blockchain Systems}
+
+In a blockchain-based identity framework, outputs from Tesseract and Rekognition are combined to form secure, immutable records. Rather than storing personal data directly, the system stores cryptographic hashes of the OCR-extracted text and biometric verification results on the blockchain \cite{atkar2025aiblockchain}. Smart contracts orchestrate the verification workflow, for example only recording a “verified” status on-chain once the document text matches expected values and the face match score exceeds a threshold \cite{atkar2025aiblockchain}. The use of hashing and distributed consensus makes the identity data tamper-evident (any attempted alteration is detectable via a hash mismatch), and the ledger’s immutability provides an auditable trail of all identity checks \cite{atkar2025aiblockchain}. This integration leverages the strengths of both AI and blockchain: AI provides automated identity proofing, while blockchain provides trust, transparency, and data integrity.
+
+\section{NGINX as a Web Server and Load Balancer in Blockchain Deployments}
+
+\bibliographystyle{ieeetr}  % this gives you IEEE style
+\bibliography{references}   % 'references' matches the .bib filename (without .bib)
+
+\end{document}
