@@ -3,34 +3,56 @@ import jwt, { JwtPayload } from 'jsonwebtoken';
 import axios from 'axios';
 import { Pool } from 'pg';
 import { getContract } from './fabric';
+import dotenv from 'dotenv';
 
+dotenv.config();
 const app = express();
 app.use(express.json());
 
 const pool = new Pool({ connectionString: process.env.PG_CONN });
 
-// 1) JWT middleware
-app.use(
-    async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-      const authHeader = req.header('Authorization');
-      const token = authHeader?.split(' ')[1];
-      if (!token) {
-        res.status(401).send('Missing token');
-        return;                // <-- just return void, not `return res…`
-      }
-      try {
-        const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
-        (req as any).user = payload;
-        next();
-      } catch (err) {
-        res.status(401).send('Invalid token');
-        return;
-      }
-    }
+async function ensureSchema(): Promise<void> {
+  // Run your DDL on startup—using IF NOT EXISTS to avoid errors on repeat runs.
+  await pool.query(
+    `CREATE TABLE IF NOT EXISTS votes (
+       vote_id TEXT PRIMARY KEY,
+       user_id TEXT NOT NULL,
+       candidate TEXT NOT NULL,
+       ts TIMESTAMP NOT NULL DEFAULT now()
+     );`
   );
+}
 
-// 2) Identity check middleware
-app.use(
+async function startServer() {
+  // 1) Make sure the table exists (or is created)
+  try {
+    await ensureSchema();
+    console.log('✔️ votes table is ready');
+  } catch (err) {
+    console.error('✖️ failed to ensure schema:', err);
+    process.exit(1);
+  }
+
+  // 2) JWT middleware
+  app.use(async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    const authHeader = req.header('Authorization');
+    const token = authHeader?.split(' ')[1];
+    if (!token) {
+      res.status(401).send('Missing token');
+      return;
+    }
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+      (req as any).user = payload;
+      next();
+    } catch (err) {
+      res.status(401).send('Invalid token');
+      return;
+    }
+  });
+
+  // 3) Identity check middleware (only for /vote)
+  app.use(
     '/vote',
     async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       const user = (req as any).user as JwtPayload;
@@ -47,10 +69,8 @@ app.use(
     }
   );
 
-// 3) POST /vote
-app.post(
-  '/vote',
-  async (req: Request, res: Response) => {
+  // 4) POST /vote
+  app.post('/vote', async (req: Request, res: Response): Promise<void> => {
     const { candidate } = req.body;
     const user = (req as any).user as JwtPayload;
     const userId = user.sub as string;
@@ -67,20 +87,21 @@ app.post(
     );
 
     res.send({ success: true });
-  }
-);
+  });
 
-// 4) GET /results
-app.get(
-  '/results',
-  async (_req: Request, res: Response) => {
+  // 5) GET /results
+  app.get('/results', async (_req: Request, res: Response): Promise<void> => {
     const { rows } = await pool.query(
       `SELECT candidate, COUNT(*) AS count FROM votes GROUP BY candidate`
     );
     res.send(rows);
-  }
-);
+  });
 
-app.listen(process.env.PORT, () => {
-  console.log(`Voting service listening on ${process.env.PORT}`);
-});
+  // 6) Start listening
+  app.listen(process.env.PORT, () => {
+    console.log(`Voting service listening on ${process.env.PORT}`);
+  });
+}
+
+// Kick things off
+startServer();
