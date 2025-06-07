@@ -1,68 +1,557 @@
-Voter Authentication Service with Microservices
+# E-Voting Platform — Blockchain-Based Microservices
 
+A highly secure, scalable, and modular **electronic voting platform** using **microservices, biometric verification, and blockchain** for maximum integrity and transparency.
 
-This document outlines the architecture and implementation of a voter authentication service based on a microservice architecture. It focuses on the voter registration and authentication process, leveraging modern technologies for image recognition, facial verification, and security.
+---
 
+## Table of Contents
 
-Main Users
+1. [Architecture Overview](#architecture-overview)
+2. [Technology Stack](#technology-stack)
+3. [Microservices](#microservices)
 
-The primary users of the system include:
-- Voters: Individuals who will use the application to register, authenticate, and vote securely.
-- Politicians/Candidates: Users who will maintain social media-like profiles where they can post campaign content such as videos, articles, and updates.
-- Administrators: System administrators responsible for managing elections, user permissions, and ensuring system integrity.
+   * [Authentication Service](#1-authentication-service)
+   * [Document Upload Service](#2-document-upload-service)
+   * [Identity Verification Service](#3-identity-verification-service)
+   * [Voting Service](#4-voting-service)
+4. [Inter-Service Communication](#inter-service-communication)
+5. [Database Design & Migrations](#database-design--migrations)
+6. [Security Model](#security-model)
+7. [API Examples](#api-examples)
+8. [Running Locally](#running-locally)
+9. [Audit & Compliance](#audit--compliance)
+10. [Appendix: Example Configurations](#appendix-example-configurations)
 
+---
 
-Microservice-Based Architecture
+## Architecture Overview
 
-The application is designed using a microservice architecture, where different services handle distinct functionalities. Each service communicates via REST APIs and can be independently scaled or maintained. The key microservices include:
+![](./docs/integrated_microservice_communication_diagram.png)
+*(Replace with your actual diagram image)*
 
-Voter Authentication Service
+* **Spring Boot**: Auth, Document Upload, and Identity Verification services
+* **Node.js**: Voting service
+* **PostgreSQL & Redis**: Data stores (per-service, as described below)
+* **OpenCV**: Face detection and verification
+* **Hyperledger Fabric**: Blockchain for secure, immutable vote storage
+* **JWT & 2FA**: Secure authentication across all services
+* **RESTful APIs**: Microservice communication
 
-The voter authentication service is responsible for validating users before they can participate in elections. It involves a two-step authentication process:
-1. **Upload Identity Card Photo**: The user uploads a photo of their identity card. This image is processed using Optical Character Recognition (OCR) to extract details such as name, date of birth, and ID number.
-2. **Upload Selfie**: The user uploads a selfie, which is compared to the photo on their ID card using a facial recognition service like AWS Rekognition or Azure Face API.
-If the identity is validated, the service issues a JSON Web Token (JWT) to authenticate the voter in future actions.
+---
 
-Database Design
+## Technology Stack
 
-The database is divided into multiple tables to manage various aspects of the application. Key tables include:
-- **Users**: Stores information about the voters and candidates, including personal details, account status, and profile information.
-- **Elections**: Contains data related to each election, such as election dates, participating candidates, and results.
-- **Votes**: Stores voting records, ensuring that each voter can cast only one vote per election.
-- **Campaign Posts**: Allows politicians to post videos and other campaign content, similar to a social media feed.
+| Service                 | Tech Stack                               | Main Responsibilities                                  |
+| ----------------------- | ---------------------------------------- | ------------------------------------------------------ |
+| Authentication Service  | Spring Boot, PostgreSQL, JWT, 2FA, Audit | User auth, registration, RBAC, token mgmt, audit logs  |
+| Document Upload Service | Spring Boot, PostgreSQL, Redis, OpenCV   | ID upload, face extraction, metadata storage, audit    |
+| Identity Verification   | Spring Boot, Redis, PostgreSQL, OpenCV   | Selfie upload, face matching, status updates, audit    |
+| Voting Service          | Node.js, Hyperledger Fabric, JWT, Audit  | Vote casting, blockchain ledger, candidate mgmt, audit |
 
-ID Card Processing
+---
 
-The ID card processing service receives an image of the user's identity card and performs the following tasks:
-- **Validation**: Ensures the uploaded file meets the required format (JPEG, PNG) and quality standards (resolution, size).
-- **OCR**: Optical Character Recognition is applied to extract key details from the card. Tools like Tesseract OCR or Google Vision API can be used.
+## Microservices
 
-Selfie Verification
+### 1. Authentication Service
 
-The selfie verification service receives a selfie and compares it against the photo from the ID card using a facial recognition API. Services like AWS Rekognition or Azure Face API are capable of performing this comparison with a defined similarity threshold.
+#### **Purpose**
 
-Token Issuance
+* User registration and authentication (JWT-based)
+* Two-factor authentication (2FA)
+* Password reset
+* Role-Based Access Control (RBAC)
+* Audit logging
 
-Once the user's identity is verified, a JWT is generated using a service such as jjwt in Java. This token will be used for authentication in future interactions with the app.
+#### **Controller/Service Structure**
 
-Election and Campaign Management
+```
+com.example.authservice
+├── controller
+│   ├── AuthController.java
+│   ├── UserController.java
+│   └── RoleController.java
+├── service
+│   ├── AuthService.java
+│   ├── UserService.java
+│   └── AuditService.java
+├── repository
+│   ├── UserRepository.java
+│   ├── RoleRepository.java
+│   └── PasswordResetTokenRepository.java
+├── config
+│   ├── SecurityConfig.java
+│   └── JwtConfig.java
+├── model
+│   ├── User.java
+│   ├── Role.java
+│   ├── PasswordResetToken.java
+│   └── AuditLog.java
+└── ...
+```
 
-This service allows politicians to manage their campaign profiles, similar to social media accounts. They can upload campaign videos and posts, which are visible to voters. Voters can view campaign materials before casting their vote.
+#### **Example `SecurityConfig.java`**
 
-Security Considerations
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired private JwtTokenProvider jwtTokenProvider;
 
-Given the sensitivity of election data and voter authentication, several security measures must be implemented:
-- **Encryption**: All communication between services and user data must be encrypted using HTTPS and secure protocols.
-- **Token Expiration**: JWTs must have a defined expiration time to ensure session security.
-- **Multi-Factor Authentication**: Optionally, multi-factor authentication (MFA) can be added for an extra layer of security during login.
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+            .authorizeRequests()
+            .antMatchers("/api/auth/**", "/api/password/**").permitAll()
+            .antMatchers("/api/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated()
+            .and()
+            .apply(new JwtConfigurer(jwtTokenProvider));
+    }
+}
+```
 
+#### **Database Schema & Example Migration**
 
-Conclusion
+`src/main/resources/db/migration/V1__init.sql`
 
-This voter authentication service is designed to ensure secure and reliable participation in elections, leveraging modern technologies like OCR, facial recognition, and JWTs in a microservice-based architecture.
+```sql
+CREATE TABLE roles (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
 
-# Architecture Diagram
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    two_factor_enabled BOOLEAN DEFAULT FALSE,
+    dob DATE,
+    contact_info VARCHAR(100),
+    role_id INT REFERENCES roles(id),
+    is_verified BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-<p align="center">
-  <img src="./architectureDiagram_files/chart_diagramArchitecture.svg" width="2000">
-</p>
+CREATE TABLE password_reset_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    token VARCHAR(255) NOT NULL,
+    expiry TIMESTAMP NOT NULL
+);
+
+CREATE TABLE audit_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id),
+    action VARCHAR(255) NOT NULL,
+    ip_address VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE candidates (
+    user_id INT PRIMARY KEY REFERENCES users(id),
+    party_id INT,
+    party_name VARCHAR(100),
+    vote_count INT DEFAULT 0
+);
+```
+
+#### **API Endpoints**
+
+| Endpoint                | Method | Description                     | Auth Needed |
+| ----------------------- | ------ | ------------------------------- | ----------- |
+| `/api/auth/register`    | POST   | Register new user               | No          |
+| `/api/auth/login`       | POST   | Authenticate user (returns JWT) | No          |
+| `/api/auth/2fa/enable`  | POST   | Enable/verify 2FA for user      | Yes         |
+| `/api/auth/2fa/verify`  | POST   | Verify 2FA token                | Yes         |
+| `/api/users/me`         | GET    | Get current user profile        | Yes         |
+| `/api/admin/roles`      | GET    | List roles                      | Admin       |
+| `/api/password/request` | POST   | Request password reset link     | No          |
+| `/api/password/reset`   | POST   | Reset password with token       | No          |
+
+**Example Request**
+
+```http
+POST /api/auth/login
+{
+    "username": "john",
+    "password": "MySecretPassw0rd!"
+}
+```
+
+**Example Response**
+
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6...",
+  "user": { "id": 1, "role": "user", ... },
+  "2fa_required": true
+}
+```
+
+---
+
+### 2. Document Upload Service
+
+#### **Purpose**
+
+* Secure ID document upload and storage
+* Face extraction using OpenCV
+* Metadata storage in PostgreSQL, images in Redis
+* Audit logging
+
+#### **Controller/Service Structure**
+
+```
+com.example.documentservice
+├── controller
+│   └── DocumentController.java
+├── service
+│   ├── DocumentService.java
+│   ├── FaceExtractionService.java
+│   └── AuditService.java
+├── repository
+│   └── DocumentRepository.java
+├── config
+│   ├── SecurityConfig.java
+│   └── RedisConfig.java
+├── model
+│   └── Document.java
+└── ...
+```
+
+#### **Example `RedisConfig.java`**
+
+```java
+@Configuration
+public class RedisConfig {
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        return new LettuceConnectionFactory("localhost", 6379);
+    }
+}
+```
+
+#### **Database Schema & Example Migration**
+
+`src/main/resources/db/migration/V1__init.sql`
+
+```sql
+CREATE TABLE documents (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    filename VARCHAR(100),
+    content_type VARCHAR(50),
+    upload_timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    file_size INT,
+    extracted_name VARCHAR(100),
+    extracted_dob DATE,
+    extracted_birthplace VARCHAR(100),
+    face_bounding_box VARCHAR(100)
+);
+```
+
+#### **API Endpoints**
+
+| Endpoint                    | Method | Description                        | Auth Needed |
+| --------------------------- | ------ | ---------------------------------- | ----------- |
+| `/api/documents/upload`     | POST   | Upload document (image + metadata) | Yes         |
+| `/api/documents/{id}`       | GET    | Get document metadata              | Yes         |
+| `/api/documents/image/{id}` | GET    | Get document image from Redis      | Yes         |
+
+**Example Request**
+
+```http
+POST /api/documents/upload
+Content-Type: multipart/form-data
+Authorization: Bearer <JWT>
+- file: id_card.jpg
+- extracted_name: John Doe
+- extracted_dob: 1990-05-01
+- extracted_birthplace: CityName
+```
+
+---
+
+### 3. Identity Verification Service
+
+#### **Purpose**
+
+* Selfie upload and biometric matching (OpenCV)
+* Stores selfies in Redis for fast access
+* Verifies against document faces
+* Updates verification status in PostgreSQL
+* Audit logging
+
+#### **Controller/Service Structure**
+
+```
+com.example.identityverificationservice
+├── controller
+│   └── VerificationController.java
+├── service
+│   ├── FaceVerificationService.java
+│   ├── CacheService.java
+│   └── AuditService.java
+├── config
+│   ├── SecurityConfig.java
+│   └── RedisConfig.java
+├── model
+│   └── VerificationResult.java
+└── ...
+```
+
+#### **API Endpoints**
+
+| Endpoint                   | Method | Description                       | Auth Needed |
+| -------------------------- | ------ | --------------------------------- | ----------- |
+| `/api/verification/selfie` | POST   | Upload selfie for verification    | Yes         |
+| `/api/verification/result` | GET    | Get result of latest verification | Yes         |
+
+**Example Request**
+
+```http
+POST /api/verification/selfie
+Content-Type: multipart/form-data
+Authorization: Bearer <JWT>
+- file: selfie.jpg
+```
+
+**Response**
+
+```json
+{
+  "verified": true,
+  "similarity": 0.89
+}
+```
+
+---
+
+### 4. Voting Service
+
+#### **Purpose**
+
+* Secure vote casting and storage on Hyperledger Fabric blockchain
+* Vote audit and candidate/party tracking
+* JWT authentication and audit logs
+
+#### **Project Structure (Node.js)**
+
+```
+voting-service/
+├── app.js
+├── routes/
+│   └── voting.js
+├── services/
+│   ├── blockchainService.js
+│   └── auditService.js
+├── middlewares/
+│   └── auth.js
+├── config/
+│   └── fabricConfig.js
+└── ...
+```
+
+#### **Example `auth.js` Middleware**
+
+```js
+const jwt = require('jsonwebtoken');
+module.exports = function(req, res, next) {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) return res.sendStatus(401);
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+}
+```
+
+#### **API Endpoints**
+
+| Endpoint            | Method | Description                 | Auth Needed |
+| ------------------- | ------ | --------------------------- | ----------- |
+| `/api/vote`         | POST   | Cast a vote for a candidate | Yes         |
+| `/api/candidates`   | GET    | List all candidates         | Yes         |
+| `/api/vote/history` | GET    | Get user’s voting history   | Yes         |
+
+**Example Vote Request**
+
+```http
+POST /api/vote
+Authorization: Bearer <JWT>
+{
+  "candidate_id": 42
+}
+```
+
+**Example Vote Blockchain Record**
+
+```json
+{
+  "transactionId": "0xabc123...",
+  "voterId": "anonymizedUserHash",
+  "candidateId": 42,
+  "timestamp": "2025-06-01T10:21:00Z"
+}
+```
+
+---
+
+## Inter-Service Communication
+
+* All requests are authenticated with JWT tokens.
+* Voting service checks user verification status via identity service before allowing a vote.
+* Document service and identity service share face data via Redis for real-time matching.
+* Audit logs are written per microservice for every key user action.
+
+---
+
+## Database Design & Migrations
+
+Each microservice manages its own database schema. See migration files under `src/main/resources/db/migration` for Java services and any ORM migration scripts for Node.js (e.g., Sequelize, Knex).
+
+---
+
+## Security Model
+
+* **JWT Authentication:** Every API is protected. Tokens are signed with strong secrets.
+* **2FA:** Optional for users, enforced via TOTP (compatible with Google Authenticator, etc.).
+* **Role-Based Access Control:** Actions restricted by user roles (user/candidate/admin).
+* **Audit Logging:** All actions—login, upload, verification, voting—are logged with timestamp, user, action, and IP.
+* **Password Security:** Passwords are hashed (bcrypt) and never stored in plain text.
+* **Sensitive File Storage:** Photos are kept in Redis (memory), not persisted to disk, reducing long-term exposure.
+* **Blockchain:** All votes are immutable and traceable, preventing double voting and tampering.
+
+---
+
+## API Examples
+
+**Register:**
+
+```http
+POST /api/auth/register
+{
+  "username": "alice",
+  "email": "alice@mail.com",
+  "password": "SuperSecret123"
+}
+```
+
+**Login:**
+
+```http
+POST /api/auth/login
+{
+  "username": "alice",
+  "password": "SuperSecret123"
+}
+```
+
+**Enable 2FA:**
+
+```http
+POST /api/auth/2fa/enable
+Authorization: Bearer <JWT>
+{
+  "secret": "JBSWY3DPEHPK3PXP"
+}
+```
+
+**Upload Document:**
+
+```http
+POST /api/documents/upload
+Authorization: Bearer <JWT>
+Form-data:
+  file: id.jpg
+  extracted_name: Alice Smith
+  extracted_dob: 1987-07-12
+```
+
+**Upload Selfie:**
+
+```http
+POST /api/verification/selfie
+Authorization: Bearer <JWT>
+Form-data:
+  file: selfie.jpg
+```
+
+**Cast Vote:**
+
+```http
+POST /api/vote
+Authorization: Bearer <JWT>
+{
+  "candidate_id": 5
+}
+```
+
+---
+
+## Running Locally
+
+Each service can be started independently. Ensure dependencies (Postgres, Redis, Hyperledger Fabric) are running.
+
+**Example:**
+
+```bash
+cd authservice
+./mvnw spring-boot:run
+
+cd ../documentservice
+./mvnw spring-boot:run
+
+cd ../identityVerificationService
+./mvnw spring-boot:run
+
+cd ../voting
+npm install
+node app.js
+```
+
+Configure database and Redis URLs in each service’s `.env` or `application.properties`.
+
+---
+
+## Audit & Compliance
+
+Every service writes an audit log of critical actions.
+Audit logs can be centralized or queried for compliance and post-election review.
+
+---
+
+## Appendix: Example Configurations
+
+**Spring Boot `application.properties`:**
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/authdb
+spring.datasource.username=postgres
+spring.datasource.password=changeme
+
+spring.redis.host=localhost
+spring.redis.port=6379
+
+jwt.secret=SuperSecretJWTKey123456
+jwt.expiration=86400000
+```
+
+**Node.js `.env`:**
+
+```
+PORT=3000
+JWT_SECRET=SuperSecretJWTKey123456
+FABRIC_NETWORK_CONFIG=./network.yaml
+```
+
+---
+
+## Contributors
+
+* \[Name] — System Architecture & Security
+
+---
