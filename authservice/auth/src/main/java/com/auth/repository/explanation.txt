@@ -1,2 +1,0 @@
-repo = data access objects
-spring automatically generates the methods based on their names

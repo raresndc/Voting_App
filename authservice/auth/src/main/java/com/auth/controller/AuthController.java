@@ -9,6 +9,7 @@ import com.auth.repository.UserRepository;
 import com.auth.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,12 +27,23 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final CandidateRepository candidateRepository;
+    @Autowired
+    private AuthService authService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private CandidateRepository candidateRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -118,7 +130,12 @@ public class AuthController {
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         TokenPair tokens = authService.issueTokenPair(auth);
-        return ResponseEntity.ok(tokens);
+        return ResponseEntity.ok(Map.of(
+                "accessToken", tokens.getAccessToken(),
+                "refreshToken", tokens.getRefreshToken(),
+                "username", user.getUsername(),
+                "role", user.getRole().getName()
+        ));
     }
 
     @PostMapping("/2fa/auth")
