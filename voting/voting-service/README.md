@@ -1,3 +1,5 @@
+
+
 # Voting Service (Blockchain-based)
 
 This project is a **blockchain-integrated voting service** that enables users to cast votes for candidates securely, with each vote recorded both on a Hyperledger Fabric blockchain and in a PostgreSQL database for querying results. It is designed to ensure authenticity, confidentiality, and integrity of voting processes in a microservices context.
