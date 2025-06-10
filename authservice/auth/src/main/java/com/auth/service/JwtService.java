@@ -1,14 +1,19 @@
 package com.auth.service;
 
 import com.auth.dto.TokenPair;
+import com.auth.model.User;
+import com.auth.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -28,6 +33,9 @@ public class JwtService {
     private long refreshExpirationMs;
 
     private static final String TOKEN_PREFIX = "Bearer ";
+
+    @Autowired
+    private UserRepository userRepo;
 
     public TokenPair generateTokenPair(Authentication authentication) {
         String accessToken = generateAccessToken(authentication);
@@ -166,5 +174,30 @@ public class JwtService {
         Claims claims = extractAllClaims(token);
         String jti = claims.getId();
         // persist jti into a blacklist store
+    }
+
+    /**
+     * Extracts the User entity from a Bearer JWT in the Authorization header.
+     * @param authHeader the raw "Authorization" header value
+     * @return the authenticated User
+     * @throws ResponseStatusException(401) if missing/invalid token
+     * @throws ResponseStatusException(404) if user not found
+     */
+    public User extractUser(String authHeader) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization header");
+        }
+
+        String token = authHeader.substring(7);  // strip "Bearer "
+        if (!isValidToken(token)) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Invalid or expired JWT token");
+        }
+
+        String username = extractUsernameFromToken(token);
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "User not found"));
     }
 }

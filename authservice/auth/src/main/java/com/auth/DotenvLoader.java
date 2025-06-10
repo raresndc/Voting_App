@@ -12,5 +12,8 @@ public class DotenvLoader {
 
         System.setProperty("APP_JWT_SECRET", dotenv.get("APP_JWT_SECRET"));
         System.setProperty("SPRING_MAIL_PASSWORD", dotenv.get("SPRING_MAIL_PASSWORD"));
+
+        System.setProperty("RSA_MODULUS", dotenv.get("RSA_MODULUS"));
+        System.setProperty("RSA_PRIVATEEXP", dotenv.get("RSA_PRIVATEEXP"));
     }
 }
