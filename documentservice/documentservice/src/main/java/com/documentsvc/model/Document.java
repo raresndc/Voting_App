@@ -2,6 +2,8 @@ package com.documentsvc.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -38,5 +40,5 @@ public class Document {
     private String sex;
     private LocalDateTime expiryDate;
     private LocalDateTime issueDate;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 }

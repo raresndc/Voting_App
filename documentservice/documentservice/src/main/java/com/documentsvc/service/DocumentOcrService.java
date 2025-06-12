@@ -2,6 +2,7 @@ package com.documentsvc.service;
 
 import com.documentsvc.model.Document;
 import com.documentsvc.repository.DocumentRepository;
+import com.documentsvc.service.util.MrzUtils;
 import com.documentsvc.service.util.RoiExtractor;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -38,23 +39,6 @@ public class DocumentOcrService {
 
     private final PhotoExtractionService photoSvc;
     private final DocumentRepository repo;
-
-    private static final Pattern DATE_RANGE = Pattern.compile(
-            // issue can be either 2 or 4 year‐digits:
-            "(\\d{2}\\.\\d{2}\\.(?:\\d{2}|\\d{4}))" +
-                    "-" +
-                    // expiry **only** 4‐digit year
-                    "(\\d{2}\\.\\d{2}\\.\\d{4})"
-    );
-    // for parsing 2-digit years as 2000–2099
-    private static final DateTimeFormatter TWO_DIGIT_YEAR = new DateTimeFormatterBuilder()
-            .appendPattern("dd.MM.")
-            .appendValueReduced(ChronoField.YEAR, 2, 2, 2000)
-            .toFormatter();
-
-    // for parsing full 4-digit years
-    private static final DateTimeFormatter FOUR_DIGIT_YEAR =
-            DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @Value("${tesseract.datapath}")
     private String tessDataPath;
@@ -113,17 +97,26 @@ public class DocumentOcrService {
         doc.setUploadedBy(username);
         doc.setUploadedAt(LocalDateTime.now());
 
-        String IDtext = tailChars(ocrText, 74);
+        String IDtext = MrzUtils.tailChars(ocrText, 74);
 
         doc.setNationality(IDtext.substring(2, 5));
-        doc.setLastName(extractLastName(IDtext));
-        doc.setFirstName(extractFirstName(IDtext));
+        doc.setLastName(MrzUtils.extractLastName(IDtext));
+        doc.setFirstName(MrzUtils.extractFirstName(IDtext));
         doc.setSeries(IDtext.substring(37, 45));
         doc.setSex(IDtext.substring(57, 58));
 
+        //dob
+        String[] lines = IDtext.split("\\R", 2);
+        if (lines.length < 2) {
+            throw new IllegalArgumentException("MRZ must be two lines");
+        }
+        String line2 = lines[1];
+        LocalDate dob = MrzUtils.parseDobFromMrz2(line2);
+        doc.setDateOfBirth(LocalDate.from(dob.atStartOfDay()));
+
         //valid
-        String dateText = tailChars(ocrText, 94);
-        LocalDate[] dates = extractDates(dateText);
+        String dateText = MrzUtils.tailChars(ocrText, 94);
+        LocalDate[] dates = MrzUtils.extractDates(dateText);
         LocalDate issueDate = dates[0];
         LocalDate expiryDate = dates[1];
 
@@ -140,69 +133,5 @@ public class DocumentOcrService {
         return repo.save(doc);
     }
 
-    public String extractLastName(String line) {
-        int start = 5;
-        int end = line.indexOf("<");
-        if(end < 0) {
-            end = line.length();
-        }
-        return line.substring(start, end);
-    }
 
-    public static String extractFirstName(String fullLine) {
-        if (fullLine == null) return "";
-
-        // 0) MRZ lines are always exactly 36 chars long
-        String mrz = fullLine.length() > 36
-                ? fullLine.substring(0, 36)
-                : fullLine;
-
-        // 1) Drop everything up through the first double-chevron
-        int sep = mrz.indexOf("<<");
-        if (sep < 0 || sep + 2 >= mrz.length()) return "";
-        String tail = mrz.substring(sep + 2);
-
-        // 2) Remove all trailing '<' filler
-        tail = tail.replaceFirst("<+$", "");
-
-        // 3) Turn any remaining '<' into spaces
-        tail = tail.replace('<', ' ');
-
-        // 4) (Optional) turn hyphens into spaces, collapse whitespace, trim
-        tail = tail.replace('-', ' ')
-                .replaceAll("\\s+", " ")
-                .trim();
-
-        return tail;
-    }
-
-    public static LocalDate[] extractDates(String fullText) {
-        String firstLine = fullText.split("\\R", 2)[0];
-
-        Matcher m = DATE_RANGE.matcher(firstLine);
-        if (!m.find()) {
-            throw new IllegalArgumentException("No date‐range found in:\n" + firstLine);
-        }
-
-        String start = m.group(1);
-        String end   = m.group(2);
-
-        LocalDate issue  = parseDate(start, TWO_DIGIT_YEAR);
-        LocalDate expiry = parseDate(end, FOUR_DIGIT_YEAR);
-        return new LocalDate[]{ issue, expiry };
-    }
-
-    private static LocalDate parseDate(String s, DateTimeFormatter formatter) {
-        // choose formatter by length of year
-        return LocalDate.parse(s, formatter);
-    }
-
-    public String tailChars(String text, int noOfChars) {
-        if(text == null) {
-            return "";
-        } else {
-            int len = text.length();
-            return text.substring(Math.max(0, len-noOfChars));
-        }
-    }
 }
