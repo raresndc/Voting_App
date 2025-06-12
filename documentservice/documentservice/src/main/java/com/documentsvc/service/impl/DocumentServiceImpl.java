@@ -43,7 +43,7 @@ public class DocumentServiceImpl implements DocumentService {
                 // explicitly point to the parent of tessdata
                 String tessPath = Dotenv.load().get("TESSDATA_PREFIX");
                 ocr.setDatapath(tessPath);
-                ocr.setLanguage("eng");
+                ocr.setLanguage("ron");
 
                 StringBuilder sb = new StringBuilder();
 

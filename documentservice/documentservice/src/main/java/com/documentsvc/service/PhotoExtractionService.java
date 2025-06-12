@@ -9,6 +9,7 @@ import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,10 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 @Service
 public class PhotoExtractionService {
@@ -97,7 +102,7 @@ public class PhotoExtractionService {
         return bufferedImageToPngBytes(source);
     }
 
-    private Mat bufferedImageToMat(BufferedImage bi) {
+    public Mat bufferedImageToMat(BufferedImage bi) {
         // ensure TYPE_3BYTE_BGR
         BufferedImage converted = new BufferedImage(
                 bi.getWidth(), bi.getHeight(),
@@ -121,4 +126,76 @@ public class PhotoExtractionService {
         return baos.toByteArray();
     }
 
+    public BufferedImage loadAsBufferedImage(MultipartFile upload) throws IOException {
+        BufferedImage source = null;
+
+        if ("application/pdf".equals(upload.getContentType())) {
+            try (PDDocument doc = PDDocument.load(upload.getBytes())) {
+                PDPage page = doc.getPage(0);
+                PDResources res = page.getResources();
+                for (COSName name : res.getXObjectNames()) {
+                    PDXObject xobj = res.getXObject(name);
+                    if (xobj instanceof PDImageXObject) {
+                        source = ((PDImageXObject) xobj).getImage();
+                        break;
+                    }
+                }
+            }
+        } else {
+            source = ImageIO.read(upload.getInputStream());
+        }
+
+        if (source == null) {
+            throw new IOException("No image found in upload");
+        }
+        return source;
+    }
+
+    /**
+     * Detects the four corners of the card and warps it to a flat 800×520 output.
+     */
+    public Mat warpToCard(Mat src) {
+        // 1) gray + blur + edge
+        Mat gray = new Mat();
+        Imgproc.cvtColor(src, gray, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.GaussianBlur(gray, gray, new Size(5,5), 0);
+        Mat edges = new Mat();
+        Imgproc.Canny(gray, edges, 75, 200);
+
+        // 2) find contours
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(edges, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        contours.sort((c1,c2) -> Double.compare(Imgproc.contourArea(c2), Imgproc.contourArea(c1)));
+
+        // 3) look for 4-point polygon
+        MatOfPoint2f approx = new MatOfPoint2f(), largest = null;
+        for (MatOfPoint c : contours) {
+            MatOfPoint2f c2f = new MatOfPoint2f(c.toArray());
+            double peri = Imgproc.arcLength(c2f, true);
+            Imgproc.approxPolyDP(c2f, approx, 0.02 * peri, true);
+            if (approx.total() == 4) { largest = approx; break; }
+        }
+        if (largest == null) return src;
+
+        // 4) order points
+        Point[] pts = largest.toArray();
+        Arrays.sort(pts, Comparator.comparingDouble(p -> p.x + p.y));
+        Point tl = pts[0], br = pts[3];
+        Arrays.sort(pts, Comparator.comparingDouble(p -> p.y - p.x));
+        Point tr = pts[0], bl = pts[3];
+
+        MatOfPoint2f srcPts = new MatOfPoint2f(tl, tr, br, bl);
+        MatOfPoint2f dstPts = new MatOfPoint2f(
+                new Point(0,0),
+                new Point(800,0),
+                new Point(800,520),
+                new Point(0,520)
+        );
+
+        // 5) warp
+        Mat M = Imgproc.getPerspectiveTransform(srcPts, dstPts);
+        Mat warped = new Mat();
+        Imgproc.warpPerspective(src, warped, M, new Size(800, 520));
+        return warped;
+    }
 }

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class Document {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,4 +28,15 @@ public class Document {
 
     private LocalDateTime uploadedAt;
     private String uploadedBy;  // will store the JWT‐username
+
+//    private String serialNumber;
+//    private String lastName;
+//    private String firstName;
+//    private String nationality;
+//    private String sex;
+//    private LocalDateTime expiryDate;
+//    private String isValid;
+//    private String address;
+//    private String dob;
+//    private String cnp;
 }
