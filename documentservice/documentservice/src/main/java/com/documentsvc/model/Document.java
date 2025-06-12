@@ -3,6 +3,7 @@ package com.documentsvc.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "documents")
@@ -29,14 +30,13 @@ public class Document {
     private LocalDateTime uploadedAt;
     private String uploadedBy;  // will store the JWT‐username
 
-//    private String serialNumber;
-//    private String lastName;
-//    private String firstName;
-//    private String nationality;
-//    private String sex;
-//    private LocalDateTime expiryDate;
-//    private String isValid;
-//    private String address;
-//    private String dob;
-//    private String cnp;
+    private boolean isValid;
+    private String nationality;
+    private String lastName;
+    private String firstName;
+    private String series;
+    private String sex;
+    private LocalDateTime expiryDate;
+    private LocalDateTime issueDate;
+    private Date dateOfBirth;
 }
