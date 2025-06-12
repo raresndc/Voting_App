@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
@@ -43,14 +44,18 @@ public class DocumentController {
     }
 
     @PostMapping(path="/ocr/text", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
-    public String ocrText(
+    public Document ocrAndSave(
+            Authentication auth,
             @RequestPart("file") MultipartFile file
     ) throws Exception {
         BufferedImage bi   = photoSvc.loadAsBufferedImage(file);
+
         Tesseract tess = new Tesseract();
         tess.setDatapath(tessDataPath);
-        tess.setLanguage("eng+ron");
-        return tess.doOCR(bi);
+        tess.setLanguage("eng+ron+fra");
+        String ocrText = tess.doOCR(bi);
+
+        return ocrService.saveOcr(file, ocrText, auth.getName());
     }
 
     // List my documents

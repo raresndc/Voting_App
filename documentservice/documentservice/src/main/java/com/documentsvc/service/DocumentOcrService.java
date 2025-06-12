@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -77,5 +78,16 @@ public class DocumentOcrService {
     private String ocr(Mat roi) throws TesseractException {
         BufferedImage crop = RoiExtractor.matToBufferedImage(roi);
         return tess.doOCR(crop).trim().replaceAll("\\s+", " ");
+    }
+
+    public Document saveOcr(MultipartFile file, String ocrText, String username) throws IOException {
+        Document doc = new Document();
+        doc.setFilename(file.getOriginalFilename());
+        doc.setContentType(file.getContentType());
+        doc.setData(file.getBytes());
+        doc.setTextContent(ocrText);
+        doc.setUploadedBy(username);
+        doc.setUploadedAt(LocalDateTime.now());
+        return repo.save(doc);
     }
 }
