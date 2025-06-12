@@ -130,6 +130,8 @@ public class DocumentOcrService {
             doc.setValid(false);
         }
 
+        doc.setVerifiedInfo(false);
+
         return repo.save(doc);
     }
 
