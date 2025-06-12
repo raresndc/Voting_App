@@ -23,6 +23,7 @@ This Auth Microservice provides:
 8. [Project Structure](#project-structure)
 9. [Customization](#customization)
 10. [Audit Logging](#audit-logging)
+11. [Blinded Voting Process](#blinded-voting-process)
 
 ---
 
@@ -238,6 +239,61 @@ This service records both data changes and business events:
 2. **Business-Event Logging**: Methods annotated with `@Auditable` are intercepted by an AOP aspect that writes to the `audit_logs` table. Events include `REGISTER`, `VERIFY`, `LOGIN_SUCCESS`, `LOGIN_FAILURE`, `2FA_SETUP`, `2FA_CONFIRM`, and `LOGIN_2FA`.
 3. **Security Events**: Listeners capture Spring Security login successes and failures and record them automatically.
 4. **Reviewing Logs**: Admins can fetch logs via a secured `/api/audit` endpoint or by querying the database directly.
+
+---
+
+## Blinded Voting Process
+
+To enable **privacy-preserving voting**, the microservice implements an RSA blind-signature protocol.
+
+1. **Request Challenge**
+
+   * **Endpoint**: `GET /api/vote/challenge`
+   * **Headers**: `Authorization: Bearer <access_token>`
+   * **Response**:
+
+     ```json
+     {
+       "placeholderId": 123,
+       "blindedValue": "BASE64_ENCODED_BLINDED_VUID"
+     }
+     ```
+   * **Description**: Generates a fresh 32‑byte e‑VUID, blinds it with a random factor, persists a placeholder record (in `vote_tokens`), and returns the blinded value and placeholder ID.
+
+2. **Client-side Unblinding**
+
+   * Clients use the returned `blindedValue` and locally computed blinding factor `r` to unblind the server’s blind signature later.
+
+3. **Obtain Signed Token**
+
+   * **Endpoint**: `POST /api/vote/token`
+   * **Headers**: `Authorization: Bearer <access_token>`
+   * **Body**:
+
+     ```json
+     {
+       "placeholderId": 123,
+       "blindedSignature": "BASE64_ENCODED_BLINDED_SIGNATURE"
+     }
+     ```
+   * **Response**:
+
+     ```json
+     {
+       "evuid": "BASE64_ENCODED_RAW_VUID",
+       "signature": "BASE64_ENCODED_SIGNED_BLINDED_VALUE"
+     }
+     ```
+   * **Description**: Verifies the JWT, locates the placeholder, signs the blinded value, persists the signature, and returns the signature. The client then unblinds locally to obtain a valid signature over the raw e‑VUID.
+
+4. **Vote Submission (Client-side)**
+
+   * Use the unblinded signature (`signature_unblinded`) together with `evuid` as proof of eligibility when submitting a vote to the voting application. Each `vote_tokens` entry has a `used` flag to prevent replay.
+
+Under the hood:
+
+* **`RsaBlindSignatureService`** handles e‑VUID generation, blinding, signing, and unblinding using RSA parameters from configuration.
+* **`VoteController`** exposes the `/vote/challenge` and `/vote/token` endpoints, uses `JwtService` to authenticate users, and persists tokens in the `vote_tokens` table.
 
 ---
 
