@@ -78,7 +78,8 @@ public class AuthController {
 
         // Map the RegisterRequest to a User entity
         User superAdmin = new User(
-                registerRequest.getFullName(),
+                registerRequest.getFirstName().toUpperCase(),
+                registerRequest.getLastName().toUpperCase(),
                 registerRequest.getUsername(),
                 passwordEncoder.encode(registerRequest.getPassword()),
                 superAdminRole, // Assign the SUPER_ADMIN role

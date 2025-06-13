@@ -15,10 +15,20 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RegisterRequest {
-    @NotBlank(message = "Full name is required")
-    @Size(min = 3, max = 50, message = "Full name must be between 3 and 50 characters!")
-    @Pattern(regexp = "^[A-Za-z ]+$", message = "Full name must contain only letters and spaces")
-    private String fullName;
+//    @NotBlank(message = "Full name is required")
+//    @Size(min = 3, max = 50, message = "Full name must be between 3 and 50 characters!")
+//    @Pattern(regexp = "^[A-Za-z ]+$", message = "Full name must contain only letters and spaces")
+//    private String fullName;
+
+    @NotBlank(message = "First name is required")
+    @Size(min = 3, max = 50, message = "First name must be between 3 and 50 characters!")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "First name must contain only letters and spaces")
+    private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    @Size(min = 3, max = 50, message = "Last name must be between 3 and 50 characters!")
+    @Pattern(regexp = "^[A-Za-z ]+$", message = "Last name must contain only letters and spaces")
+    private String lastName;
 
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters!")
@@ -81,4 +91,6 @@ public class RegisterRequest {
 
     @Min(value = 0, message = "Age must be a non-negative number")
     private Integer age;
+
+    private String IDseries;
 }

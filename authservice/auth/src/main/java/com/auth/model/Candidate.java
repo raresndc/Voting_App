@@ -24,11 +24,23 @@ public class Candidate {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+//    @Column(
+//            name = "full_name",
+//            nullable=false
+//    )
+//    private String fullName;
+
     @Column(
-            name = "full_name",
+            name = "first_name",
             nullable=false
     )
-    private String fullName;
+    private String firstName;
+
+    @Column(
+            name = "last_name",
+            nullable=false
+    )
+    private String lastName;
 
     @Column(
             nullable = false,
@@ -62,6 +74,11 @@ public class Candidate {
     private LocalDate dob;
 
     private Integer age;
+
+    @Column(
+            unique = true
+    )
+    private String IDseries;
 
     @Builder.Default
     private boolean verified = false;

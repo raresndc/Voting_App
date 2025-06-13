@@ -14,8 +14,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class RegisterCandidateRequest {
 
-    @NotBlank(message = "Full name is required")
-    private String fullName;
+//    @NotBlank(message = "Full name is required")
+//    private String fullName;
+
+    @NotBlank(message = "First name is required")
+    private String firstName;
+
+    @NotBlank(message = "Last name is required")
+    private String lastName;
 
     @NotBlank(message = "Username is required")
     @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters")
@@ -38,6 +44,8 @@ public class RegisterCandidateRequest {
 
     @Min(value = 0, message = "Age must be a non-negative number")
     private Integer age;
+
+    private String IDseries;
 
     @NotBlank(message = "Political party is required")
     private String politicalParty;

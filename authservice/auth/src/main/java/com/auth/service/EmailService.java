@@ -35,7 +35,7 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
-    public void sendAccountVerifiedEmail(String to, String fullName) {
+    public void sendAccountVerifiedEmail(String to, String firstName, String lastName) {
         MimeMessage msg = javaMailSender.createMimeMessage();
         try {
             // true = multipart (for inline), UTF-8
@@ -54,7 +54,7 @@ public class EmailService {
                             "The VotingApp Team\n" +
                             "support@votingapp.com | +40 712 345 678\n" +
                             "https://www.votingapp.com",
-                    fullName
+                    firstName + " " + lastName
             );
 
 //            // 2) embed logo inline (from src/main/resources/email/images/logo.png)
@@ -80,7 +80,7 @@ public class EmailService {
                     </p>
                   </body>
                 </html>
-                """.formatted(fullName);
+                """.formatted(firstName + " " + lastName);
 
             // set both parts
             helper.setText(textBody, htmlBody);
@@ -114,7 +114,7 @@ public class EmailService {
 //        );
 //    }
 
-    public void sendVerificationEmail(String to, String fullName, String code) {
+    public void sendVerificationEmail(String to, String firstName, String lastName, String code) {
         String subject = "VotingApp • Verify Your Email Address";
         String htmlBody = """
             <html>
@@ -134,7 +134,7 @@ public class EmailService {
                 </p>
               </body>
             </html>
-            """.formatted(fullName, code);
+            """.formatted(firstName + " " + lastName, code);
 
         try {
             sendHtmlEmail(to, subject, htmlBody);
@@ -143,7 +143,7 @@ public class EmailService {
         }
     }
 
-    public void sendPasswordResetEmail(String to, String fullName, String resetLink) {
+    public void sendPasswordResetEmail(String to, String firstName, String lastName, String resetLink) {
         try {
             MimeMessage msg = javaMailSender.createMimeMessage();
             // true = multipart (for inline), "UTF-8" charset
@@ -162,7 +162,7 @@ public class EmailService {
                             "— The VotingApp Team%n" +
                             "support@votingapp.com | +40 712 345 678%n" +
                             "https://www.votingapp.com",
-                    fullName, resetLink
+                    firstName + " " + lastName, resetLink
             );
 
             // 2) HTML body
@@ -188,7 +188,7 @@ public class EmailService {
               </p>
             </body>
           </html>
-          """.formatted(fullName, resetLink);
+          """.formatted(firstName + " " + lastName, resetLink);
 
             helper.setText(textBody, htmlBody);
             javaMailSender.send(msg);

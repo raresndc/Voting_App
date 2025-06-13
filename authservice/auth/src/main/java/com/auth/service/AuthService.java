@@ -75,12 +75,14 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("User role not found"));
 
         User user = User.builder()
-                .fullName(registerRequest.getFullName())
+                .firstName(registerRequest.getFirstName().toUpperCase())
+                .lastName(registerRequest.getLastName().toUpperCase())
+//                .fullName(registerRequest.getFullName())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(userRole)
                 .phoneNo(registerRequest.getPhoneNo())
-                .gender(registerRequest.getGender())
+                .gender(registerRequest.getGender().toUpperCase().substring(0,1))
                 .email(registerRequest.getEmail())
                 .personalIdNo(registerRequest.getPersonalIdNo())
                 .citizenship(registerRequest.getCitizenship())
@@ -90,6 +92,11 @@ public class AuthService {
                 .address(registerRequest.getAddress())
                 .dob(registerRequest.getDob())
                 .age(calculateAge(registerRequest.getDob()))
+                .IDseries(registerRequest.getIDseries())
+                .createdBy(registerRequest.getUsername())
+                .createdDate(LocalDateTime.now())
+                .lastModifiedBy(registerRequest.getUsername())
+                .lastModifiedDate(LocalDateTime.now())
                 .build();
 
         userRepository.save(user);
@@ -105,7 +112,7 @@ public class AuthService {
         userRepository.save(user);
 
         // send code
-        emailService.sendVerificationEmail(user.getEmail(), user.getFullName(), code);
+        emailService.sendVerificationEmail(user.getEmail(), user.getFirstName(), user.getLastName(), code);
     }
 
     //candidate
@@ -127,7 +134,9 @@ public class AuthService {
                 .orElseThrow(() -> new RuntimeException("Candidate role not found"));
 
         Candidate candidate = Candidate.builder()
-                .fullName(registerRequest.getFullName())
+                .firstName(registerRequest.getFirstName().toUpperCase())
+                .lastName(registerRequest.getLastName().toUpperCase())
+//                .fullName(registerRequest.getFullName())
                 .username(registerRequest.getUsername())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .gender(registerRequest.getGender())
@@ -135,6 +144,7 @@ public class AuthService {
                 .dob(registerRequest.getDob())
                 .age(registerRequest.getAge())
                 .role(candidateRole)
+                .IDseries(registerRequest.getIDseries())
                 .politicalParty(registerRequest.getPoliticalParty())
                 .verified(false)
                 .votes(0L)
@@ -150,7 +160,7 @@ public class AuthService {
         candidateRepository.save(candidate);
 
         // send code
-        emailService.sendVerificationEmail(candidate.getEmail(), candidate.getFullName(), code);
+        emailService.sendVerificationEmail(candidate.getEmail(), candidate.getFirstName(), candidate.getLastName(), code);
     }
 
     @Auditable(action="VERIFY", targetType="User", targetIdArg="username")
@@ -174,7 +184,7 @@ public class AuthService {
         user.setVerificationExpiryDate(null);
         userRepository.save(user);
 
-        emailService.sendAccountVerifiedEmail(user.getEmail(), user.getFullName());
+        emailService.sendAccountVerifiedEmail(user.getEmail(), user.getFirstName(), user.getLastName());
     }
 
     @Auditable(action="VERIFY", targetType="Candidate", targetIdArg="username")
@@ -199,7 +209,7 @@ public class AuthService {
         candidate.setVerificationExpiryDate(null);
         candidateRepository.save(candidate);
 
-        emailService.sendAccountVerifiedEmail(candidate.getEmail(), candidate.getFullName());
+        emailService.sendAccountVerifiedEmail(candidate.getEmail(), candidate.getFirstName(), candidate.getLastName());
     }
 
     private int calculateAge(LocalDate dob) {
@@ -333,7 +343,7 @@ public class AuthService {
 
             // 4) Send the email
             String link = "https://your-domain.com/reset-password?token=" + resetToken;
-            emailService.sendPasswordResetEmail(user.getEmail(), user.getFullName(), link);
+            emailService.sendPasswordResetEmail(user.getEmail(), user.getFirstName(), user.getLastName(), link);
         });
     }
 

@@ -27,11 +27,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+//    @Column(
+//           name = "full_name",
+//           nullable=false
+//    )
+//    private String fullName;
+
     @Column(
-           name = "full_name",
-           nullable=false
+            name = "first_name",
+            nullable=false
     )
-    private String fullName;
+    private String firstName;
+
+    @Column(
+            name = "last_name",
+            nullable=false
+    )
+    private String lastName;
 
     @Column(
             nullable = false,
@@ -130,7 +142,14 @@ public class User {
     @LastModifiedBy
     private String lastModifiedBy;
 
-    public User(String fullName,
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String IDseries;
+
+    public User(String firstName,
+                String lastName,
                 String username,
                 String password,
                 Role role,
@@ -146,7 +165,8 @@ public class User {
                 LocalDate dob,
                 Integer age,
                 boolean verified) {
-        this.fullName = fullName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.password = password;
         this.role = role;
