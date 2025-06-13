@@ -103,7 +103,13 @@ public class DocumentOcrService {
         doc.setLastName(MrzUtils.extractLastName(IDtext));
         doc.setFirstName(MrzUtils.extractFirstName(IDtext));
         doc.setSeries(IDtext.substring(37, 45));
-        doc.setSex(IDtext.substring(57, 58));
+
+        if(IDtext.substring(57, 58).equals("M")) {
+            doc.setSex("Male");
+        } else {
+            doc.setSex("Female");
+        }
+//        doc.setSex(IDtext.substring(57, 58));
 
         //dob
         String[] lines = IDtext.split("\\R", 2);
