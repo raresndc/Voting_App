@@ -1,6 +1,8 @@
 package com.documentsvc.service;
 
+import com.documentsvc.client.AuthUser;
 import com.documentsvc.model.Document;
+import com.documentsvc.repository.AuthUserRepository;
 import com.documentsvc.repository.DocumentRepository;
 import com.documentsvc.service.util.MrzUtils;
 import com.documentsvc.service.util.RoiExtractor;
@@ -13,6 +15,8 @@ import net.sourceforge.tess4j.Word;
 import org.opencv.core.Mat;
 import org.opencv.core.Size;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,13 +30,14 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.http.HttpHeaders;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class DocumentOcrService {
 
     private final PhotoExtractionService photoSvc;
     private final DocumentRepository repo;
+    private final AuthUserRepository authUserRepo;
 
     @Value("${tesseract.datapath}")
     private String tessDataPath;
@@ -138,7 +144,21 @@ public class DocumentOcrService {
             doc.setValid(false);
         }
 
+        //match info with auth
         doc.setVerifiedInfo(false);
+
+        AuthUser user = authUserRepo.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("No such user: " + username));
+
+        boolean matches =
+                user.getAge() == doc.getAge()
+                && Objects.equals(user.getCitizenship(), doc.getNationality())
+//                && user.getDateOfBirth() == doc.getDateOfBirth()
+                && Objects.equals(user.getGender(), doc.getSex())
+                && Objects.equals(user.getLastName(), doc.getLastName())
+                && Objects.equals(user.getFirstName(), doc.getFirstName())
+                && Objects.equals(user.getIdSeries(), doc.getSeries());
+        doc.setVerifiedInfo(matches);
 
         return repo.save(doc);
     }

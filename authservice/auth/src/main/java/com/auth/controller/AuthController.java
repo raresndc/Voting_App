@@ -8,6 +8,7 @@ import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.auth.service.AuthService;
 import com.auth.service.SuperAdminService;
+import com.auth.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
@@ -53,6 +55,9 @@ public class AuthController {
 
     @Autowired
     private CandidateRepository candidateRepository;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -259,5 +264,13 @@ public class AuthController {
     public ResponseEntity<?> resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
         authService.resetPassword(req);
         return ResponseEntity.ok("Your password has been reset successfully.");
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<UserInfoDto> getByUsername(@PathVariable String username) {
+        return userService.findByUsername(username)
+                .map(ResponseEntity::ok)
+                .orElseThrow(() ->
+                        new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
     }
 }
