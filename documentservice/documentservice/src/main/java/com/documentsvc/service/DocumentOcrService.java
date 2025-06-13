@@ -130,8 +130,9 @@ public class DocumentOcrService {
         doc.setIssueDate(issueDate.atStartOfDay());
         doc.setExpiryDate(expiryDate.atStartOfDay());
 
+        int age = Period.between(dob, LocalDate.now()).getYears();
         if(expiryDate.atStartOfDay().isAfter(LocalDateTime.now())
-                && issueDate.atStartOfDay().isBefore(LocalDateTime.now())) {
+                && issueDate.atStartOfDay().isBefore(LocalDateTime.now()) && age >= 18) {
             doc.setValid(true);
         } else {
             doc.setValid(false);
