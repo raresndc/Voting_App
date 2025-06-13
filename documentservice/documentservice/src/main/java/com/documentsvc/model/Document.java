@@ -41,6 +41,6 @@ public class Document {
     private LocalDateTime expiryDate;
     private LocalDateTime issueDate;
     private LocalDate dateOfBirth;
-
+    private int age;
     private boolean verifiedInfo;
 }

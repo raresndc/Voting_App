@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -103,13 +104,12 @@ public class DocumentOcrService {
         doc.setLastName(MrzUtils.extractLastName(IDtext));
         doc.setFirstName(MrzUtils.extractFirstName(IDtext));
         doc.setSeries(IDtext.substring(37, 45));
-
-        if(IDtext.substring(57, 58).equals("M")) {
-            doc.setSex("Male");
-        } else {
-            doc.setSex("Female");
-        }
-//        doc.setSex(IDtext.substring(57, 58));
+        doc.setSex(IDtext.substring(57, 58));
+//        if(IDtext.substring(57, 58).equals("M")) {
+//            doc.setSex("Male");
+//        } else {
+//            doc.setSex("Female");
+//        }
 
         //dob
         String[] lines = IDtext.split("\\R", 2);
@@ -119,6 +119,7 @@ public class DocumentOcrService {
         String line2 = lines[1];
         LocalDate dob = MrzUtils.parseDobFromMrz2(line2);
         doc.setDateOfBirth(LocalDate.from(dob.atStartOfDay()));
+        doc.setAge(Period.between(dob, LocalDate.now()).getYears());
 
         //valid
         String dateText = MrzUtils.tailChars(ocrText, 94);
