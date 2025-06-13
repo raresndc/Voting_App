@@ -26,18 +26,9 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.http.HttpHeaders;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +87,11 @@ public class DocumentOcrService {
     }
 
     public Document saveOcr(MultipartFile file, String ocrText, String username) throws IOException {
-        Document doc = new Document();
+
+        Document doc = repo
+                .findTopByUploadedByOrderByUploadedAtDesc(username)
+                .orElseGet(Document::new);
+
         doc.setFilename(file.getOriginalFilename());
         doc.setContentType(file.getContentType());
         doc.setData(file.getBytes());
