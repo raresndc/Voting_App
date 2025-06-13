@@ -70,6 +70,14 @@ public class AuthController {
         return ResponseEntity.ok("Candidate registered successfully! Status: pending account");
     }
 
+//    @PreAuthorize("hasRole('SUPER_USER') or hasRole('SUPER_ADMIN')")
+//    @PostMapping("/register-candidate")
+//    public ResponseEntity<String> registerCandidate(@RequestBody @Valid RegisterCandidateRequest request) {
+//
+//        authService.registerCandidate(request);
+//        return ResponseEntity.ok("Candidate registered successfully! Status: pending account");
+//    }
+
     @PostMapping("/login-super-admin")
     public ResponseEntity<?> loginSuperAdmin(
             @Valid @RequestBody SuperAdminLoginRequest req

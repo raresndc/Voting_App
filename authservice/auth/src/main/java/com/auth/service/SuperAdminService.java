@@ -20,7 +20,7 @@ import java.util.Optional;
 public class SuperAdminService {
     private final UserRepository userRepo;
     private final SuperAdminRepository superAdminRepo;
-    private final PasswordEncoder hasher;     // Argon2id or bcrypt adapter
+    private final PasswordEncoder hasher;
     private final SecureRandom rng;
 
     @Autowired
@@ -59,6 +59,7 @@ public class SuperAdminService {
         sa.setEmail(req.getEmail());
         sa.setSecretKeyHash(secretHash);
         sa.setAuditLevel(req.getAuditLevel());
+        sa.setRole(superAdminRole);
         superAdminRepo.save(sa);
 
         // 5) Return the ONE-TIME secret for admin to record

@@ -32,4 +32,11 @@ public class SuperAdmin {
     @Column(name = "email", nullable = false)
     private String email;
 
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(
+            name = "role_id",
+            referencedColumnName = "id"
+    )
+    private Role role;
+
 }
