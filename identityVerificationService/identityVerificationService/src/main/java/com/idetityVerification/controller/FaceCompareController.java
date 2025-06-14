@@ -1,5 +1,6 @@
 package com.idetityVerification.controller;
 
+import com.idetityVerification.dto.FaceComparisonResult;
 import com.idetityVerification.service.FaceComparisonService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,16 +29,10 @@ public class FaceCompareController {
      * Higher threshold = more lenient matching.
      */
     @GetMapping("/{userId}")
-    public ResponseEntity<Map<String, Object>> compare(
+    public FaceComparisonResult compare(
             @PathVariable String userId,
-            @RequestParam(value = "threshold", required = false) Double threshold
-    ) throws IOException {
-        double effectiveThreshold = threshold != null ? threshold : defaultThreshold;
-        boolean match = comparisonService.isSamePerson(userId, effectiveThreshold);
-        return ResponseEntity.ok(Map.of(
-                "userId", userId,
-                "match",  match,
-                "threshold", effectiveThreshold
-        ));
+            @RequestParam(defaultValue = "100") double threshold
+    ) {
+        return comparisonService.compare(userId, threshold);
     }
 }

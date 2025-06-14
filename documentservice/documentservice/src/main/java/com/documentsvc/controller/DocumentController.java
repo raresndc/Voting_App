@@ -30,7 +30,7 @@ public class DocumentController {
     private final DocumentOcrService ocrService;
     private final PhotoExtractionService photoSvc;
 
-    // Upload PDF
+    // Upload PDF -> not good
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public Document upload(
             Authentication auth,
