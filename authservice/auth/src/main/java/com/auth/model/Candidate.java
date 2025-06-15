@@ -107,10 +107,9 @@ public class Candidate {
     @LastModifiedBy
     private String lastModifiedBy;
 
-    @Column(
-            name = "political_party"
-    )
-    private String politicalParty;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "political_party_id")
+    private PoliticalParty politicalParty;
 
     @Column(
             name = "votes",

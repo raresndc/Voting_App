@@ -2,16 +2,15 @@ package com.auth.service;
 
 import com.auth.audit.dto.Auditable;
 import com.auth.dto.*;
-import com.auth.model.Candidate;
-import com.auth.model.PasswordResetToken;
-import com.auth.model.Role;
-import com.auth.model.User;
+import com.auth.model.*;
 import com.auth.repository.CandidateRepository;
+import com.auth.repository.PoliticalPartyRepository;
 import com.auth.repository.RoleRepository;
 import com.auth.repository.UserRepository;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.GoogleAuthenticatorQRGenerator;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +44,7 @@ public class AuthService {
     private final EmailService emailService;
     private final RoleRepository roleRepository;
     private final CandidateRepository candidateRepository;
+    private final PoliticalPartyRepository partyRepo;
     private final GoogleAuthenticator gAuth = new GoogleAuthenticator();
 
     @Value("${app.jwt.reset-expiration-ms}")
@@ -133,6 +133,10 @@ public class AuthService {
         Role candidateRole = roleRepository.findByName("ROLE_CANDIDATE")
                 .orElseThrow(() -> new RuntimeException("Candidate role not found"));
 
+        PoliticalParty party = partyRepo.findById(registerRequest.getPoliticalPartyId())
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "No political party with id=" + registerRequest.getPoliticalPartyId()));
+
         Candidate candidate = Candidate.builder()
                 .firstName(registerRequest.getFirstName().toUpperCase())
                 .lastName(registerRequest.getLastName().toUpperCase())
@@ -145,7 +149,7 @@ public class AuthService {
                 .age(registerRequest.getAge())
                 .role(candidateRole)
                 .IDseries(registerRequest.getIDseries())
-                .politicalParty(registerRequest.getPoliticalParty())
+                .politicalParty(party)
                 .verified(false)
                 .votes(0L)
                 .build();

@@ -2,9 +2,11 @@ package com.auth.controller;
 
 import com.auth.dto.*;
 import com.auth.model.Role;
+import com.auth.model.SuperUser;
 import com.auth.model.User;
 import com.auth.repository.CandidateRepository;
 import com.auth.repository.RoleRepository;
+import com.auth.repository.SuperUserRepository;
 import com.auth.repository.UserRepository;
 import com.auth.service.AuthService;
 import com.auth.service.SuperAdminService;
@@ -58,6 +60,9 @@ public class AuthController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private SuperUserRepository superUserRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -206,14 +211,45 @@ public class AuthController {
         ));
     }
 
-    @PostMapping("/2fa/auth")
-    public ResponseEntity<TokenPair> loginWith2fa(@RequestBody TwoFaLoginRequest req) {
-        TokenPair tokens = authService.loginWith2FA(
-                req.getUsername(),
-                req.getPassword(),
-                req.getCode()
-        );
-        return ResponseEntity.ok(tokens);
+    @PostMapping("/login-super-user")
+    public ResponseEntity<?> loginSuperUser(
+            @Valid @RequestBody LoginRequest req) {
+        // 1) Lookup the SuperUser entity
+        SuperUser su = superUserRepository.findByUsername(req.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Super-user not found"));
+
+        // 2) Check password yourself
+        if (!passwordEncoder.matches(req.getPassword(), su.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Invalid credentials"));
+        }
+
+        // 3) Build a Spring Security principal
+        GrantedAuthority authRole = new SimpleGrantedAuthority(su.getRole().getName());
+        UserDetails principal = org.springframework.security.core.userdetails.User
+                .withUsername(su.getUsername())
+                .password(su.getPassword())
+                .authorities(authRole)
+                .accountExpired(false)
+                .accountLocked(false)
+                .credentialsExpired(false)
+                .build();
+
+        // 4) Populate the SecurityContext
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                principal, null, principal.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+
+        // 5) Issue tokens
+        TokenPair tokens = authService.issueTokenPair(auth);
+
+        // 6) Return the same map shape as your other logins
+        return ResponseEntity.ok(Map.of(
+                "accessToken",  tokens.getAccessToken(),
+                "refreshToken", tokens.getRefreshToken(),
+                "username",     su.getUsername(),
+                "role",         su.getRole().getName()
+        ));
     }
 
     @PostMapping("/refresh-token")
