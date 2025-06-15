@@ -39,4 +39,8 @@ public class CandidateService {
     public List<Candidate> listCandidates() {
         return candidateRepo.findAll();
     }
+
+    public List<Candidate> listByPoliticalPartyId(Long partyId) {
+        return candidateRepo.findByPoliticalPartyId(partyId);
+    }
 }

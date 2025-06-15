@@ -19,4 +19,6 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
 
     List<Candidate> findByPoliticalParty(PoliticalParty politicalParty);
     Boolean existsByPoliticalParty(PoliticalParty politicalParty);
+
+    List<Candidate> findByPoliticalPartyId(Long partyId);
 }
