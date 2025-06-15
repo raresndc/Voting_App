@@ -1,5 +1,6 @@
 package com.auth.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 @Builder
 @Getter
 @Setter
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class PoliticalParty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

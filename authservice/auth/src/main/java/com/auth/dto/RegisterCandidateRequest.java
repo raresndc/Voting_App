@@ -47,6 +47,6 @@ public class RegisterCandidateRequest {
 
     private String IDseries;
 
-    @NotBlank(message = "Political party is required")
+    @NotNull(message = "Political party is required")
     private Long politicalPartyId;
 }
