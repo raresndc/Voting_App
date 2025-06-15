@@ -35,4 +35,8 @@ public class CandidateService {
                 .orElseThrow(() -> new UsernameNotFoundException("No such super-user"));
         return candidateRepo.findByPoliticalParty(su.getPoliticalParty());
     }
+
+    public List<Candidate> listCandidates() {
+        return candidateRepo.findAll();
+    }
 }
