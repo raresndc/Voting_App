@@ -11,10 +11,14 @@ import com.auth.service.JwtService;
 import com.auth.service.RsaBlindSignatureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigInteger;
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.RSAPublicKeySpec;
 import java.util.Base64;
 
 @RestController
@@ -85,5 +89,20 @@ public class VoteController {
         tokenRepo.save(placeholder);
 
         return new SignedToken(placeholder.getEvuid(), signatureBase64);
+    }
+
+    @GetMapping("/publicKey")
+    public ResponseEntity<String> publicKeyPem() throws Exception {
+        BigInteger n = blindService.getModulus();
+        BigInteger e = BigInteger.valueOf(65537);
+        RSAPublicKeySpec spec = new RSAPublicKeySpec(n, e);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        PublicKey pub = kf.generatePublic(spec);
+
+        String pem = "-----BEGIN PUBLIC KEY-----\n"
+                + Base64.getMimeEncoder(64, "\n".getBytes())
+                .encodeToString(pub.getEncoded())
+                + "\n-----END PUBLIC KEY-----\n";
+        return ResponseEntity.ok(pem);
     }
 }

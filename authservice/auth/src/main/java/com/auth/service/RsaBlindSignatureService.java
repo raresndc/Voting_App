@@ -1,5 +1,6 @@
 package com.auth.service;
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -7,6 +8,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 @Service
+@Getter
 public class RsaBlindSignatureService {
 
     private final BigInteger privateExponent;
