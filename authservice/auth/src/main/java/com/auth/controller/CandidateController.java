@@ -3,6 +3,7 @@ package com.auth.controller;
 import com.auth.model.Candidate;
 import com.auth.service.CandidateService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,13 +15,14 @@ public class CandidateController {
     @Autowired
     private CandidateService candidateService;
 
-    @PostMapping("{id}/vote")
+    @PostMapping("/{id}/vote")
     public String voteForCandidate(@PathVariable String username) {
         candidateService.voteForCandidate(username);
         return "Vote cast successfully!";
     }
 
-    @GetMapping("/getAllCandidates")
+    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+    @GetMapping
     public List<Candidate> getAllCandidates() {
         return candidateService.listCandidates();
     }
