@@ -1,54 +1,85 @@
 "use strict";
-// src/VotingContract.ts
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.VotingContract = void 0;
 const fabric_contract_api_1 = require("fabric-contract-api");
-let VotingContract = class VotingContract extends fabric_contract_api_1.Contract {
-    async castVote(ctx, voteId, candidate) {
-        const exists = await ctx.stub.getState(voteId);
-        if (exists && exists.length) {
-            throw new Error(`Vote ${voteId} already recorded`);
-        }
-        const record = { candidate };
-        await ctx.stub.putState(voteId, Buffer.from(JSON.stringify(record)));
+const fs = __importStar(require("fs"));
+const crypto_1 = require("crypto");
+class VotingContract extends fabric_contract_api_1.Contract {
+    constructor() {
+        super(...arguments);
+        // Load the Auth service public key once
+        this.pubKey = (0, crypto_1.createPublicKey)(fs.readFileSync('crypto/auth_public.pem', 'utf8'));
     }
+    /**
+     * castVote
+     * @param ctx Fabric transaction context
+     * @param token The cleartext vote token (m) issued by Auth
+     * @param candidate The candidate name to vote for
+     * @param signature The Base64-encoded RSA signature (s) over the token
+     */
+    async castVote(ctx, token, candidate, signature) {
+        // 1) Verify the RSA signature using SHA-256 + PKCS#1 v1.5 padding
+        const valid = (0, crypto_1.verify)(null, // default = SHA256+RSA
+        Buffer.from(token, 'utf8'), this.pubKey, Buffer.from(signature, 'base64'));
+        if (!valid) {
+            throw new Error('❌ Invalid vote token signature');
+        }
+        // 2) Validate candidate against your known list
+        const cands = JSON.parse(fs.readFileSync('config/candidates.json', 'utf8'));
+        if (!cands.includes(candidate)) {
+            throw new Error(`❌ Unknown candidate: ${candidate}`);
+        }
+        // 3) Prevent replay by ensuring this token hasn’t been used
+        const existing = await ctx.stub.getState(token);
+        if (existing && existing.length > 0) {
+            throw new Error('❌ Token already used');
+        }
+        // 4) Record the vote: key = token, value = candidate
+        await ctx.stub.putState(token, Buffer.from(candidate, 'utf8'));
+    }
+    /**
+     * tallyAll
+     * @param ctx Fabric transaction context
+     * @returns A JSON string mapping candidate names to vote counts
+     */
     async tallyAll(ctx) {
         const iterator = await ctx.stub.getStateByRange('', '');
-        const counts = {};
-        // manual iteration instead of `for await…of`
+        const results = {};
+        // Iterate through all entries
         let res = await iterator.next();
         while (!res.done) {
-            const { candidate } = JSON.parse(res.value.value.toString());
-            counts[candidate] = (counts[candidate] || 0) + 1;
+            if (res.value && res.value.value) {
+                // Convert the stored Uint8Array to string using Buffer
+                const candidateName = Buffer.from(res.value.value).toString('utf8');
+                results[candidateName] = (results[candidateName] || 0) + 1;
+            }
             res = await iterator.next();
         }
         await iterator.close();
-        return JSON.stringify(counts);
+        return JSON.stringify(results);
     }
-};
-__decorate([
-    (0, fabric_contract_api_1.Transaction)(true),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [fabric_contract_api_1.Context, String, String]),
-    __metadata("design:returntype", Promise)
-], VotingContract.prototype, "castVote", null);
-__decorate([
-    (0, fabric_contract_api_1.Transaction)(false),
-    (0, fabric_contract_api_1.Returns)('string'),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [fabric_contract_api_1.Context]),
-    __metadata("design:returntype", Promise)
-], VotingContract.prototype, "tallyAll", null);
-VotingContract = __decorate([
-    (0, fabric_contract_api_1.Info)({ title: 'VotingContract', description: 'Anonymously cast and tally votes' })
-], VotingContract);
+}
 exports.VotingContract = VotingContract;

@@ -2,17 +2,17 @@
   "name": "chaincode-voting",
   "version": "1.0.0",
   "type": "commonjs",
+  "main": "dist/VotingContract.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node src/dist/VotingContract.js"
+  },
   "dependencies": {
     "fabric-contract-api": "^2.5.8",
     "fabric-shim": "^2.5.8"
   },
-  "scripts": {
-    "build" : "tsc",
-    "start" : "node dist/VotingContract.js"
-  },
   "devDependencies": {
     "typescript": "^4.x",
-    "ts-node": "^10.x",
     "@types/node": "^18.x"
   }
 }
