@@ -1,0 +1,9 @@
+PeerOrgs:
+  - Name: Org1
+    Domain: org1.example.com
+    Specs:
+      - Hostname: orderer0.orderer-group
+    Template:
+      Count: 2
+    Users:
+      Count: 1

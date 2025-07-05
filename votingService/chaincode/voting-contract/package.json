@@ -1,0 +1,14 @@
+{
+    "name": "voting-contract",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+      "build": "echo \"No build step required\"",
+      "start": "fabric-chaincode-node start"
+    },
+    "dependencies": {
+      "fabric-contract-api": "^2.5.4",
+      "fabric-shim":        "^2.5.4"
+    }
+  }
+  
