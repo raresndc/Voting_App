@@ -1,46 +1,74 @@
 package com.voting.votingService.service;
 
+import com.voting.votingService.domain.VoteToken;
+import com.voting.votingService.domain.VoteTokenRepository;
 import com.voting.votingService.domain.Candidate;
 import com.voting.votingService.domain.CandidateRepository;
 import com.voting.votingService.security.SignatureService;
 import org.hyperledger.fabric.gateway.Contract;
-import org.hyperledger.fabric.gateway.ContractException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Base64;
 
 @Service
 public class VotingService {
     private final Contract contract;
-    private final CandidateRepository repo;
+    private final CandidateRepository candidateRepo;
+    private final VoteTokenRepository tokenRepo;
     private final SignatureService sigSvc;
 
     public VotingService(Contract contract,
-                         CandidateRepository repo,
+                         CandidateRepository candidateRepo,
+                         VoteTokenRepository tokenRepo,
                          SignatureService sigSvc) {
         this.contract = contract;
-        this.repo     = repo;
-        this.sigSvc   = sigSvc;
+        this.candidateRepo = candidateRepo;
+        this.tokenRepo = tokenRepo;
+        this.sigSvc = sigSvc;
     }
 
-    public boolean hasVoted(String evuid) throws ContractException {
-        byte[] res = contract.evaluateTransaction("HasVoted", evuid);
-        return Boolean.parseBoolean(new String(res));
+    /** Returns true if this token has already been used */
+    public boolean hasVoted(String evuid) {
+        return tokenRepo.findByEvuid(evuid)
+                .map(VoteToken::getUsed)
+                .orElse(false);
     }
 
+    /**
+     * Verifies the blind signature, marks the token used, then
+     * records the vote on Fabric and updates the vote count locally.
+     */
     @Transactional
     public void castVote(String evuid, String candidateId, byte[] signature) throws Exception {
-        if (!sigSvc.verify(evuid.getBytes(), signature))
-            throw new SecurityException("Invalid signature");
+        VoteToken token = tokenRepo.findByEvuid(evuid)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token ID"));
 
+        if (Boolean.TRUE.equals(token.getUsed())) {
+            throw new IllegalStateException("This token has already been used");
+        }
+
+        // 1) Verify the signature over the raw VUID bytes
+        byte[] rawVuid = Base64.getDecoder().decode(evuid);
+        if (!sigSvc.verify(rawVuid, signature)) {
+            throw new SecurityException("Signature verification failed");
+        }
+
+        // 2) Mark token used
+        token.setUsed(true);
+        tokenRepo.save(token);
+
+        // 3) Submit to Fabric
         contract.submitTransaction("CastVote", evuid, candidateId);
 
-        Candidate c = repo.findById(Long.valueOf(candidateId))
+        // 4) Update local count
+        Candidate c = candidateRepo.findById(Long.valueOf(candidateId))
                 .orElseThrow(() -> new IllegalArgumentException("Unknown candidate"));
         c.setVotes(c.getVotes() + 1);
-        repo.save(c);
+        candidateRepo.save(c);
     }
 
-    public long getVoteCount(String candidateId) throws ContractException {
+    public long getVoteCount(String candidateId) throws Exception {
         byte[] res = contract.evaluateTransaction("GetVoteCount", candidateId);
         return Long.parseLong(new String(res));
     }

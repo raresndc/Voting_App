@@ -16,8 +16,8 @@ public class VotingController {
         this.svc = svc;
     }
 
-    @GetMapping("/hasVoted/{evuid}")
-    public boolean hasVoted(@PathVariable String evuid) throws Exception {
+    @GetMapping("/hasVoted")
+    public boolean hasVoted(@RequestParam String evuid) {
         return svc.hasVoted(evuid);
     }
 
