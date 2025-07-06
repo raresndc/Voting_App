@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/auth_db
+    username: postgres
+    password: "!Aa123456"
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+fabric:
+  networkConfig: classpath:connection-profile-org1.yaml
+  certPath: classpath:identity/Admin@org1.example.com-cert.pem
+  keyPath: classpath:identity/priv-key.pem
+  user: Admin@org1.example.com
+  channel: voting-channel
+  chaincode: voting-contract
+
+evoting:
+  publicKeyPath: classpath:auth_public.pem
+
+management:
+  metrics:
+    export:
+      otlp:
+        enabled: false
+  tracing:
+    enabled: false
+
