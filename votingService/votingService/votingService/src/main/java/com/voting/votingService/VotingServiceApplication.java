@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class VotingServiceApplication {
 
 	public static void main(String[] args) {
+		DotenvLoader.loadEnv();
+
 		SpringApplication.run(VotingServiceApplication.class, args);
 	}
 
