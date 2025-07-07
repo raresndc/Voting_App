@@ -303,8 +303,8 @@ export default function HomePage() {
         <div className="absolute inset-0 h-full w-full " />
       </div>
 
-      {GlobalState.role !== ACCOUNT_TYPES.GUEST &&
-      GlobalState.role !== ACCOUNT_TYPES.USER &&
+      {GlobalState.role !== ACCOUNT_TYPES.ROLE_CANDIDATE &&
+      GlobalState.role !== ACCOUNT_TYPES.ROLE_USER &&
       GlobalState.role !== ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI ? (
         <>
           {entity?.content?.map((router, key) => {
@@ -425,7 +425,7 @@ export const projectsData = [
     img: <ServerIcon className="h-full w-full object-cover" />,
     title: "Routers",
     route: "/dashboard/router",
-    privileges: [ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.SUPER_USER],
+    privileges: [ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.SUPER_USER],
   },
   {
     img: <UserCircleIcon className="h-full w-full object-cover" />,
@@ -433,10 +433,10 @@ export const projectsData = [
     route: "/dashboard/profile",
     privileges: [
       ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI,
-      ACCOUNT_TYPES.GUEST,
-      ACCOUNT_TYPES.SISTEM_ADMIN,
+      ACCOUNT_TYPES.ROLE_CANDIDATE,
+      ACCOUNT_TYPES.ROLE_SUPER_ADMIN,
       ACCOUNT_TYPES.SUPER_USER,
-      ACCOUNT_TYPES.USER,
+      ACCOUNT_TYPES.ROLE_USER,
     ],
   },
 
@@ -446,10 +446,10 @@ export const projectsData = [
     route: "/dashboard/map",
     privileges: [
       ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI,
-      ACCOUNT_TYPES.GUEST,
-      ACCOUNT_TYPES.SISTEM_ADMIN,
+      ACCOUNT_TYPES.ROLE_CANDIDATE,
+      ACCOUNT_TYPES.ROLE_SUPER_ADMIN,
       ACCOUNT_TYPES.SUPER_USER,
-      ACCOUNT_TYPES.USER,
+      ACCOUNT_TYPES.ROLE_USER,
     ],
   },
 
@@ -460,7 +460,7 @@ export const projectsData = [
     privileges: [
       ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI,
       // ACCOUNT_TYPES.GUEST,
-      ACCOUNT_TYPES.SISTEM_ADMIN,
+      ACCOUNT_TYPES.ROLE_SUPER_ADMIN,
       ACCOUNT_TYPES.SUPER_USER,
       // ACCOUNT_TYPES.USER
     ],

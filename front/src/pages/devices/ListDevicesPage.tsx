@@ -203,8 +203,8 @@ export default function ListDevicesPage() {
 
         <CardBody className="overflow-x-scroll px-0 pt-0 pb-2">
           <Link to="/dashboard/add-doctor">
-            {GlobalState.role !== ACCOUNT_TYPES.GUEST &&
-            GlobalState.role !== ACCOUNT_TYPES.USER ? (
+            {GlobalState.role !== ACCOUNT_TYPES.ROLE_CANDIDATE &&
+            GlobalState.role !== ACCOUNT_TYPES.ROLE_USER ? (
               <>
                 <Button
                   variant="text"
@@ -338,8 +338,8 @@ export default function ListDevicesPage() {
                         </Tooltip>
                       </Link>
 
-                      {GlobalState.role !== ACCOUNT_TYPES.SISTEM_ADMIN &&
-                      GlobalState.role !== ACCOUNT_TYPES.USER ? (
+                      {GlobalState.role !== ACCOUNT_TYPES.ROLE_SUPER_ADMIN &&
+                      GlobalState.role !== ACCOUNT_TYPES.ROLE_USER ? (
                         <>
                           <Link to={`/dashboard/modify-doctor/${device.id}`}>
                             <Tooltip content="Edit">
@@ -356,8 +356,8 @@ export default function ListDevicesPage() {
                         ""
                       )}
 
-                      {GlobalState.role !== ACCOUNT_TYPES.GUEST &&
-                      GlobalState.role !== ACCOUNT_TYPES.USER ? (
+                      {GlobalState.role !== ACCOUNT_TYPES.ROLE_CANDIDATE &&
+                      GlobalState.role !== ACCOUNT_TYPES.ROLE_USER ? (
                         <>
                           <Tooltip content="Delete">
                             <button

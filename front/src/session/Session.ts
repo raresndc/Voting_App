@@ -3,6 +3,10 @@ import GlobalState from "./GlobalState.ts";
 import { post } from "./HttpRequest.ts";
 
 export const BACKEND_URL = process.env.REACT_APP_BACKEND;
+export const AUTH_BACKEND_URL = process.env.REACT_APP_AUTH;
+export const DOCUMENT_BACKEND_URL = process.env.REACT_APP_DOCUMENT;
+export const IDENTITY_BACKEND_URL = process.env.REACT_APP_IDENTITY;
+
 
 export function isAuthenticated() : boolean {
 
@@ -34,7 +38,10 @@ export async function login(username: string, password: string) {
         password: password
     });
 
-    let response = await post(body, BACKEND_URL + "/login");
+    let response = await post(body, AUTH_BACKEND_URL + "/api/auth/login");
+    const role = response.role;
+    Cookies.set('username', username);
+    Cookies.set('role', role);
     readSessionFromCookies();
     return response;
 }
@@ -45,22 +52,20 @@ export async function forgot(username: string) {
         username: username
     });
 
-    let response = await post(body, BACKEND_URL + "/forgotPassword");
+    let response = await post(body, AUTH_BACKEND_URL + "/forgotPassword");
     return response;
 }
 
 export async function checkToken() {
 
-    let response = await post(undefined, BACKEND_URL + "/autorizeUsers");
+    let response = await post(undefined, AUTH_BACKEND_URL + "/autorizeUsers");
 
     return response;
 }
 
 export async function logout() {
-    let response = await post(undefined, BACKEND_URL + "/logoutUser");
+    let response = await post(undefined, AUTH_BACKEND_URL + "/logoutUser");
     deleteCookies();
     GlobalState.navigate("/sign-in")
     return response;
 }
-
-//TODO de facut error server page

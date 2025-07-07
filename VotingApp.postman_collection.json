@@ -10,96 +10,110 @@
 			"name": "authService",
 			"item": [
 				{
-					"name": "getAllProducts",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NTk0MDI2NywiZXhwIjoxNzQ1OTQwMjc3fQ.0paIle6-yRiEKDNybgPev6Q7IceQtxxRzBcJZ373Zvo",
-									"type": "string"
+					"name": "rsa",
+					"item": [
+						{
+							"name": "generateEvuid",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"username\": \"raresndc\",\r\n    \"password\": \"!Aa123456\" \r\n}"
+								},
+								"url": {
+									"raw": "localhost:8080/vote/generate",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"vote",
+										"generate"
+									]
 								}
-							]
+							},
+							"response": []
 						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
+						{
+							"name": "getChallenge",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kY19VU0VSIiwiaWF0IjoxNzUxODgyODcwLCJleHAiOjE3NTE4ODY0NzB9.7MCZUCq6hP1tsdNbYUWXG0FtHGBOo4EKwFjCtTVlXaE",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"evuid\": \"lCtyfeWPTvm1s5rHmQLSztTCpgaE2QkPOu49vBuZAk8=\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/vote/challenge",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"vote",
+										"challenge"
+									]
 								}
-							}
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "http://localhost:8080/api/products",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"products"
-							]
+						{
+							"name": "postToken",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kY19VU0VSIiwiaWF0IjoxNzQ5NTc5NTM5LCJleHAiOjE3NDk1ODMxMzl9.JfxtjoGWz1SbcPNjCTrzuuvAdS8qW8yZnfu4YXkeCU0",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"placeholderId\": 52,\r\n    \"blindedSignature\": \"aHcw2xZTp2SNdbeYhFvS41Pb3KmUT8HAKzNnw+OmqUAc+ZJiIi0U4pnNdmmhi+QS5TI7wfBbXV5b4cMN0Xy+KiI5ugJiAlPbw2daCkB9yRb3jM+/dbdR6nbkDTcbN1nJK2+h6BlbZUaSWQJfcHf7jU1lqITd2CgEww8FLzD/080cgsImT7RFbnzIFM5LVHxiQ7RQTxiY8vwa0KmBGuxVd5MRbR5DiSVKhOU5WM9FzE+A7fg4mApSHjB+2a2Mp+hFr6tXLk4tKLFcfVwtLcn3+JjdAYpxZZROWRViMbVLjW8Je7xJyFTTsvAuuT0eHCI0nMAXezlm5sQbpcuG9/pHJw==\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/vote/token",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"vote",
+										"token"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
-				},
-				{
-					"name": "getProductById",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NTkzOTE1MywiZXhwIjoxNzQ1OTQyNzUzfQ.puUaoivoUREMIwz3MURGASTHKgAY7OsFkCfDdyGWEYc",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/products/2",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"products",
-								"2"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "1",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
+					]
 				},
 				{
 					"name": "saveProduct",
@@ -230,23 +244,13 @@
 					"response": []
 				},
 				{
-					"name": "updateProduct",
+					"name": "login superUser",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NTkzOTE1MywiZXhwIjoxNzQ1OTQyNzUzfQ.puUaoivoUREMIwz3MURGASTHKgAY7OsFkCfDdyGWEYc",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PUT",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"iPhone\",\r\n    \"price\":550\r\n}",
+							"raw": "{\r\n    \"username\": \"raresndc\",\r\n    \"password\": \"!Aa123456\" \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -254,38 +258,28 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:8080/api/products/2",
+							"raw": "localhost:8080/api/auth/login",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"products",
-								"2"
+								"auth",
+								"login"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "deleteProduct",
+					"name": "loginSuperAdmin",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0dXNlciIsImlhdCI6MTc0NTkzOTE1MywiZXhwIjoxNzQ1OTQyNzUzfQ.puUaoivoUREMIwz3MURGASTHKgAY7OsFkCfDdyGWEYc",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
+						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\r\n    \"username\": \"raresndc\",\r\n    \"password\": \"!Aa123456\" \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -293,23 +287,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8080/api/products/3",
-							"protocol": "http",
+							"raw": "localhost:8080/api/auth/login",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"api",
-								"products",
-								"3"
-							],
-							"query": [
-								{
-									"key": "id",
-									"value": "3",
-									"disabled": true
-								}
+								"auth",
+								"login"
 							]
 						}
 					},
@@ -551,6 +537,106 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NzIzNTcwMiwiZXhwIjoxNzQ3MjM5MzAyfQ.D3BvVNT8WDpmx-RvdnSJ5d_ogCq4an6uxI341h1k0TQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"refreshToken\":\"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsInRva2VuVHlwZSI6InJlZnJlc2giLCJpYXQiOjE3NDcyMzU3MDIsImV4cCI6MTc0NzMyMjEwMn0.NBQSBi5dmBGOvVGzw070SXYp389iSk4sJo3dbEZ7uhU\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/api/auth/logout",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgot-password",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get PublicKey",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kY19VU0VSIiwiaWF0IjoxNzQ5NTc4NzkzLCJleHAiOjE3NDk1ODIzOTN9.q2iqR1R3YqfPeVdR2VphRZOmKWHy-vghLQgd6Y4MD04",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\":\"raresndc_USER\",\r\n    \"verificationCode\":\"1716\"\r\n}"
+						},
+						"url": {
+							"raw": "http://localhost:8080/vote/challenge",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"vote",
+								"challenge"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getAllCandidates",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "getAllCandidates Copy",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		},
@@ -559,6 +645,45 @@
 			"item": [
 				{
 					"name": "postDocument",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kYyIsImlhdCI6MTc0NjAyODI2NywiZXhwIjoxNzQ2MDMxODY3fQ.nvlafP5mO9Tj_-sfbbJ4gc6H_piP75k4Qia1QTeFaoA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/D:/Eu/Carte de Identitate Nedelcu Mihail Rares.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:8081/api/documents",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"documents"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ocrText",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -708,6 +833,14 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "extractText",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		},
@@ -803,6 +936,121 @@
 								}
 							]
 						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "votingService",
+			"item": [
+				{
+					"name": "getTallyPerCandidate",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kY19VU0VSIiwiaWF0IjoxNzUxODg3NzU2LCJleHAiOjE3NTE4OTEzNTZ9.gcH_pyIepEiCMm0ZA-7pd5Ugazf6pIgLziMD5BbBevg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/api/votes/count/102",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"votes",
+								"count",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTallyOverall",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYXJlc25kY19VU0VSIiwiaWF0IjoxNzUxODg3NzU2LCJleHAiOjE3NTE4OTEzNTZ9.gcH_pyIepEiCMm0ZA-7pd5Ugazf6pIgLziMD5BbBevg",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8083/api/votes/count/102",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8083",
+							"path": [
+								"api",
+								"votes",
+								"count",
+								"102"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "hasVoted",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "vote",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"evuid\":       \"U390Bna/OFDGTqvXj5C+uWZAUAIqEtZDRKxeUtEU4+4=\",\r\n  \"candidateId\": \"102\",\r\n  \"signature\":   \"Azy4iN9TEC4uyyloe3CZ4R0uGPvf6Bj638Trjhj5QGsU3kxl0mTkXpGz7JeY7zVsPw3scpuaNJ42N5DsoGh5V0b3iZBwga1UWzI3pAlrc0SD7apS3973fRX3V/FeC2t0Md4ifAEII1xF4K7uJZRS5U0Mv0R3rhFDSUTkpj/Ys/h6/MfxmNcDfl8ELcp2xjKljv4U7wqGadaCJ7nQBiFRlMzeR0qrWWxA3+Q3YG/uWcX13AwIfGe6kmFhGsaAIuF9gV/UZKLDVgfR4e9bQlRb4A1sXJPnHVy6LoSktIc+U0R1FcDORx5cIgHQWHCpeFDkX6cZuerazMDWZXk1bL+8oA==\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/votes/cast",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"votes",
+								"cast"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "verify",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}

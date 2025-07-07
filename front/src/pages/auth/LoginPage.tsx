@@ -73,7 +73,7 @@ const handleBlur = (e) => {
         <p className="titleLog">Welcome back! </p>
         <p className="messageLog">Log in to continue your journey with us. </p>            
         <label>
-            <input required placeholder="" type="email" className="inputLog"
+            <input required placeholder="" /*type="email"*/ className="inputLog"
                     onChange={(e) => {setCredentials({...credentials, username: e.target.value})}}
                     onKeyPress={handleKeyPress}
                     onFocus={handleFocus}

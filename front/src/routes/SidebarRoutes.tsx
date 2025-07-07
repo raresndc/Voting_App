@@ -38,23 +38,23 @@ export const routes = [
     {
       layout: "dashboard",
       pages: [
-        {icon: <House {...icon} />,name: "Home",path: "/home",element: <HomePage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <House {...icon} />,name: "Home",path: "/home",element: <HomePage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
 
-        {icon: <IdCard {...icon} />,name: "profile",path: "/profile",element: <Profile />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <IdCard {...icon} />,name: "profile",path: "/profile",element: <Profile />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
 
         {icon: <Users {...icon} />,name: "Users",path: "/users",element: <ListUsersPage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SUPER_USER]},
         // {name: "add-user",path: "/add-user",element: <AddUserPage/>, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SISTEM_ADMIN]},
         // {name: "modify-user",path: "/modify-user/:username",element: <ModifyUserPage/>},
 
 
-        {icon: <Blocks {...icon} />,name: "Political parties",path: "/political-parties",element: <ListDeviceTypePage />, privileges: [ACCOUNT_TYPES.SUPER_USER, ACCOUNT_TYPES.SISTEM_ADMIN]},
+        {icon: <Blocks {...icon} />,name: "Political parties",path: "/political-parties",element: <ListDeviceTypePage />, privileges: [ACCOUNT_TYPES.SUPER_USER, ACCOUNT_TYPES.ROLE_SUPER_ADMIN]},
         {name: "add-device-type",path: "/add-device-type",element: <AddDeviceTypePage/>},
         {name: "modify-device-type",path: "/modify-device-type/:id",element: <ModifyDeviceTypePage/>},
         
-        {icon: <User {...icon} />,name: "Candidats",path: "/candidats",element: <ListDevicesPage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <User {...icon} />,name: "Candidats",path: "/candidats",element: <ListDevicesPage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
       
-        {icon: <ListTodo {...icon} />,name: "Vote",path: "/vote",element: <ListVotePage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
-        {icon: <ChartColumn {...icon} />,name: "Statistics",path: "/statistics",element: <VotingStatistics />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <ListTodo {...icon} />,name: "Vote",path: "/vote",element: <ListVotePage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <ChartColumn {...icon} />,name: "Statistics",path: "/statistics",element: <VotingStatistics />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
 
 
 
@@ -64,10 +64,10 @@ export const routes = [
         {name: "temperature-control-device",path: "/temperature-control-device/:id",element: <TemperatureControlCommand/>},
         {name: "temperature-alert-device",path: "/temperature-alert-device/:id",element: <TemperatureAlert/>},
         {name: "oprire-pornire-programata-device",path: "/oprire-pornire-programata-device/:id",element: <DelayControl/>},
-        {icon: <ShieldQuestion {...icon} />,name: "Audit",path: "/audit",element: <ListAuditPage />, privileges: [ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.SUPER_USER]},
-        {icon: <FileUp {...icon} />,name: "Doc Upload",path: "/add-doc",element: <AddUserDocument />, privileges: [ ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <ShieldQuestion {...icon} />,name: "Audit",path: "/audit",element: <ListAuditPage />, privileges: [ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <FileUp {...icon} />,name: "Doc Upload",path: "/add-doc",element: <AddUserDocument />, privileges: [ ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
 
-        {icon: <Network {...icon} />,name: "Network",path: "/network",element: <ListRoutersPage />, privileges: [ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <Network {...icon} />,name: "Network",path: "/network",element: <ListRoutersPage />, privileges: [ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.SUPER_USER]},
         {name: "add-device",path: "/add-router",element: <AddRouterPage/>},
         {name: "modify-device",path: "/modify-router/:id",element: <ModifyRouterPage/>},
 
@@ -75,7 +75,7 @@ export const routes = [
 
 
         {icon: <Loader {...icon} />,name: "Pending Accounts",path: "/pending-accounts",element: <ListMedicalInfoPage />, privileges: [ ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SUPER_USER]},
-        {icon: <MapPinned {...icon} />,name: "physical voting locations",path: "/map",element: <MapPage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.SISTEM_ADMIN, ACCOUNT_TYPES.GUEST, ACCOUNT_TYPES.USER, ACCOUNT_TYPES.SUPER_USER]},
+        {icon: <MapPinned {...icon} />,name: "physical voting locations",path: "/map",element: <MapPage />, privileges: [ACCOUNT_TYPES.ADMINISTRATOR_UTILIZATORI, ACCOUNT_TYPES.ROLE_SUPER_ADMIN, ACCOUNT_TYPES.ROLE_CANDIDATE, ACCOUNT_TYPES.ROLE_USER, ACCOUNT_TYPES.SUPER_USER]},
         
       ],
     }
