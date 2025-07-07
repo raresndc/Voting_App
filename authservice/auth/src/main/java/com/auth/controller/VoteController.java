@@ -1,8 +1,6 @@
 package com.auth.controller;
 
-import com.auth.dto.BlindChallenge;
-import com.auth.dto.SignedToken;
-import com.auth.dto.UnblindRequest;
+import com.auth.dto.*;
 import com.auth.model.User;
 import com.auth.model.VoteToken;
 import com.auth.repository.UserRepository;
@@ -41,55 +39,80 @@ public class VoteController {
         this.jwtService = jwtService;
     }
 
-    @GetMapping("/challenge")
-    public BlindChallenge getBlindChallenge(@RequestHeader("Authorization") String jwt) {
-        // 1. Verify JWT & 2FA via your existing filter chain
-        User user = jwtService.extractUser(jwt);
+    @PostMapping("/generate")
+    public EvuidResponse generateToken() {
+        byte[] rawVuid = blindService.generateRandomVUID();
+        String evuid   = Base64.getEncoder().encodeToString(rawVuid);
 
-        // 2. Generate the raw e-VUID
-        byte[] rawVUID = blindService.generateRandomVUID();
+        // persist a new row with used=false
+        VoteToken token = new VoteToken();
+        token.setEvuid(evuid);
+        token.setUsed(false);
+        tokenRepo.save(token);
 
-        // 3. Blind it and keep track of `r`; return blinded value and an ID to link later
-        BigInteger blinded = blindService.blind(rawVUID);
-        String blindedBase64 = Base64.getEncoder().encodeToString(blinded.toByteArray());
-
-        // 4. Persist a placeholder so we know to attach the final signature
-        VoteToken placeholder = new VoteToken();
-        placeholder.setEvuid(Base64.getEncoder().encodeToString(rawVUID));
-        placeholder.setOwner(user);
-        tokenRepo.save(placeholder);
-
-        return new BlindChallenge(placeholder.getId(), blindedBase64);
+        return new EvuidResponse(evuid);
     }
+
+    @PostMapping("/challenge")
+    public BlindChallenge getBlindChallenge(@RequestBody ChallengeRequest req) {
+        // 1) Lookup the pre‐created token
+        VoteToken token = tokenRepo.findByEvuid(req.evuid())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Token not found: " + req.evuid()
+                ));
+
+        // 2) Generate r & blind
+        byte[] rawVuid = Base64.getDecoder().decode(req.evuid());
+        BigInteger r       = blindService.generateR();
+        BigInteger blinded = blindService.blind(new BigInteger(1, rawVuid), r);
+
+        // 3) Update the existing token’s blindingFactor
+        token.setBlindingFactor(
+                Base64.getEncoder().encodeToString(r.toByteArray())
+        );
+        tokenRepo.save(token);
+
+        // 4) Return the blinded value
+        String blindedB64 = Base64.getEncoder()
+                .encodeToString(blinded.toByteArray());
+        return new BlindChallenge(req.evuid(), blindedB64);
+    }
+
 
     @PostMapping("/token")
-    public SignedToken unblindAndSign(
-            @RequestHeader("Authorization") String jwt,
-            @RequestBody UnblindRequest req) {
+    public SignedToken unblindAndSign(@RequestBody UnblindRequest req) {
+        // 1) decode the client’s blinded signature
+        BigInteger signedBlinded = new BigInteger(
+                1,
+                Base64.getDecoder().decode(req.blindedSignature())
+        );
 
-        // 1. Verify JWT & retrieve the placeholder
-        User user = jwtService.extractUser(jwt);
-        VoteToken placeholder = tokenRepo.findById(req.getPlaceholderId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        // 2) server‐side RSA sign
+        BigInteger sBlinded = blindService.signBlinded(signedBlinded);
 
-        if (!placeholder.getOwner().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-        }
+        // 3) lookup & decode r
+        VoteToken token = tokenRepo.findByEvuid(req.evuid())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "No such token: " + req.evuid()
+                ));
+        BigInteger r = new BigInteger(
+                1,
+                Base64.getDecoder().decode(token.getBlindingFactor())
+        );
 
-        // 2. Sign the blinded value stored client-side
-        BigInteger signedBlinded = new BigInteger(1, Base64.getDecoder().decode(req.getBlindedSignature()));
-        BigInteger signed = blindService.signBlinded(signedBlinded);
+        // 4) unblind
+        byte[] realSigBytes = blindService.unblind(sBlinded, r);
+        String realSigB64   = Base64.getEncoder()
+                .encodeToString(realSigBytes);
 
-        // 3. Unblind: client does this locally with `r`, but you can verify if you store `r` server-side.
-        //    (Often you let the client unblind; here we just return the raw signed bytes.)
-        String signatureBase64 = Base64.getEncoder().encodeToString(signed.toByteArray());
+        // 5) persist
+        token.setSignedToken(realSigB64);
+        tokenRepo.save(token);
 
-        // 4. Update the DB row with the real signature
-        placeholder.setSignedToken(signatureBase64);
-        tokenRepo.save(placeholder);
-
-        return new SignedToken(placeholder.getEvuid(), signatureBase64);
+        // 6) return
+        return new SignedToken(token.getEvuid(), realSigB64);
     }
+
 
     @GetMapping("/publicKey")
     public ResponseEntity<String> publicKeyPem() throws Exception {

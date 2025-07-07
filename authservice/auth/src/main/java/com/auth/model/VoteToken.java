@@ -21,13 +21,16 @@ public class VoteToken {
     @Column(nullable = false, unique = true, length = 64)
     private String evuid;       //hex/base64 of the 32-byte random ID
 
-    @Column(nullable = true, length = 512)
+    @Column(name = "signed_token", nullable = true, length = 512)
     private String signedToken;
+
+    @Column(name = "blinding_factor", length = 512, nullable = true)
+    private String blindingFactor;
 
     @Column(nullable = false)
     private Boolean used = false;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User owner;
 }
