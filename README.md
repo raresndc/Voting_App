@@ -1,7 +1,3 @@
-Absolutely! Here’s a comprehensive README in your **requested structure**, deeply enhanced to reflect everything from your four microservices—**especially the advanced features and flows of the Voting Service, including blockchain integration, privacy, and blind signatures**.
-
----
-
 # E-Voting Platform: Secure, Scalable, Modular E-Voting Using Microservices, Biometrics, and Blockchain
 
 A highly secure, scalable, and modular electronic voting platform using microservices, biometric verification, and blockchain for maximum integrity and transparency.
