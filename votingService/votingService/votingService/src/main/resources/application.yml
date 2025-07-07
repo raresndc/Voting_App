@@ -32,3 +32,7 @@ management:
 app:
   jwt:
     secret: ${APP_JWT_SECRET}
+
+rsa:
+  modulus: ${RSA_MODULUS}
+  publicExp: 65537

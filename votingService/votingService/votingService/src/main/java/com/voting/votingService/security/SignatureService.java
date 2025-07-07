@@ -5,9 +5,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.security.*;
+import java.security.interfaces.RSAPublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 
@@ -17,29 +17,54 @@ public class SignatureService {
     @Value("${evoting.publicKeyPath}")
     private Resource publicKeyResource;
 
-    private PublicKey publicKey;
+    // 1) inject the same RSA parameters your auth service uses:
+    @Value("${rsa.modulus}")
+    private String modHex;
+
+    @Value("${rsa.publicExp}")
+    private int pubExp;
+
+    private BigInteger modulus;
+    private BigInteger publicExp;
 
     @PostConstruct
     public void init() throws Exception {
-        // load the raw PEM text
-        String pem = new String(publicKeyResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
-        // strip header/footer and any whitespace
-        pem = pem
+        // decode the PEM exactly as before, so you still verify structure
+        String pem = new String(publicKeyResource.getInputStream().readAllBytes(), StandardCharsets.UTF_8)
                 .replace("-----BEGIN PUBLIC KEY-----", "")
                 .replace("-----END PUBLIC KEY-----", "")
                 .replaceAll("\\s+", "");
-        // Base64-decode
         byte[] keyBytes = Base64.getDecoder().decode(pem);
-
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        this.publicKey = kf.generatePublic(spec);
+        var kf = java.security.KeyFactory.getInstance("RSA");
+        RSAPublicKey rsaPub = (RSAPublicKey) kf.generatePublic(spec);
+
+        // build BigInteger parameters from your config
+        this.modulus   = new BigInteger(modHex, 16);
+        this.publicExp = BigInteger.valueOf(pubExp);
+
+        // sanity check: the modulus from the PEM must match the config!
+        if (!modulus.equals(rsaPub.getModulus())) {
+            throw new IllegalStateException(
+                    "Config modulus does not match PEM modulus:\n" +
+                            " config=" + modulus.toString(16) + "\n" +
+                            "   pem=" + rsaPub.getModulus().toString(16)
+            );
+        }
+
+        System.out.println("VOTE RSA MODULUS = " + modulus.toString(16));
+        System.out.println("VOTE RSA EXPONENT = " + publicExp);
     }
 
-    public boolean verify(byte[] data, byte[] signature) throws Exception {
-        Signature sig = Signature.getInstance("SHA256withRSA");
-        sig.initVerify(publicKey);
-        sig.update(data);
-        return sig.verify(signature);
+    /**
+     * Raw RSA verify: decrypt the signature via modPow(e,n) and compare to the raw message.
+     */
+    public boolean verify(byte[] data, byte[] signature) {
+        BigInteger m = new BigInteger(1, data);       // original message
+        BigInteger s = new BigInteger(1, signature);  // signature as integer
+
+        // mPrime = s^e mod n
+        BigInteger mPrime = s.modPow(publicExp, modulus);
+        return mPrime.equals(m);
     }
 }
