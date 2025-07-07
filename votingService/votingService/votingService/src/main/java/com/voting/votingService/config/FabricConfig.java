@@ -59,6 +59,7 @@ public class FabricConfig {
         return Gateway.createBuilder()
                 .identity(wallet, userName)
                 .networkConfig(networkConfig.getFile().toPath())
+                .discovery(true)
                 .connect();
     }
 
