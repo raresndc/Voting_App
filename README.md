@@ -26,7 +26,7 @@ A highly secure, scalable, and modular electronic voting platform using microser
 
 ## Architecture Overview
 
-![Architecture Overview](thesis/architectureDiagram_files/architectureDiagram.PNG)
+![Architecture Overview](thesis/architectureDiagram_files/goodArchitectureDiagram.PNG)
 
 * **Spring Boot:** Auth, Document Upload, and Identity Verification services
 * **Node.js:** Voting service (API and Fabric chaincode in Node.js)
