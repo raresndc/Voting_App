@@ -7,30 +7,45 @@ export default function Candidates() {
 
   useEffect(() => {
     async function fetchCandidates() {
-      const res = await axios.get('/api/documents/candidates');
-      setCandidates(res.data);
+      try {
+        const res = await axios.get('/api/candidates');
+        setCandidates(res.data);
+      } catch (err) {
+        console.error('Failed to fetch candidates:', err);
+      }
     }
     fetchCandidates();
   }, []);
 
   return (
-    <div>
+    <div className="p-6 text-gray-900">
       <h1 className="text-3xl font-bold mb-4">Candidates</h1>
-      <ul className="space-y-4">
-        {candidates.map(c => (
-          <li key={c.id}>
-            <Link
-              to={`/candidates/${c.id}`}
-              className="block p-4 bg-white rounded shadow hover:bg-gray-50"
-            >
-              <div className="flex items-center">
-                <img src={c.photoUrl} alt={c.name} className="h-12 w-12 rounded-full mr-4" />
-                <div>
-                  <h2 className="text-lg font-semibold">{c.name}</h2>
-                  <p className="text-gray-500">{c.partyName}</p>
-                </div>
-              </div>
-            </Link>
+      <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {candidates.map((c, idx) => (
+          <li key={idx}>
+            <div className="p-6 bg-white rounded shadow flex flex-col items-center">
+              <img
+                src={c.photo}
+                alt={`${c.firstName} ${c.lastName}`}
+                className="h-24 w-24 rounded-full mb-4 object-cover"
+              />
+              <h2 className="text-xl font-semibold mb-1">
+                {c.firstName} {c.lastName}
+              </h2>
+              <p className="text-gray-500 mb-2">{c.politicalParty}</p>
+              <p className="text-gray-600 text-sm mb-2">
+                {c.gender}, {c.age} years old
+              </p>
+              <p className="text-gray-700 text-sm mb-4 text-center">
+                {c.description}
+              </p>
+              <Link
+                to={`/candidates/${c.id || idx}`}
+                className="mt-auto text-blue-600 hover:underline"
+              >
+                View Profile
+              </Link>
+            </div>
           </li>
         ))}
       </ul>

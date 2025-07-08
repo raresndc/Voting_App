@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader } from "../components/ui/card";
+import { Card, CardContent, CardHeader } from "../components/ui/Card";
 import { Button } from "../components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
