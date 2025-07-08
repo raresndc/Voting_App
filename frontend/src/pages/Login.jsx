@@ -125,6 +125,15 @@ export default function Login() {
           Submit
         </motion.button>
       </motion.form>
+
+      <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+              className="absolute bottom-10 text-sm text-white/80 z-10"
+            >
+              <span>Made by E-Vote Team</span>
+            </motion.div>
     </div>
   );
 }
