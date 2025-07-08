@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader } from "../components/ui/Card";
 import { Button } from "../components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion } from 'framer-motion';
+import { useUser } from "../context/UserContext";
 
 const voteData = [
   { name: 'Jan', votes: 400 },
@@ -14,7 +15,9 @@ const voteData = [
 ];
 
 export default function Dashboard() {
-  const verificationStatus = 'Pending';
+  const { user } = useUser();
+
+  const verificationStatus = user?.verified ? 'Verified' : 'Pending Verification';
   const upcomingElection = '2025 General Election';
 
   return (
