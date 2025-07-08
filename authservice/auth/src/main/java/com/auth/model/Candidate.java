@@ -116,4 +116,13 @@ public class Candidate {
             nullable = false
     )
     private Long votes = 0L;  // initialize with zero votes
+
+    @Column(
+            name = "description",
+            length = 5000
+    )
+    private String description;
+
+    @Column(name = "photo")
+    private String photo;
 }

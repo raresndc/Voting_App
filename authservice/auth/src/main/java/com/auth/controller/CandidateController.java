@@ -1,5 +1,6 @@
 package com.auth.controller;
 
+import com.auth.dto.CandidateDTO;
 import com.auth.model.Candidate;
 import com.auth.model.SuperUser;
 import com.auth.repository.SuperUserRepository;
@@ -28,9 +29,9 @@ public class CandidateController {
         return "Vote cast successfully!";
     }
 
-    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
+//    @PreAuthorize("hasRole('ROLE_SUPER_ADMIN')")
     @GetMapping
-    public List<Candidate> getAllCandidates() {
+    public List<CandidateDTO> getAllCandidates() {
         return candidateService.listCandidates();
     }
 

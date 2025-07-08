@@ -1,5 +1,6 @@
 package com.auth.service;
 
+import com.auth.dto.CandidateDTO;
 import com.auth.model.Candidate;
 import com.auth.model.SuperUser;
 import com.auth.repository.CandidateRepository;
@@ -9,6 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CandidateService {
@@ -36,8 +38,23 @@ public class CandidateService {
         return candidateRepo.findByPoliticalParty(su.getPoliticalParty());
     }
 
-    public List<Candidate> listCandidates() {
-        return candidateRepo.findAll();
+    public List<CandidateDTO> listCandidates() {
+        return candidateRepository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
+    private CandidateDTO toDto(Candidate c) {
+        return new CandidateDTO(
+                c.getFirstName(),
+                c.getLastName(),
+                c.getGender(),
+                c.getDob(),
+                c.getAge(),
+                c.getPoliticalParty().getName(),  // or .getAcronym() if you prefer
+                c.getDescription(),
+                c.getPhoto()
+        );
     }
 
     public List<Candidate> listByPoliticalPartyId(Long partyId) {
