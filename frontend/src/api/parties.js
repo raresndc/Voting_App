@@ -1,4 +1,4 @@
-import { API_ROOT } from './root';
+import API from '../api/auth';
 
 export const listParties = () =>
-  API_ROOT.get('/parties');
+  API.get('/api/parties');

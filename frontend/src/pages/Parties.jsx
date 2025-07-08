@@ -13,7 +13,7 @@ export default function Parties() {
   }, []);
 
   return (
-    <div className="relative flex flex-col items-center p-6 bg-gradient-to-br from-gray-800 to-gray-900 min-h-screen text-white">
+    <div className="relative flex flex-col items-center p-6 bg-gradient-to-br from-gray-800 to-gray-900 min-h-screen text-white overflow-hidden">
       {/* Background Circles */}
       <motion.div
         className="absolute w-72 h-72 bg-white bg-opacity-10 rounded-full top-16 left-12"
@@ -37,12 +37,22 @@ export default function Parties() {
         Political Parties
       </motion.h1>
 
-      <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+      <motion.div
+        className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: {},
+          visible: { transition: { staggerChildren: 0.1 } }
+        }}
+      >
         {parties.map((p, idx) => (
           <motion.div
             key={p.id || idx}
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl shadow-lg p-6 flex flex-col items-center text-gray-900"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
             whileHover={{ scale: 1.03 }}
-            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl shadow-lg p-6 flex flex-col items-center text-gray-900 h-full"
             transition={{ type: 'spring', stiffness: 120 }}
           >
             {p.logoUrl && (
@@ -52,13 +62,17 @@ export default function Parties() {
                 className="h-20 w-auto mb-4 rounded-full border-2 border-white"
               />
             )}
-            <h2 className="text-2xl font-semibold mb-2 text-white drop-shadow-md">{p.name}</h2>
+            <h2 className="text-2xl font-semibold mb-2 text-white drop-shadow-md">
+              {p.name}
+            </h2>
             {p.description && (
-              <p className="text-white/80 text-sm text-center">{p.description}</p>
+              <p className="text-white/80 text-sm text-center">
+                {p.description}
+              </p>
             )}
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
