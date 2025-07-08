@@ -154,9 +154,9 @@ public class AuthController {
 
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .domain("e-vote.ro")
+//                .domain("e-vote.ro")
                 .maxAge(jwtService.getExpirySeconds())
                 .sameSite("Strict")
                 .build();
@@ -241,9 +241,9 @@ public class AuthController {
         // 1) Create access‐cookie
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
                 .httpOnly(true)
-                .secure(true)              // in prod: only send over HTTPS
+                .secure(false)              // in prod: only send over HTTPS
                 .path("/")
-                .domain("e-vote.ro")       // lock to your domain
+//                .domain("e-vote.ro")       // lock to your domain
                 .maxAge(jwtService.getExpirySeconds())
                 .sameSite("Strict")        // prevent CSRF
                 .build();
@@ -325,9 +325,9 @@ public class AuthController {
         // 5) Set cookie
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .domain("e-vote.ro")
+//                .domain("e-vote.ro")
                 .maxAge(jwtService.getExpirySeconds())
                 .sameSite("Strict")
                 .build();
@@ -366,9 +366,9 @@ public class AuthController {
         // 4) Issue a new access-token cookie
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .domain("e-vote.ro")
+//                .domain("e-vote.ro")
                 .maxAge(jwtService.getExpirySeconds())
                 .sameSite("Strict")
                 .build();
@@ -417,9 +417,9 @@ public class AuthController {
         TokenPair tokens = authService.issueTokenPairForUser(user);
         ResponseCookie cookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
                 .httpOnly(true)
-                .secure(true)
+                .secure(false)
                 .path("/")
-                .domain("e-vote.ro")
+//                .domain("e-vote.ro")
                 .maxAge(jwtService.getExpirySeconds())
                 .sameSite("Strict")
                 .build();
@@ -437,7 +437,8 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         ResponseCookie delete = ResponseCookie.from("JWT_TOKEN", "")
-                .httpOnly(true).secure(true).path("/").domain("e-vote.ro")
+                .httpOnly(true).secure(false).path("/")
+//                .domain("e-vote.ro")
                 .maxAge(0).sameSite("Strict").build();
         response.addHeader(HttpHeaders.SET_COOKIE, delete.toString());
         return ResponseEntity.ok("Logged out");
