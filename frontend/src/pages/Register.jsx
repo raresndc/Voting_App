@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { register } from "../api/auth";
+import { registerUser } from "../api/auth";
 
 const countryPrefixes = [
   { code: "+40", name: "Romania" },

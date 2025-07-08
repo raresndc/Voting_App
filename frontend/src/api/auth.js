@@ -1,16 +1,24 @@
 // src/api/auth.js
 import axios from 'axios';
 
-// 1️⃣ Public client: no interceptor
-const PUBLIC = axios.create({ baseURL: '/api/auth' });
-export const register      = (data) => PUBLIC.post('/register', data);
-
-// 2️⃣ Private client: automatically adds Authorization
-export const API = axios.create({ baseURL: '/api/auth' });
-API.interceptors.request.use(cfg => {
-  const token = localStorage.getItem('token');
-  if (token) cfg.headers.Authorization = `Bearer ${token}`;
-  return cfg;
+const API = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_AUTH_API_BASE, // e.g. http://localhost:8080
+  withCredentials: true,                // <-- send & receive cookies
 });
-export const login         = (data) => API.post('/login', data);
-export const loginSuper    = (data) => API.post('/login-super-user', data);
+
+// Auth endpoints
+export const registerUser    = data => API.post('/api/auth/register', data);
+export const registerCand    = data => API.post('/api/auth/register-candidate', data);
+export const loginUser       = data => API.post('/api/auth/login', data);
+export const loginSU         = data => API.post('/api/auth/login-super-user', data);
+export const loginSA         = data => API.post('/api/auth/login-super-admin', data);
+export const confirm2FA      = data => API.post('/api/auth/2fa/confirm', data);
+export const refreshToken    = ()   => API.post('/api/auth/refresh-token');
+export const logoutUser      = ()   => API.post('/api/auth/logout');
+
+// Protected
+export const getProfile      = ()   => API.get('/api/auth/profile');
+export const getByUsername   = username => API.get(`/api/auth/${username}`);
+
+// Export the instance in case you need interceptors
+export default API;

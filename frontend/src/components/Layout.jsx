@@ -2,6 +2,8 @@
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import { logoutUser } from '../api/auth';
+import { useUser } from '../context/UserContext';
 
 // Sidebar links
 const links = [
@@ -15,17 +17,24 @@ const links = [
 
 export default function Layout() {
   const navigate = useNavigate();
+  const { clearUser } = useUser();
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');       // back to welcome
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+    } catch (err) {
+      console.error('Logout failed', err);
+    } finally {
+      clearUser();
+      navigate('/login');
+    }
   };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white flex flex-col">
-      <Link to="/dashboard" className="block p-4 text-xl font-bold hover:bg-gray-700">
+        <Link to="/dashboard" className="block p-4 text-xl font-bold hover:bg-gray-700">
           E-Vote
         </Link>
         <nav className="flex-1 px-2 space-y-2">
