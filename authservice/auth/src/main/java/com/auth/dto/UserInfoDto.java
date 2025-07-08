@@ -1,6 +1,7 @@
 package com.auth.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.auth.model.User;
 import lombok.*;
@@ -14,11 +15,14 @@ public class UserInfoDto {
     String    firstName;
     String    idSeries;
     Boolean   verified;
+    String    personalIdNo;
+    String    phoneNo;
+    LocalDateTime createdDate;
 
     public UserInfoDto() {
     }
 
-    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified) {
+    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate) {
         this.age = age;
         this.citizenship = citizenship;
         this.dateOfBirth = dateOfBirth;
@@ -27,6 +31,9 @@ public class UserInfoDto {
         this.firstName = firstName;
         this.idSeries = idSeries;
         this.verified = verified;
+        this.personalIdNo = personalIdNo;
+        this.phoneNo = phoneNo;
+        this.createdDate = createdDate;
     }
 
     public int getAge() {
@@ -93,6 +100,30 @@ public class UserInfoDto {
         this.verified = verified;
     }
 
+    public String getPersonalIdNo() {
+        return personalIdNo;
+    }
+
+    public void setPersonalIdNo(String personalIdNo) {
+        this.personalIdNo = personalIdNo;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public static UserInfoDto from(User user) {
         UserInfoDto dto = new UserInfoDto();
         dto.setAge(user.getAge());
@@ -103,6 +134,9 @@ public class UserInfoDto {
         dto.setFirstName(user.getFirstName());
         dto.setIdSeries(user.getIDseries());
         dto.setVerified(user.isVerified());
+        dto.setPhoneNo(user.getPhoneNo());
+        dto.setPersonalIdNo(user.getPersonalIdNo());
+        dto.setCreatedDate(user.getCreatedDate());
         return dto;
     }
 }

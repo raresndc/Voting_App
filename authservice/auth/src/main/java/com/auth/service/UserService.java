@@ -23,7 +23,10 @@ public class UserService {
                         u.getLastName(),
                         u.getFirstName(),
                         u.getIDseries(),
-                        u.isVerified()
+                        u.isVerified(),
+                        u.getPersonalIdNo(),
+                        u.getPhoneNo(),
+                        u.getCreatedDate()
                 ));
     }
 }
