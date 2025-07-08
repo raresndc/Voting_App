@@ -1,6 +1,8 @@
+// src/pages/Locations.jsx
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import axios from 'axios';
+import { motion } from 'framer-motion';
 
 // Helper to change map view when user location is obtained
 function ChangeView({ center, zoom }) {
@@ -15,7 +17,6 @@ export default function Locations() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Request browser geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
@@ -31,16 +32,15 @@ export default function Locations() {
     }
   }, []);
 
-  // Fetch nearby schools via Overpass once we have userPos
   useEffect(() => {
     if (!userPos) return;
     const [lat, lng] = userPos;
     const query = `
       [out:json][timeout:25];
       (
-        node["amenity"="school"](around:5000,${lat},${lng});
-        way["amenity"="school"](around:5000,${lat},${lng});
-        relation["amenity"="school"](around:5000,${lat},${lng});
+        node[\"amenity\"=\"school\"](around:5000,${lat},${lng});
+        way[\"amenity\"=\"school\"](around:5000,${lat},${lng});
+        relation[\"amenity\"=\"school\"](around:5000,${lat},${lng});
       );
       out center;
     `;
@@ -66,30 +66,59 @@ export default function Locations() {
       .catch(err => console.error('OSM query failed', err));
   }, [userPos]);
 
-  // Default center if geolocation not available yet
   const defaultCenter = [45, 25];
   const mapCenter = userPos || defaultCenter;
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4 text-gray-900">Voting Locations</h1>
-      {error && <p className="text-red-600 mb-4">{error}</p>}
-      <MapContainer center={mapCenter} zoom={userPos ? 13 : 6} className="h-96 rounded-lg">
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-        {userPos && <ChangeView center={userPos} zoom={13} />}
-        {userPos && (
-          <Marker position={userPos}>
-            <Popup>You are here</Popup>
-          </Marker>
-        )}
-        {locations.map(loc => (
-          <Marker position={[loc.lat, loc.lng]} key={loc.id}>
-            <Popup>
-              <strong>{loc.name}</strong>
-            </Popup>
-          </Marker>
-        ))}
-      </MapContainer>
+    <div className="relative flex flex-col items-center p-6 bg-gradient-to-br from-gray-800 to-gray-900 min-h-screen text-white overflow-hidden">
+      {/* Background Animations */}
+      <motion.div
+        className="absolute w-80 h-80 bg-white bg-opacity-10 rounded-full top-16 left-12"
+        initial={{ scale: 0 }}
+        animate={{ scale: [0, 1.2, 1] }}
+        transition={{ duration: 2, repeat: Infinity, repeatDelay: 4 }}
+      />
+      <motion.div
+        className="absolute w-96 h-96 bg-white bg-opacity-5 rounded-full bottom-12 right-12"
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 0.8 }}
+        transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 3 }}
+      />
+
+      <motion.h1
+        className="z-10 text-4xl font-extrabold mb-4"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+      >
+        Voting Locations
+      </motion.h1>
+
+      {error && <motion.p className="z-10 text-red-400 mb-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{error}</motion.p>}
+
+      <motion.div
+        className="relative z-10 w-full max-w-4xl h-[500px] rounded-xl overflow-hidden shadow-lg"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.8 }}
+      >
+        <MapContainer center={mapCenter} zoom={userPos ? 13 : 6} className="w-full h-full">
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          {userPos && <ChangeView center={userPos} zoom={13} />}
+          {userPos && (
+            <Marker position={userPos}>
+              <Popup>You are here</Popup>
+            </Marker>
+          )}
+          {locations.map(loc => (
+            <Marker position={[loc.lat, loc.lng]} key={loc.id}>
+              <Popup>
+                <strong className="text-gray-900">{loc.name}</strong>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </motion.div>
     </div>
   );
 }
