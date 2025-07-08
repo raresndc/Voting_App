@@ -18,11 +18,12 @@ public class UserInfoDto {
     String    personalIdNo;
     String    phoneNo;
     LocalDateTime createdDate;
+    String    username;
 
     public UserInfoDto() {
     }
 
-    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate) {
+    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate, String username) {
         this.age = age;
         this.citizenship = citizenship;
         this.dateOfBirth = dateOfBirth;
@@ -34,6 +35,7 @@ public class UserInfoDto {
         this.personalIdNo = personalIdNo;
         this.phoneNo = phoneNo;
         this.createdDate = createdDate;
+        this.username = username;
     }
 
     public int getAge() {
@@ -124,6 +126,14 @@ public class UserInfoDto {
         this.createdDate = createdDate;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public static UserInfoDto from(User user) {
         UserInfoDto dto = new UserInfoDto();
         dto.setAge(user.getAge());
@@ -137,6 +147,7 @@ public class UserInfoDto {
         dto.setPhoneNo(user.getPhoneNo());
         dto.setPersonalIdNo(user.getPersonalIdNo());
         dto.setCreatedDate(user.getCreatedDate());
+        dto.setUsername(user.getUsername());
         return dto;
     }
 }

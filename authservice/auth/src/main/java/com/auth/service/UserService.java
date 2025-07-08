@@ -26,7 +26,8 @@ public class UserService {
                         u.isVerified(),
                         u.getPersonalIdNo(),
                         u.getPhoneNo(),
-                        u.getCreatedDate()
+                        u.getCreatedDate(),
+                        u.getUsername()
                 ));
     }
 }
