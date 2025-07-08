@@ -183,4 +183,17 @@ public class User {
         this.age = age;
         this.verified = verified;
     }
+
+    public User(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+
+    public boolean isVerified() {
+        return verified;
+    }
+
+    public void setVerified(boolean verified) {
+        this.verified = verified;
+    }
 }

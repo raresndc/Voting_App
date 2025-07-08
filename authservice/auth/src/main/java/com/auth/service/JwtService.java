@@ -6,9 +6,12 @@ import com.auth.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -71,6 +74,10 @@ public class JwtService {
         return extractAllClaims(token) != null;
     }
 
+    public long getExpirySeconds() {
+        return jwtExpirationMs / 1_000;
+    }
+
     public String extractUsernameFromToken(String token) {
         Claims claims = extractAllClaims(token);
 
@@ -80,6 +87,16 @@ public class JwtService {
 
         return null;
     }
+
+    public User extractUserFromToken(String token) {
+        if (token == null || !isValidToken(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid JWT");
+        }
+        String username = extractUsernameFromToken(token);
+        return userRepo.findByUsername(username)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
 
     // check if the token is refresh token
 
@@ -176,6 +193,23 @@ public class JwtService {
         // persist jti into a blacklist store
     }
 
+    public String resolveToken(HttpServletRequest request) {
+        // 1) Try Authorization header
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        // 2) Fallback to our cookie
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("JWT_TOKEN".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Extracts the User entity from a Bearer JWT in the Authorization header.
      * @param authHeader the raw "Authorization" header value
@@ -199,5 +233,22 @@ public class JwtService {
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request) {
+        // first try header
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.substring(7);
+        }
+        // otherwise look in cookies
+        if (request.getCookies() != null) {
+            for (Cookie c : request.getCookies()) {
+                if ("REFRESH_TOKEN".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
     }
 }

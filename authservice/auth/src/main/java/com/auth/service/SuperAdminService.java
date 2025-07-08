@@ -1,6 +1,8 @@
 package com.auth.service;
 
 import com.auth.dto.CreateSuperAdminRequest;
+import com.auth.dto.SuperAdminLoginRequest;
+import com.auth.dto.UserInfoDto;
 import com.auth.model.Role;
 import com.auth.model.SuperAdmin;
 import com.auth.model.User;
@@ -9,11 +11,17 @@ import com.auth.repository.SuperAdminRepository;
 import com.auth.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -78,5 +86,37 @@ public class SuperAdminService {
 
     public Optional<SuperAdmin> findByUsername(String username) {
         return superAdminRepo.findByUsername(username);
+    }
+
+    public Authentication authenticate(SuperAdminLoginRequest req) {
+        SuperAdmin sa = superAdminRepo.findByUsername(req.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Super-admin not found"));
+
+        // 1) check password
+        if (!hasher.matches(req.getPassword(), sa.getPasswordHash())) {
+            throw new BadCredentialsException("Invalid credentials");
+        }
+        // 2) check secret key
+        if (!verifySecret(sa.getId(), req.getSecretKey())) {
+            throw new BadCredentialsException("Invalid secret key");
+        }
+
+        // 3) build Authentication token
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_SUPER_ADMIN");
+        return new UsernamePasswordAuthenticationToken(
+                sa.getUsername(),
+                null,
+                List.of(authority)
+        );
+    }
+
+    public UserInfoDto buildUserInfoDto(String username) {
+        SuperAdmin sa = superAdminRepo.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Super-admin not found"));
+
+        // map only the fields your UserInfoDto needs
+        UserInfoDto dto = new UserInfoDto();
+        dto.setVerified(true);  // super-admins are always verified
+        return dto;
     }
 }

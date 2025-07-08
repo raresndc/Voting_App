@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -30,6 +31,7 @@ import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -291,7 +293,7 @@ public class AuthService {
 
     // 2) Confirm the code & enable
     @Auditable(action="CONFIRM_2FA", targetType="User", targetIdArg="username")
-    public void confirm2FA(String username, int code) {
+    public User confirm2FA(String username, int code) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("No user"));
         if (!gAuth.authorize(user.getTwoFactorSecret(), code)) {
@@ -299,6 +301,7 @@ public class AuthService {
         }
         user.setTwoFactorEnabled(true);
         userRepository.save(user);
+        return userRepository.save(user);
     }
 
     // 3) During login, verify TOTP
@@ -373,6 +376,23 @@ public class AuthService {
      */
     public TokenPair issueTokenPair(Authentication authentication) {
         return jwtService.generateTokenPair(authentication);
+    }
+
+    public TokenPair issueTokenPairForUser(User user) {
+        // 1) Extract the single role from the user
+        String roleName = user.getRole().getName();
+        //    ↑ if your Role class calls it differently, e.g. getRoleName(), use that.
+
+        // 2) Build a Spring Authentication object
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+        Authentication auth = new UsernamePasswordAuthenticationToken(
+                user.getUsername(),
+                null,
+                Collections.singletonList(authority)
+        );
+
+        // 3) Delegate to your existing method
+        return issueTokenPair(auth);
     }
 
 }

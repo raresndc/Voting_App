@@ -3,8 +3,10 @@ package com.auth.filter;
 import com.auth.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -75,9 +77,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     }
 
-    private String getJwtFromRequest(HttpServletRequest request) {
-        final String authHeader = request.getHeader("Authorization");
-        //Bearer <token>
-        return authHeader.substring(7);
+//    private String getJwtFromRequest(HttpServletRequest request) {
+//        final String authHeader = request.getHeader("Authorization");
+//        //Bearer <token>
+//        return authHeader.substring(7);
+//    }
+    private String getJwtFromRequest(HttpServletRequest req) {
+        // 1) Try the standard header
+        String auth = req.getHeader("Authorization");
+        if (auth != null && auth.startsWith("Bearer ")) {
+            return auth.substring(7);
+        }
+        // 2) Fallback to our secure cookie
+        if (req.getCookies() != null) {
+            for (Cookie c : req.getCookies()) {
+                if ("JWT_TOKEN".equals(c.getName())) {
+                    return c.getValue();
+                }
+            }
+        }
+        return null;
     }
 }
