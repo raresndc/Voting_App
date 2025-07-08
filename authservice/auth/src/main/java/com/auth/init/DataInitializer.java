@@ -105,21 +105,53 @@ public class DataInitializer implements ApplicationRunner {
                 });
 
         // Initialize political parties
-        Map<String, PoliticalParty> parties = new HashMap<>();
-        List<String> partyNames = List.of(
-                "Partidul Social Democrat",
-                "Partidul National Liberal",
-                "Uniunea Salvati Romania",
-                "Alianta pentru Uniunea Romanilor",
-                "Independent",
-                "Uniunea Democrata Maghiara din Romania"
+        Map<String, String> logoMap = Map.of(
+                "Partidul Social Democrat",           "/logos/psd.png",
+                "Partidul National Liberal",          "/logos/pnl.png",
+                "Uniunea Salvati Romania",            "/logos/usr.png",
+                "Alianta pentru Uniunea Romanilor",   "/logos/aur.jpg",
+                "Independent",                        "/logos/IND.png",
+                "Uniunea Democrata Maghiara din Romania", "/logos/udmr.png"
         );
-        for (String name : partyNames) {
+        Map<String, String> acronymMap = Map.of(
+                "Partidul Social Democrat",           "PSD",
+                "Partidul National Liberal",          "PNL",
+                "Uniunea Salvati Romania",            "USR",
+                "Alianta pentru Uniunea Romanilor",   "AUR",
+                "Independent",                        "IND",
+                "Uniunea Democrata Maghiara din Romania", "UDMR"
+        );
+
+        // 2️⃣ Create or load each party, storing the entity in a map
+        Map<String, PoliticalParty> parties = new HashMap<>();
+        for (String name : logoMap.keySet()) {
+            String logoUrl   = logoMap.get(name);
+            String acronym   = acronymMap.get(name);
+
             PoliticalParty party = partyRepo.findByName(name)
                     .orElseGet(() -> {
-                        log.info("Creating political party: {}", name);
-                        return partyRepo.save(PoliticalParty.builder().name(name).build());
+                        log.info("Creating {} ({}) with logo {}", name, acronym, logoUrl);
+                        return partyRepo.save(PoliticalParty.builder()
+                                .name(name)
+                                .acronym(acronym)
+                                .logoUrl(logoUrl)
+                                .build());
                     });
+
+            // If it existed but acronym/logo were missing, you might update it:
+            boolean dirty = false;
+            if (!acronym.equals(party.getAcronym())) {
+                party.setAcronym(acronym);
+                dirty = true;
+            }
+            if (!logoUrl.equals(party.getLogoUrl())) {
+                party.setLogoUrl(logoUrl);
+                dirty = true;
+            }
+            if (dirty) {
+                party = partyRepo.save(party);
+            }
+
             parties.put(name, party);
         }
 

@@ -23,4 +23,16 @@ public class PoliticalParty {
             unique = true
     )
     private String name;
+
+    @Column(
+            nullable = false,
+            unique = true
+    )
+    private String acronym;
+
+    @Column(name = "description")
+    private String description;
+
+    @Column(name = "logo_url")
+    private String logoUrl;
 }
