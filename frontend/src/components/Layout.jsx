@@ -68,13 +68,13 @@ export default function Layout() {
       </motion.div>
 
       {/* Main content area */}
-      <div className="flex-1 flex flex-col bg-gray-900">
+      <div className="flex-1 flex flex-col">
         {/* Header */}
-        <header className="flex justify-end items-center bg-gray-100 shadow px-6 py-3">
+        <header className="flex justify-end items-center bg-gray-800 shadow px-6 py-3">
           <motion.button
             whileHover={{ scale: 1.05 }}
             onClick={() => navigate("/profile")}
-            className="mr-4 text-gray-800 hover:underline"
+            className="mr-4 text-white hover:underline"
           >
             View Profile
           </motion.button>
@@ -88,7 +88,7 @@ export default function Layout() {
         </header>
 
         {/* Page content */}
-        <main className="p-6 overflow-auto flex-1 bg-gray-100">
+        <main className="p-6 overflow-auto flex-1 bg-gray-800">
           <Outlet />
         </main>
       </div>

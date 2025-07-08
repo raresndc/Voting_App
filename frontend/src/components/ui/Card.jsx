@@ -1,10 +1,11 @@
+// src/components/ui/Card.jsx
 import React from 'react';
 
 export function Card({ children, className = '', ...props }) {
   return (
     <div
       {...props}
-      className={`rounded-2xl shadow p-4 bg-white ${className}`}
+      className={`rounded-2xl shadow-lg p-6 bg-white bg-opacity-20 backdrop-blur-lg ${className}`}
     >
       {children}
     </div>
@@ -13,7 +14,7 @@ export function Card({ children, className = '', ...props }) {
 
 export function CardHeader({ children, className = '', ...props }) {
   return (
-    <div {...props} className={`mb-2 font-medium text-gray-700 ${className}`}>
+    <div {...props} className={`mb-2 font-medium text-white ${className}`}>
       {children}
     </div>
   );
@@ -21,7 +22,7 @@ export function CardHeader({ children, className = '', ...props }) {
 
 export function CardContent({ children, className = '', ...props }) {
   return (
-    <div {...props} className={`${className}`}>
+    <div {...props} className={className}>
       {children}
     </div>
   );
