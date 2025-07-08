@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/vote/publicKey").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/candidates").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/candidates/**").permitAll()
 //                        .requestMatchers(HttpMethod.GET, "/api/parties").permitAll()
                         .requestMatchers(HttpMethod.GET, "/logos/**").permitAll()
                         .anyRequest().authenticated()
