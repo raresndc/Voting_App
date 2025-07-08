@@ -14,6 +14,11 @@ export default defineConfig({
         // If your backend paths already include /api, you don’t need rewrite.
         // If your backend is mounted at the root (no /api prefix), uncomment the next line:
         // rewrite: (path) => path.replace(/^\/api/, '')
+      },
+      '/logos': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+        secure: false,
       }
     }
   }
