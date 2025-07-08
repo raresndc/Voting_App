@@ -12,6 +12,7 @@ export const registerCand    = data => API.post('/api/auth/register-candidate', 
 export const loginUser       = data => API.post('/api/auth/login', data);
 export const loginSU         = data => API.post('/api/auth/login-super-user', data);
 export const loginSA         = data => API.post('/api/auth/login-super-admin', data);
+export const setup2FA        = data => API.post('/api/auth/2fa/setup', null, { params: data });
 export const confirm2FA      = data => API.post('/api/auth/2fa/confirm', data);
 export const refreshToken    = ()   => API.post('/api/auth/refresh-token');
 export const logoutUser      = ()   => API.post('/api/auth/logout');

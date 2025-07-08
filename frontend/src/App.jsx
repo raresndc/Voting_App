@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Welcome from './pages/Welcome';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,6 +12,7 @@ import Vote from './pages/Vote';
 import Stats from './pages/Stats';
 import Locations from './pages/Locations';
 import Profile from './pages/Profile';
+import TwoFASetup from './pages/2FA';
 import { UserProvider, useUser } from './context/UserContext';
 import { getProfile } from './api/auth';
 
@@ -20,15 +21,19 @@ function AppInner() {
 
   const { setUser, clearUser } = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     getProfile()
       .then(res => setUser(res.data))
       .catch(() => {
         clearUser();
-        navigate('/login');
+        const publicPaths = ['/', '/login', '/register'];
+        if (!publicPaths.includes(location.pathname)) {
+          navigate('/');
+        }
       });
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -45,6 +50,7 @@ function AppInner() {
           <Route path="/stats" element={<Stats />} />
           <Route path="/locations" element={<Locations />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/2fa-setup" element={<TwoFASetup />} />
         </Route>
       </Routes>
     </div>

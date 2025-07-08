@@ -4,6 +4,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { logoutUser } from '../api/auth';
 import { useUser } from '../context/UserContext';
+import { motion } from "framer-motion";
 
 // Sidebar links
 const links = [
@@ -26,7 +27,7 @@ export default function Layout() {
       console.error('Logout failed', err);
     } finally {
       clearUser();
-      navigate('/login');
+      navigate('/');
     }
   };
 
@@ -53,6 +54,15 @@ export default function Layout() {
           ))}
         </nav>
       </aside>
+
+      <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.2, duration: 0.6 }}
+              className="absolute bottom-10 text-sm text-white/80 z-10"
+            >
+              <span>Made by E-Vote Team</span>
+            </motion.div>
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col">
