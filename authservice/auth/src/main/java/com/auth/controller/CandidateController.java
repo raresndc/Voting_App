@@ -35,6 +35,11 @@ public class CandidateController {
         return candidateService.listCandidates();
     }
 
+    @GetMapping("/votes")
+    public List<CandidateDTO> getAllCandidatesVotes() {
+        return candidateService.listCandidatesVotes();
+    }
+
     @PreAuthorize("hasRole('ROLE_SUPER_USER')")
     @GetMapping("/politicalParty")
     public List<Candidate> getAllCandidatesByPoliticalParty(Authentication auth) {

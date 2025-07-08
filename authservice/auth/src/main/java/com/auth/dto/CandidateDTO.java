@@ -18,4 +18,25 @@ public class CandidateDTO {
     private String politicalParty;
     private String description;
     private String photo;
+    private Long votes;
+
+    public CandidateDTO(String firstName, String lastName, Integer age, String politicalParty, String photo, Long votes) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.politicalParty = politicalParty;
+        this.photo = photo;
+        this.votes = votes;
+    }
+
+    public CandidateDTO(String firstName, String lastName, String gender, LocalDate dob, Integer age, String politicalParty, String description, String photo) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.gender = gender;
+        this.dob = dob;
+        this.age = age;
+        this.politicalParty = politicalParty;
+        this.description = description;
+        this.photo = photo;
+    }
 }

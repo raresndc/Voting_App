@@ -44,6 +44,12 @@ public class CandidateService {
                 .collect(Collectors.toList());
     }
 
+    public List<CandidateDTO> listCandidatesVotes() {
+        return candidateRepository.findAll().stream()
+                .map(this::toDtoVotes)
+                .collect(Collectors.toList());
+    }
+
     private CandidateDTO toDto(Candidate c) {
         return new CandidateDTO(
                 c.getFirstName(),
@@ -54,6 +60,17 @@ public class CandidateService {
                 c.getPoliticalParty().getName(),  // or .getAcronym() if you prefer
                 c.getDescription(),
                 c.getPhoto()
+        );
+    }
+
+    private CandidateDTO toDtoVotes(Candidate c) {
+        return new CandidateDTO(
+                c.getFirstName(),
+                c.getLastName(),
+                c.getAge(),
+                c.getPoliticalParty().getName(),  // or .getAcronym() if you prefer
+                c.getPhoto(),
+                c.getVotes()
         );
     }
 
