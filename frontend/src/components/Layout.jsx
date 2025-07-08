@@ -1,6 +1,7 @@
 // src/components/Layout.jsx
 import React from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 // Sidebar links
 const links = [
@@ -24,7 +25,9 @@ export default function Layout() {
     <div className="flex h-screen">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 text-white flex flex-col">
-        <div className="p-4 text-xl font-bold">E-Vote</div>
+      <Link to="/dashboard" className="block p-4 text-xl font-bold hover:bg-gray-700">
+          E-Vote
+        </Link>
         <nav className="flex-1 px-2 space-y-2">
           {links.map(({ to, label }) => (
             <NavLink
