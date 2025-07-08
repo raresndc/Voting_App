@@ -12,4 +12,5 @@ public class UserInfoDto {
     String    lastName;
     String    firstName;
     String    idSeries;
+    Boolean   verified;
 }

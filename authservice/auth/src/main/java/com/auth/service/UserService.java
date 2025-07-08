@@ -22,7 +22,8 @@ public class UserService {
                         u.getGender(),
                         u.getLastName(),
                         u.getFirstName(),
-                        u.getIDseries()
+                        u.getIDseries(),
+                        u.isVerified()
                 ));
     }
 }
