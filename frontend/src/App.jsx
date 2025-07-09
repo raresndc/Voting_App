@@ -7,6 +7,8 @@ import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import Parties from './pages/Parties';
 import Candidates from './pages/Candidates';
+import AddCandidate from './pages/AddCandidate';
+import EditCandidate from './pages/EditCandidate'; 
 import Upload from './pages/DocumentUpload';
 import Vote from './pages/Vote';
 import Stats from './pages/Stats';
@@ -45,6 +47,9 @@ function AppInner() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/parties" element={<Parties />} />
           <Route path="/candidates" element={<Candidates />} />
+          {/* <Route path="/candidates/:id" element={<CandidateProfile />} /> */}
+          <Route path="/candidates/add" element={<AddCandidate />} />
+          <Route path="/candidates/edit/:id" element={<EditCandidate />} />
           <Route path="/upload" element={<Upload />} />
           <Route path="/vote" element={<Vote />} />
           <Route path="/stats" element={<Stats />} />
