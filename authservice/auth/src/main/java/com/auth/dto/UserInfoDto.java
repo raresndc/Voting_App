@@ -19,11 +19,12 @@ public class UserInfoDto {
     String    phoneNo;
     LocalDateTime createdDate;
     String    username;
+    Boolean   twoFactorEnabled;
 
     public UserInfoDto() {
     }
 
-    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate, String username) {
+    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate, String username, Boolean twoFactorEnabled) {
         this.age = age;
         this.citizenship = citizenship;
         this.dateOfBirth = dateOfBirth;
@@ -36,6 +37,7 @@ public class UserInfoDto {
         this.phoneNo = phoneNo;
         this.createdDate = createdDate;
         this.username = username;
+        this.twoFactorEnabled = twoFactorEnabled;
     }
 
     public int getAge() {
@@ -134,6 +136,14 @@ public class UserInfoDto {
         this.username = username;
     }
 
+    public Boolean getTwoFactorEnabled() {
+        return twoFactorEnabled;
+    }
+
+    public void setTwoFactorEnabled(Boolean twoFactorEnabled) {
+        this.twoFactorEnabled = twoFactorEnabled;
+    }
+
     public static UserInfoDto from(User user) {
         UserInfoDto dto = new UserInfoDto();
         dto.setAge(user.getAge());
@@ -148,6 +158,7 @@ public class UserInfoDto {
         dto.setPersonalIdNo(user.getPersonalIdNo());
         dto.setCreatedDate(user.getCreatedDate());
         dto.setUsername(user.getUsername());
+        dto.setTwoFactorEnabled(user.isTwoFactorEnabled());
         return dto;
     }
 }

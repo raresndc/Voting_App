@@ -27,7 +27,8 @@ public class UserService {
                         u.getPersonalIdNo(),
                         u.getPhoneNo(),
                         u.getCreatedDate(),
-                        u.getUsername()
+                        u.getUsername(),
+                        u.isTwoFactorEnabled()
                 ));
     }
 }
