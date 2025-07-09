@@ -2,8 +2,16 @@
 import axios from 'axios';
 
 const API = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_AUTH_API_BASE, // e.g. http://localhost:8080
+  baseURL: import.meta.env.VITE_BACKEND_AUTH_API_BASE,
   withCredentials: true,                // <-- send & receive cookies
+});
+
+API.interceptors.request.use(config => {
+  const token = localStorage.getItem('JWT_TOKEN');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 // Auth endpoints
