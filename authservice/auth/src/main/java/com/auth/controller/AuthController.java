@@ -362,14 +362,6 @@ public class AuthController {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-//        // 6) You may need to map SuperUser → User to populate all DTO fields
-//        User dummy = new User(
-//                su.getUsername(),
-//                su.getEmail()
-//        );
-//        dummy.setAge(0);
-//        dummy.setCitizenship("N/A");
-
         return ResponseEntity.ok(SuperUserInfoDto.from(su));
     }
 
