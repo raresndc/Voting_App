@@ -327,7 +327,7 @@ public class AuthController {
 //    }
 
     @PostMapping("/login-super-user")
-    public ResponseEntity<UserInfoDto> loginSuperUser(
+    public ResponseEntity<SuperUserInfoDto> loginSuperUser(
             @RequestBody LoginRequest req,
             HttpServletResponse response
     ) {
@@ -362,12 +362,15 @@ public class AuthController {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        // 6) You may need to map SuperUser → User to populate all DTO fields
-        User dummy = new User(
-                su.getUsername(),
-                su.getEmail()
-        );
-        return ResponseEntity.ok(UserInfoDto.from(dummy));
+//        // 6) You may need to map SuperUser → User to populate all DTO fields
+//        User dummy = new User(
+//                su.getUsername(),
+//                su.getEmail()
+//        );
+//        dummy.setAge(0);
+//        dummy.setCitizenship("N/A");
+
+        return ResponseEntity.ok(SuperUserInfoDto.from(su));
     }
 
 
