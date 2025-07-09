@@ -1,65 +1,80 @@
-// src/pages/DocumentUpload.jsx
 import React, { useState } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import documentServiceApi from '../api/documentService';
+import { useUser } from '../context/UserContext';
 
-export default function DocumentUpload({ userId }) {
+export default function DocumentUpload() {
+  const { user } = useUser();
+  const userId = user?.id;
   const [step, setStep] = useState(1);
   const [idFile, setIdFile] = useState(null);
-  const [selfieFile, setSelfieFile] = useState(null);
   const [idPreview, setIdPreview] = useState(null);
-  const [selfiePreview, setSelfiePreview] = useState(null);
   const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'success' });
 
-  const handleFileChange = (e, type) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (type === 'id') {
-      if (file.type !== 'application/pdf') {
-        setError('Please upload a PDF document');
-        return;
-      }
-      setIdFile(file);
-      setIdPreview(URL.createObjectURL(file));
-    } else {
-      if (!['image/jpeg', 'image/png'].includes(file.type)) {
-        setError('Please upload a JPG or PNG image');
-        return;
-      }
-      setSelfieFile(file);
-      setSelfiePreview(URL.createObjectURL(file));
-    }
+  // Simple toast helper
+  const showToast = (type, message) => {
+    setToast({ visible: true, type, message });
+    setTimeout(() => setToast(prev => ({ ...prev, visible: false })), 3000);
   };
 
-  const handleNext = () => step === 1 && idFile && setStep(2);
-  const handleBack = () => step === 2 && setStep(1);
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.type !== 'application/pdf') {
+      showToast('error', 'Please upload a PDF document');
+      return;
+    }
+    setIdFile(file);
+    setIdPreview(URL.createObjectURL(file));
+  };
 
-  const handleUpload = async () => {
-    if (!idFile || !selfieFile) return;
+  // Step 1: OCR and save face to Redis
+  const handleNext = async () => {
+    if (step !== 1 || !idFile || !userId) return;
     setUploading(true);
-    setError('');
     try {
-      const formData1 = new FormData();
-      formData1.append('file', idFile);
-      await axios.post(`/api/id-photo/${userId}`, formData1);
+      const formData = new FormData();
+      formData.append('file', idFile);
 
-      const formData2 = new FormData();
-      formData2.append('file', selfieFile);
-      await axios.post(`/api/face-photo/${userId}`, formData2);
+      // 1) OCR verification
+      await documentServiceApi.post('/documents/ocr/text', formData);
 
-      setSuccess('Files uploaded and verified successfully!');
+      // 2) Extract face and store in Redis
+      await documentServiceApi.post(`/id-photo/${userId}`, formData);
+
+      showToast('success', 'ID verified and face stored successfully!');
+      setStep(2);
     } catch (err) {
-      console.error('Upload failed:', err);
-      setError('Upload failed. Please try again.');
+      const msg = err.response?.data?.message || 'Verification failed: please ensure your ID details match.';
+      showToast('error', msg);
     } finally {
       setUploading(false);
     }
   };
 
+  const handleBack = () => {
+    if (step === 2) setStep(1);
+  };
+
   return (
     <div className="relative flex flex-col items-center p-6 bg-gradient-to-br from-gray-800 to-gray-900 min-h-screen text-white overflow-hidden">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast.visible && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className={`fixed top-4 right-4 px-4 py-2 rounded shadow-lg ${
+              toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+            }`}
+          >
+            {toast.message}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Background Animations */}
       <motion.div
         initial={{ scale: 0 }}
@@ -80,19 +95,8 @@ export default function DocumentUpload({ userId }) {
         transition={{ duration: 0.8 }}
         className="z-10 text-3xl font-extrabold mb-6"
       >
-        {step === 1 ? 'Step 1: Upload ID Document (PDF)' : 'Step 2: Upload Selfie'}
+        {step === 1 ? 'Step 1: Upload ID Document (PDF)' : 'Step 2: (Done)'}
       </motion.h2>
-
-      {error && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-red-400 mb-4 z-10">
-          {error}
-        </motion.p>
-      )}
-      {success && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-green-400 mb-4 z-10">
-          {success}
-        </motion.p>
-      )}
 
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -111,51 +115,40 @@ export default function DocumentUpload({ userId }) {
                 <p className="font-medium mb-2">Choose your ID PDF</p>
               </div>
             )}
-            <input type="file" accept="application/pdf" onChange={e => handleFileChange(e, 'id')} className="mb-4" />
+            <input
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileChange}
+              className="mb-4"
+              disabled={uploading}
+            />
             <motion.button
-              whileHover={{ scale: idFile ? 1.05 : 1 }}
-              whileTap={{ scale: idFile ? 0.95 : 1 }}
-              disabled={!idFile}
+              whileHover={{ scale: idFile && !uploading && userId ? 1.05 : 1 }}
+              whileTap={{ scale: idFile && !uploading && userId ? 0.95 : 1 }}
+              disabled={!idFile || uploading || !userId}
               onClick={handleNext}
-              className={`w-full py-2 rounded ${idFile ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 cursor-not-allowed'} text-white`}
+              className={`w-full py-2 rounded text-white ${
+                idFile && !uploading && userId ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-600 cursor-not-allowed'
+              }`}
             >
-              Next
+              {uploading ? 'Verifying...' : 'Next'}
             </motion.button>
           </div>
         )}
 
         {step === 2 && (
-          <div className="flex flex-col items-center">
-            {selfiePreview ? (
-              <img src={selfiePreview} alt="Selfie preview" className="w-48 h-48 mb-4 rounded-full object-cover" />
-            ) : (
-              <div className="mb-4 p-6 border-2 border-dashed border-white rounded text-center">
-                <p className="font-medium mb-2">Choose your selfie (JPG/PNG)</p>
-              </div>
-            )}
-            <input type="file" accept="image/jpeg,image/png" onChange={e => handleFileChange(e, 'selfie')} className="mb-4" />
-            <div className="flex w-full gap-4">
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={handleBack}
-                className="flex-1 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
-              >
-                Back
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: selfieFile ? 1.05 : 1 }}
-                whileTap={{ scale: selfieFile ? 0.95 : 1 }}
-                onClick={handleUpload}
-                disabled={!selfieFile || uploading}
-                className={`flex-1 py-2 rounded text-white ${selfieFile ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 cursor-not-allowed'}`}
-              >
-                {uploading ? 'Uploading...' : 'Upload & Verify'}
-              </motion.button>
-            </div>
+          <div className="text-center">
+            <p className="font-medium text-white mb-4">Your ID is verified and face is stored!</p>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={handleBack}
+              className="mt-4 w-full py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+            >
+              Back
+            </motion.button>
           </div>
         )}
       </motion.div>
     </div>
-  );
-}
+)}
