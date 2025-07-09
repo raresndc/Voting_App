@@ -8,7 +8,7 @@ spring:
     password: "!Aa123456"
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
 
 fabric:
   networkConfig: classpath:connection-profile-org1.yaml
