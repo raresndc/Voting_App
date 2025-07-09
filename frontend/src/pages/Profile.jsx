@@ -1,10 +1,10 @@
 // src/pages/Profile.jsx
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { UserCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useUser } from '../context/UserContext';
-import { getProfile } from '../api/auth';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { useUser } from "../context/UserContext";
+import { getProfile } from "../api/auth";
 
 export default function Profile() {
   const [loading, setLoading] = useState(true);
@@ -13,13 +13,13 @@ export default function Profile() {
 
   useEffect(() => {
     getProfile()
-      .then(res => {
+      .then((res) => {
         setUser(res.data);
         setLoading(false);
       })
       .catch(() => {
         clearUser();
-        navigate('/login');
+        navigate("/login");
       });
   }, []);
 
@@ -74,11 +74,11 @@ export default function Profile() {
               {user.firstName} {user.lastName}
             </h1>
             <p className="text-white/80">
-              Member since:{' '}
+              Member since:{" "}
               <span className="font-medium">
-                {new Intl.DateTimeFormat('en-US', {
-                  month: 'long',
-                  year: 'numeric'
+                {new Intl.DateTimeFormat("en-US", {
+                  month: "long",
+                  year: "numeric",
                 }).format(new Date(user.createdDate))}
               </span>
             </p>
@@ -93,13 +93,16 @@ export default function Profile() {
               <span className="font-semibold">Age:</span> {user.age}
             </p>
             <p>
-              <span className="font-semibold">Citizenship:</span> {user.citizenship}
+              <span className="font-semibold">Citizenship:</span>{" "}
+              {user.citizenship}
             </p>
             <p>
-              <span className="font-semibold">Date of Birth:</span> {user.dateOfBirth}
+              <span className="font-semibold">Date of Birth:</span>{" "}
+              {user.dateOfBirth}
             </p>
             <p>
-              <span className="font-semibold">Phone Number:</span> {user.phoneNo}
+              <span className="font-semibold">Phone Number:</span>{" "}
+              {user.phoneNo}
             </p>
           </div>
           {/* Right Column */}
@@ -111,12 +114,15 @@ export default function Profile() {
               <span className="font-semibold">ID Series:</span> {user.idSeries}
             </p>
             <p>
-              <span className="font-semibold">Personal ID Number:</span> {user.personalIdNo}
+              <span className="font-semibold">Personal ID Number:</span>{" "}
+              {user.personalIdNo}
             </p>
             <p>
-              <span className="font-semibold">Verified:</span>{' '}
-              <span className={user.verified ? 'text-green-600' : 'text-red-600'}>
-                {user.verified ? 'Yes' : 'No'}
+              <span className="font-semibold">Verified:</span>{" "}
+              <span
+                className={user.verified ? "text-green-600" : "text-red-600"}
+              >
+                {user.verified ? "Yes" : "No"}
               </span>
             </p>
           </div>
@@ -127,19 +133,28 @@ export default function Profile() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="px-6 py-2 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 transition"
           >
             Back to Dashboard
           </motion.button>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate('/2fa-setup')}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-          >
-            Setup 2FA
-          </motion.button>
+          {user.twoFactorEnabled ? (
+            <button
+              disabled
+              className="px-6 py-2 bg-green-600 text-white rounded-lg cursor-not-allowed opacity-80"
+            >
+              2FA Enabled
+            </button>
+          ) : (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate("/2fa-setup")}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              Setup 2FA
+            </motion.button>
+          )}
         </div>
       </motion.div>
     </div>

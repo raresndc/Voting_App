@@ -6,7 +6,8 @@ import { useUser } from "../context/UserContext";
 import { motion } from "framer-motion";
 
 export default function Login() {
-  const [isSuper, setIsSuper] = useState(false);
+  // role: 'user' | 'super_user' | 'super_admin'
+  const [role, setRole] = useState('user');
   const [stage, setStage] = useState('initial'); // 'initial' or '2fa'
   const [form, setForm] = useState({
     username: "",
@@ -19,21 +20,21 @@ export default function Login() {
   const { setUser } = useUser();
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox") {
-      setIsSuper(checked);
-      if (!checked) setForm(f => ({ ...f, secretKey: "" }));
-    } else {
-      setForm(f => ({ ...f, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setForm(f => ({ ...f, [name]: value }));
   };
 
   const submitInitial = async () => {
     setError("");
     try {
-      const res = isSuper
-        ? await loginSA(form)
-        : await loginUser(form);
+      let res;
+      if (role === 'super_user') {
+        res = await loginSU(form);
+      } else if (role === 'super_admin') {
+        res = await loginSA(form);
+      } else {
+        res = await loginUser(form);
+      }
 
       if (res.data?.needs2fa) {
         setStage('2fa');
@@ -72,7 +73,6 @@ export default function Login() {
   return (
     <div className="relative flex flex-col items-center justify-center h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6 overflow-hidden">
       {/* animated circles omitted for brevity */}
-
       <motion.form
         onSubmit={handleSubmit}
         initial={{ y: 50, opacity: 0 }}
@@ -86,7 +86,46 @@ export default function Login() {
 
         {error && <p className="text-red-400 mb-4">{error}</p>}
 
-        {/* Always show username/password for initial stage */}
+        {/* Role selector (only on initial stage) */}
+        {stage === 'initial' && (
+          <div className="flex gap-4 mb-4">
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="role"
+                value="user"
+                checked={role === "user"}
+                onChange={() => setRole("user")}
+                className="accent-blue-500 mr-2"
+              />
+              User
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="role"
+                value="super_user"
+                checked={role === "super_user"}
+                onChange={() => setRole("super_user")}
+                className="accent-blue-500 mr-2"
+              />
+              Super User
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                name="role"
+                value="super_admin"
+                checked={role === "super_admin"}
+                onChange={() => setRole("super_admin")}
+                className="accent-blue-500 mr-2"
+              />
+              Super Admin
+            </label>
+          </div>
+        )}
+
+        {/* Username/password always show on initial stage */}
         {stage === 'initial' && (
           <>
             <label className="block mb-2 text-white">Username</label>
@@ -110,20 +149,8 @@ export default function Login() {
               required
             />
 
-            <div className="flex items-center mb-4">
-              <input
-                id="super"
-                type="checkbox"
-                checked={isSuper}
-                onChange={handleChange}
-                className="accent-blue-500"
-              />
-              <label htmlFor="super" className="ml-2 text-white">
-                Super Admin
-              </label>
-            </div>
-
-            {isSuper && (
+            {/* Secret Key: only for super admin */}
+            {role === 'super_admin' && (
               <>
                 <label className="block mb-2 text-white">Secret Key</label>
                 <input
@@ -163,8 +190,6 @@ export default function Login() {
           {stage === 'initial' ? 'Submit' : 'Verify'}
         </motion.button>
       </motion.form>
-
-      {/* attribution omitted */}
     </div>
   );
 }
