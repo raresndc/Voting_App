@@ -16,6 +16,10 @@ public class RsaBlindSignatureService {
     private final SecureRandom rnd = new SecureRandom();
     private static final BigInteger PUBLIC_EXPONENT = BigInteger.valueOf(65537);
 
+    public BigInteger getPublicExponent() {
+        return PUBLIC_EXPONENT;
+    }
+
     public RsaBlindSignatureService(
             @Value("${rsa.modulus}") String modHex,
             @Value("${rsa.privateExp}") String expHex) {
@@ -61,5 +65,12 @@ public class RsaBlindSignatureService {
         BigInteger rInv   = r.modInverse(modulus);
         BigInteger mPrime = signedBlinded.multiply(rInv).mod(modulus);
         return mPrime.toByteArray();
+    }
+
+    //===================================================
+    public boolean verify(BigInteger message, BigInteger signature) {
+        // signature^e mod n == original message
+        BigInteger recovered = signature.modPow(PUBLIC_EXPONENT, modulus);
+        return recovered.equals(message);
     }
 }

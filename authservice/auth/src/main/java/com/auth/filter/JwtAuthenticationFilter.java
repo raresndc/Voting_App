@@ -31,64 +31,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(
             HttpServletRequest request,
             HttpServletResponse response,
-            FilterChain filterChain) throws ServletException, IOException {
-        // intercepts the request
+            FilterChain filterChain
+    ) throws ServletException, IOException {
+        String token = getJwtFromRequest(request);
 
-        final String authHeader = request.getHeader("Authorization");
-        final String jwt;
-        final String username;
-
-        if(authHeader == null || !authHeader.startsWith("Bearer")) {
+        // If no token, continue filter chain without setting authentication
+        if (token == null || !jwtService.isValidToken(token)) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwt = getJwtFromRequest(request);
-
-        // check if the token is valid
-        if(!jwtService.isValidToken(jwt)) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-
-        username = jwtService.extractUsernameFromToken(jwt);
-
-        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Token is valid: extract username and load user
+        String username = jwtService.extractUsernameFromToken(token);
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            if(jwtService.validateTokenForUser(jwt, userDetails)) {
+            if (jwtService.validateTokenForUser(token, userDetails)) {
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
-                        );
-                authToken.setDetails(
-                        new WebAuthenticationDetailsSource().buildDetails(request)
-                );
+                                userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
-                filterChain.doFilter(request, response);
             }
         }
 
-        // do the validation
-        // authenticate the user
-
-
+        // Continue processing
+        filterChain.doFilter(request, response);
     }
 
-//    private String getJwtFromRequest(HttpServletRequest request) {
-//        final String authHeader = request.getHeader("Authorization");
-//        //Bearer <token>
-//        return authHeader.substring(7);
-//    }
     private String getJwtFromRequest(HttpServletRequest req) {
-        // 1) Try the standard header
-        String auth = req.getHeader("Authorization");
-        if (auth != null && auth.startsWith("Bearer ")) {
-            return auth.substring(7);
+        // 1) Try Authorization header
+        String authHeader = req.getHeader(HttpHeaders.AUTHORIZATION);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
         }
-        // 2) Fallback to our secure cookie
+        // 2) Fallback to cookie
         if (req.getCookies() != null) {
             for (Cookie c : req.getCookies()) {
                 if ("JWT_TOKEN".equals(c.getName())) {
@@ -98,4 +76,76 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
+//    @Override
+//    protected void doFilterInternal(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            FilterChain filterChain) throws ServletException, IOException {
+//        // intercepts the request
+//
+//        final String authHeader = request.getHeader("Authorization");
+//        final String jwt;
+//        final String username;
+//
+//        if(authHeader == null || !authHeader.startsWith("Bearer")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        jwt = getJwtFromRequest(request);
+//
+//        // check if the token is valid
+//        if(!jwtService.isValidToken(jwt)) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
+//
+//        username = jwtService.extractUsernameFromToken(jwt);
+//
+//        if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//
+//            if(jwtService.validateTokenForUser(jwt, userDetails)) {
+//                UsernamePasswordAuthenticationToken authToken =
+//                        new UsernamePasswordAuthenticationToken(
+//                                userDetails,
+//                                null,
+//                                userDetails.getAuthorities()
+//                        );
+//                authToken.setDetails(
+//                        new WebAuthenticationDetailsSource().buildDetails(request)
+//                );
+//                SecurityContextHolder.getContext().setAuthentication(authToken);
+//                filterChain.doFilter(request, response);
+//            }
+//        }
+//
+//        // do the validation
+//        // authenticate the user
+//
+//
+//    }
+//
+////    private String getJwtFromRequest(HttpServletRequest request) {
+////        final String authHeader = request.getHeader("Authorization");
+////        //Bearer <token>
+////        return authHeader.substring(7);
+////    }
+//    private String getJwtFromRequest(HttpServletRequest req) {
+//        // 1) Try the standard header
+//        String auth = req.getHeader("Authorization");
+//        if (auth != null && auth.startsWith("Bearer ")) {
+//            return auth.substring(7);
+//        }
+//        // 2) Fallback to our secure cookie
+//        if (req.getCookies() != null) {
+//            for (Cookie c : req.getCookies()) {
+//                if ("JWT_TOKEN".equals(c.getName())) {
+//                    return c.getValue();
+//                }
+//            }
+//        }
+//        return null;
+//    }
 }

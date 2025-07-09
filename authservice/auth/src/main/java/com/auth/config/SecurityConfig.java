@@ -78,6 +78,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/vote/publicKey").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/candidates/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/parties").permitAll()
+                        .requestMatchers("/api/vote/generate").permitAll()
+                        .requestMatchers("/api/vote/challenge").authenticated()
                         .requestMatchers(HttpMethod.GET, "/logos/**").permitAll()
                         .anyRequest().authenticated()
                 )
