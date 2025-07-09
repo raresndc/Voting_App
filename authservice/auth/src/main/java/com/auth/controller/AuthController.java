@@ -2,12 +2,10 @@ package com.auth.controller;
 
 import com.auth.dto.*;
 import com.auth.model.Role;
+import com.auth.model.SuperAdmin;
 import com.auth.model.SuperUser;
 import com.auth.model.User;
-import com.auth.repository.CandidateRepository;
-import com.auth.repository.RoleRepository;
-import com.auth.repository.SuperUserRepository;
-import com.auth.repository.UserRepository;
+import com.auth.repository.*;
 import com.auth.service.AuthService;
 import com.auth.service.JwtService;
 import com.auth.service.SuperAdminService;
@@ -36,6 +34,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -71,6 +70,9 @@ public class AuthController {
 
     @Autowired
     private SuperUserRepository superUserRepository;
+
+    @Autowired
+    private SuperAdminRepository superAdminRepository;
 
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {
@@ -492,11 +494,25 @@ public class AuthController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<UserInfoDto> profile(HttpServletRequest req) {
-        // 1) extract raw token (header or cookie)
-        String token = jwtService.resolveToken(req);   // implement this helper
-        // 2) load user
-        User u = jwtService.extractUserFromToken(token);
-        return ResponseEntity.ok(UserInfoDto.from(u));
+    public ResponseEntity<?> profile(HttpServletRequest req) {
+        String token = jwtService.resolveToken(req);
+        String username = jwtService.extractUsernameFromToken(token);
+
+        Optional<User> userOpt = userRepository.findByUsername(username);
+        if (userOpt.isPresent()) {
+            return ResponseEntity.ok(UserInfoDto.from(userOpt.get()));
+        }
+
+        Optional<SuperUser> suOpt = superUserRepository.findByUsername(username);
+        if (suOpt.isPresent()) {
+            return ResponseEntity.ok(SuperUserInfoDto.from(suOpt.get()));
+        }
+
+        Optional<SuperAdmin> saOpt = superAdminRepository.findByUsername(username);
+        if (saOpt.isPresent()) {
+            return ResponseEntity.ok(SuperAdminInfoDto.from(saOpt.get()));
+        }
+
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "No such user found");
     }
 }
