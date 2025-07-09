@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface VoteTokenRepository extends JpaRepository<VoteToken, Long> {
     Optional<VoteToken> findByEvuid(String evuid);
+    Optional<VoteToken> findByUserId(Long userId);
 }

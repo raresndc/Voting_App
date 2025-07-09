@@ -29,8 +29,8 @@ public class VotingService {
     }
 
     /** Returns true if this token has already been used */
-    public boolean hasVoted(String evuid) {
-        return tokenRepo.findByEvuid(evuid)
+    public boolean hasVoted(Long userId) {
+        return tokenRepo.findByUserId(userId)
                 .map(VoteToken::getUsed)
                 .orElse(false);
     }

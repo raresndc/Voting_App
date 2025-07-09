@@ -22,8 +22,8 @@ public class VotingController {
     }
 
     @GetMapping("/hasVoted")
-    public boolean hasVoted(@RequestParam String evuid) {
-        return svc.hasVoted(evuid);
+    public boolean hasVoted(@RequestParam Long userId) {
+        return svc.hasVoted(userId);
     }
 
     @PostMapping("/cast")

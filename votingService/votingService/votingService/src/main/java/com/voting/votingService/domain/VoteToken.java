@@ -10,13 +10,16 @@ public class VoteToken {
     private Long id;
 
     @Column(nullable = false, unique = true, length = 64)
-    private String evuid;       // Base64 of the raw VUID
+    private String evuid;
 
     @Column(nullable = true, length = 512)
-    private String signedToken; // Base64 of the blind‐signature
+    private String signedToken;
 
     @Column(nullable = false)
     private Boolean used = false;
+
+    @Column(name = "user_id")
+    private Long userId;
 
     public Long getId() {
         return id;
@@ -48,5 +51,13 @@ public class VoteToken {
 
     public void setUsed(Boolean used) {
         this.used = used;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
