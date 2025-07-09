@@ -152,21 +152,21 @@ public class AuthService {
                 .role(candidateRole)
                 .IDseries(registerRequest.getIDseries())
                 .politicalParty(party)
-                .verified(false)
+                .verified(true)
                 .votes(0L)
                 .build();
 
         candidateRepository.save(candidate);
 
-        SecureRandom secureRandom = new SecureRandom();
-        String code = String.format("%04d", secureRandom.nextInt(10_000));
-        candidate.setVerificationCode(code);
-        candidate.setVerificationExpiryDate(LocalDateTime.now().plusHours(1));
+//        SecureRandom secureRandom = new SecureRandom();
+//        String code = String.format("%04d", secureRandom.nextInt(10_000));
+//        candidate.setVerificationCode(code);
+//        candidate.setVerificationExpiryDate(LocalDateTime.now().plusHours(1));
 
         candidateRepository.save(candidate);
 
         // send code
-        emailService.sendVerificationEmail(candidate.getEmail(), candidate.getFirstName(), candidate.getLastName(), code);
+//        emailService.sendVerificationEmail(candidate.getEmail(), candidate.getFirstName(), candidate.getLastName(), code);
     }
 
     @Auditable(action="VERIFY", targetType="User", targetIdArg="username")
