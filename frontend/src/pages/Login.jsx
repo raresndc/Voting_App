@@ -1,7 +1,7 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginUser, loginSU, login2FA, getProfile } from "../api/auth";
+import { loginUser, loginSU, loginSA, login2FA, getProfile } from "../api/auth";
 import { useUser } from "../context/UserContext";
 import { motion } from "framer-motion";
 
@@ -32,7 +32,7 @@ export default function Login() {
     setError("");
     try {
       const res = isSuper
-        ? await loginSU(form)
+        ? await loginSA(form)
         : await loginUser(form);
 
       if (res.data?.needs2fa) {
