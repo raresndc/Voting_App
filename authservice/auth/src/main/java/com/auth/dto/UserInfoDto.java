@@ -7,6 +7,7 @@ import com.auth.model.User;
 import lombok.*;
 
 public class UserInfoDto {
+    Long      id;
     int       age;
     String    citizenship;
     LocalDate dateOfBirth;
@@ -24,7 +25,8 @@ public class UserInfoDto {
     public UserInfoDto() {
     }
 
-    public UserInfoDto(int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate, String username, Boolean twoFactorEnabled) {
+    public UserInfoDto(Long id, int age, String citizenship, LocalDate dateOfBirth, String gender, String lastName, String firstName, String idSeries, Boolean verified, String personalIdNo, String phoneNo, LocalDateTime createdDate, String username, Boolean twoFactorEnabled) {
+        this.id = id;
         this.age = age;
         this.citizenship = citizenship;
         this.dateOfBirth = dateOfBirth;
@@ -144,8 +146,17 @@ public class UserInfoDto {
         this.twoFactorEnabled = twoFactorEnabled;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public static UserInfoDto from(User user) {
         UserInfoDto dto = new UserInfoDto();
+        dto.setId(user.getId());
         dto.setAge(user.getAge());
         dto.setCitizenship(user.getCitizenship());
         dto.setDateOfBirth(user.getDob());

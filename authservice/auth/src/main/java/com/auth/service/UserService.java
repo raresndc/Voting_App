@@ -16,6 +16,7 @@ public class UserService {
     public Optional<UserInfoDto> findByUsername(String username) {
         return repo.findByUsername(username)
                 .map(u -> new UserInfoDto(
+                        u.getId(),
                         u.getAge(),
                         u.getCitizenship(),
                         u.getDob(),
