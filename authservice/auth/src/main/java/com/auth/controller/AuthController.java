@@ -256,6 +256,33 @@ public class AuthController {
         return ResponseEntity.ok(UserInfoDto.from(user));
     }
 
+    @PostMapping("/login/2fa")
+    public ResponseEntity<UserInfoDto> loginWith2FA(
+            @RequestBody Confirm2FARequest req,
+            HttpServletResponse response
+    ) {
+        // 1) Enable 2FA and get the updated user
+        User user = authService.confirm2FA(req.getUsername(), req.getCode());
+
+        // 2) Issue a fresh JWT (and refresh) cookie pair
+        TokenPair tokens = authService.issueTokenPairForUser(user);
+        ResponseCookie accessCookie = ResponseCookie.from("JWT_TOKEN", tokens.getAccessToken())
+                .httpOnly(true)
+                .secure(false)           // in prod: true
+                .path("/")
+                // .domain("e-vote.ro")  // uncomment in production
+                .maxAge(jwtService.getExpirySeconds())
+                .sameSite("Strict")
+                .build();
+        response.addHeader(HttpHeaders.SET_COOKIE, accessCookie.toString());
+
+        // (Optionally) set refresh‐token cookie here too…
+
+        // 3) Return the updated user DTO
+        return ResponseEntity.ok(UserInfoDto.from(user));
+    }
+
+
 //    @PostMapping("/login-super-user")
 //    public ResponseEntity<?> loginSuperUser(
 //            @Valid @RequestBody LoginRequest req) {

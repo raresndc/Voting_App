@@ -132,7 +132,13 @@ public class JwtService {
     }
 
     private String generateToken(Authentication authentication, long expirationMs, Map<String, String> claims) {
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        Object principal = authentication.getPrincipal();
+        final String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + expirationMs);
@@ -141,7 +147,7 @@ public class JwtService {
                 .header()
                 .add("typ", "JWT")
                 .and()
-                .subject(userPrincipal.getUsername())
+                .subject(username)
                 .claims(claims)
                 .issuedAt(now)
                 .expiration(expiryDate)
