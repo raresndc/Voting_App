@@ -1,238 +1,29 @@
 openapi: 3.0.3
 info:
-  title: Voting App API
+  title: E-Voting Microservices API
   version: 1.0.0
-  description: |
-    OpenAPI specification for the microservices: Auth, Identity Verification,
-    Document Service, and Voting Service.
 servers:
-  - url: http://localhost:8080
-    description: Local development server
+  - url: http://document-service:8080
+    description: Document Service
+  - url: http://identity-verification-service:8081
+    description: Identity Verification Service
+  - url: http://auth-service:8082
+    description: Authentication & Blind Signature Service
+  - url: http://voting-service:8083
+    description: Voting Service
+
+tags:
+  - name: Document Service
+  - name: Identity Verification Service
+  - name: Auth Service
+  - name: Voting Service
+
 paths:
-  /api/auth/register:
-    post:
-      tags: [Auth]
-      summary: Register a new user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterRequest'
-      responses:
-        '200':
-          description: User registered successfully
-  /api/auth/register-candidate:
-    post:
-      tags: [Auth]
-      summary: Request candidate registration (super-admin only)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RegisterCandidateRequest'
-      responses:
-        '200':
-          description: Candidate registration submitted
-  /api/auth/login:
-    post:
-      tags: [Auth]
-      summary: User login
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/LoginRequest'
-      responses:
-        '200':
-          description: Returns access & refresh tokens or 2FA challenge
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/LoginResponse'
-  /api/auth/login-super-user:
-    post:
-      tags: [Auth]
-      summary: Super-admin login (requires secret key)
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/SuperAdminLoginRequest'
-      responses:
-        '200':
-          description: Super-admin authenticated
-  /api/auth/reset-password:
-    post:
-      tags: [Auth]
-      summary: Reset password using token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ResetPasswordRequest'
-      responses:
-        '200':
-          description: Password reset successful
-  /api/auth/{username}:
-    get:
-      tags: [Auth]
-      summary: Get user info by username
-      parameters:
-        - in: path
-          name: username
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: User details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserInfoDto'
-  /api/auth/2fa/setup:
-    post:
-      tags: [Auth]
-      summary: Generate 2FA setup (secret + QR)
-      parameters:
-        - in: query
-          name: username
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 2FA setup details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Setup2FAResponse'
-  /api/auth/2fa/confirm:
-    post:
-      tags: [Auth]
-      summary: Confirm and enable 2FA
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Confirm2FARequest'
-      responses:
-        '200':
-          description: 2FA enabled
-  /api/auth/logout:
-    post:
-      tags: [Auth]
-      summary: Logout and invalidate refresh token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
-      responses:
-        '200':
-          description: Logged out successfully
-  /api/auth/refresh-token:
-    post:
-      tags: [Auth]
-      summary: Refresh access token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/RefreshTokenRequest'
-      responses:
-        '200':
-          description: New token pair
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TokenPair'
-  /api/auth/verify:
-    post:
-      tags: [Auth]
-      summary: Verify user account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VerifyRequest'
-      responses:
-        '200':
-          description: Account verified
-  /api/face-photo/{userId}:
-    post:
-      tags: [Identity]
-      summary: Upload user face photo for verification
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-      responses:
-        '201':
-          description: Photo uploaded and cached
-    get:
-      tags: [Identity]
-      summary: Retrieve cached face photo
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: PNG image
-          content:
-            image/png: {}
-        '404':
-          description: Not found
-  /api/face-compare/{userId}:
-    get:
-      tags: [Identity]
-      summary: Compare cached photos and return match result
-      parameters:
-        - in: path
-          name: userId
-          required: true
-          schema:
-            type: string
-        - in: query
-          name: threshold
-          schema:
-            type: number
-            default: 100
-      responses:
-        '200':
-          description: Face comparison result
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FaceComparisonResult'
   /api/id-photo/{userId}:
     post:
-      tags: [Document]
-      summary: Upload user ID photo
+      tags:
+        - Document Service
+      summary: Upload ID document image for OCR processing
       parameters:
         - in: path
           name: userId
@@ -240,7 +31,6 @@ paths:
           schema:
             type: string
       requestBody:
-        required: true
         content:
           multipart/form-data:
             schema:
@@ -250,11 +40,18 @@ paths:
                   type: string
                   format: binary
       responses:
-        '201':
-          description: ID photo uploaded
+        '200':
+          description: Extraction successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentData'
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
-      tags: [Document]
-      summary: Retrieve cached ID photo
+      tags:
+        - Document Service
+      summary: Retrieve extracted data for a given user ID
       parameters:
         - in: path
           name: userId
@@ -263,50 +60,47 @@ paths:
             type: string
       responses:
         '200':
-          description: PNG image
+          description: OCR data
           content:
-            image/png: {}
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentData'
         '404':
-          description: Not found
-  /api/documents:
-    post:
-      tags: [Document]
-      summary: Upload PDF document
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
+          $ref: '#/components/responses/NotFound'
+
+  /api/documents/{id}:
+    get:
+      tags:
+        - Document Service
+      summary: Retrieve stored document metadata by document ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Document metadata
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Document'
-    get:
-      tags: [Document]
-      summary: List user documents
-      responses:
-        '200':
-          description: Array of documents
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Document'
-  /api/documents/ocr/text:
+                $ref: '#/components/schemas/DocumentMetadata'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/face-photo/{userId}:
     post:
-      tags: [Document]
-      summary: OCR and save document text
+      tags:
+        - Identity Verification Service
+      summary: Upload live face photo for comparison
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           multipart/form-data:
             schema:
@@ -317,60 +111,287 @@ paths:
                   format: binary
       responses:
         '200':
-          description: Document with OCR text
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Document'
-  /api/documents/{id}:
+          description: Face image stored
+        '400':
+          $ref: '#/components/responses/BadRequest'
     get:
-      tags: [Document]
-      summary: Download document by ID
+      tags:
+        - Identity Verification Service
+      summary: Retrieve stored face image metadata
       parameters:
         - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: File download
-          content:
-            application/octet-stream: {}
-  /api/votes/hasVoted:
-    get:
-      tags: [Voting]
-      summary: Check if EVUID has already voted
-      parameters:
-        - in: query
-          name: evuid
+          name: userId
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Voting status
+          description: Face metadata
           content:
             application/json:
               schema:
-                type: boolean
-  /api/votes/cast:
+                $ref: '#/components/schemas/FaceMetadata'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/face-compare/{userId}:
     post:
-      tags: [Voting]
-      summary: Cast a vote
+      tags:
+        - Identity Verification Service
+      summary: Compare document photo against live face
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Face match result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaceMatchResult'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/auth/login-super-user:
+    post:
+      tags:
+        - Auth Service
+      summary: Super-user login
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CastRequest'
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
-          description: Vote recorded
+          description: JWT tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokens'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/auth/verify:
+    post:
+      tags:
+        - Auth Service
+      summary: Verify user credentials
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyRequest'
+      responses:
+        '200':
+          description: Verification successful
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /api/auth/logout:
+    post:
+      tags:
+        - Auth Service
+      summary: Invalidate user session
+      responses:
+        '204':
+          description: Logged out
+
+  /api/auth/refresh-token:
+    post:
+      tags:
+        - Auth Service
+      summary: Refresh JWT access token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '200':
+          description: New access token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthTokens'
+
+  /api/auth/profile:
+    get:
+      tags:
+        - Auth Service
+      summary: Get current user profile
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+
+  /api/auth/politicalParty:
+    get:
+      tags:
+        - Auth Service
+      summary: List political parties
+      responses:
+        '200':
+          description: List of parties
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Party'
+
+  /api/auth/token:
+    post:
+      tags:
+        - Auth Service
+      summary: Retrieve public blind-signature parameters
+      responses:
+        '200':
+          description: RSA public key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlindKey'
+
+  /api/auth/{userId}/vote:
+    post:
+      tags:
+        - Auth Service
+      summary: Issue a blind signature for a vote token
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlindedTokenRequest'
+      responses:
+        '200':
+          description: Blinded signature
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BlindedSignature'
+        '409':
+          description: Token already issued
+
+  /api/auth/verify-candidate:
+    post:
+      tags:
+        - Auth Service
+      summary: Verify candidate eligibility
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas<CandidateVerificationRequest>'
+      responses:
+        '200':
+          description: Candidate verified
+
+  /api/auth/{candidateId}:
+    put:
+      tags:
+        - Auth Service
+      summary: Update candidate information
+      parameters:
+        - in: path
+          name: candidateId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CandidateUpdate'
+      responses:
+        '200':
+          description: Candidate updated
+
+  /api/votes/cast:
+    post:
+      tags:
+        - Voting Service
+      summary: Cast a vote on the blockchain
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoteCastRequest'
+      responses:
+        '200':
+          description: Vote recorded on chain
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/votes/verify:
+    post:
+      tags:
+        - Voting Service
+      summary: Verify vote token authenticity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas<TokenVerificationRequest>'
+      responses:
+        '200':
+          description: Token valid
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/votes/hasVoted:
+    get:
+      tags:
+        - Voting Service
+      summary: Check if a vote token has been used
+      parameters:
+        - in: query
+          name: token
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Usage status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas<UsageStatus>'
+
+  /api/votes/summaries:
+    get:
+      tags:
+        - Voting Service
+      summary: Get vote summaries for all candidates
+      responses:
+        '200':
+          description: List of vote counts per candidate
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas<VoteSummary>'
+
   /api/votes/count/{candidateId}:
     get:
-      tags: [Voting]
-      summary: Get vote count for a candidate
+      tags:
+        - Voting Service
+      summary: Get vote count for a specific candidate
       parameters:
         - in: path
           name: candidateId
@@ -379,205 +400,171 @@ paths:
             type: string
       responses:
         '200':
-          description: Number of votes
+          description: Vote count
           content:
             application/json:
               schema:
-                type: integer
-  /api/votes/summaries:
-    get:
-      tags: [Voting]
-      summary: Get summaries of all candidates (super-admin only)
-      responses:
-        '200':
-          description: List of candidate summaries
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CandidateSummary'
-  /api/votes/verify:
-    post:
-      tags: [Voting]
-      summary: Debug: verify blind signature
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VoteVerifyRequest'
-      responses:
-        '200':
-          description: Verification result
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VoteVerifyResponse'
+                $ref: '#/components/schemas<VoteCount>'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    BadRequest:
+      description: Invalid input
+    Unauthorized:
+      description: Authentication failed
+    NotFound:
+      description: Resource not found
+
   schemas:
-    RegisterRequest:
+    DocumentData:
       type: object
       properties:
-        firstName:
+        serie:
           type: string
-        lastName:
+        number:
           type: string
+        name:
+          type: string
+        cnp:
+          type: string
+        validFrom:
+          type: string
+          format: date
+        validTo:
+          type: string
+          format: date
+    DocumentMetadata:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        uploadedAt:
+          type: string
+          format: date-time
+    FaceMetadata:
+      type: object
+      properties:
+        userId:
+          type: string
+        storedAt:
+          type: string
+          format: date-time
+    FaceMatchResult:
+      type: object
+      properties:
+        matched:
+          type: boolean
+        confidence:
+          type: number
+    LoginRequest:
+      type: object
+      properties:
         username:
           type: string
         password:
           type: string
-        role:
-          type: string
-          example: USER
-        phoneNo:
-          type: string
-        gender:
-          type: string
-          enum: [MALE, FEMALE]
-        email:
-          type: string
-          format: email
-        personalIdNo:
-          type: string
-          pattern: '^\\d{13}$'
-        citizenship:
-          type: string
-        country:
-          type: string
-        county:
-          type: string
-        city:
-          type: string
-        address:
-          type: string
-        dob:
-          type: string
-          format: date
-        age:
-          type: integer
-        IDseries:
-          type: string
-          pattern: '^[A-Za-z]{2}\\d{6}$'
-      required: [firstName, lastName, username, password, phoneNo, gender, email, personalIdNo, citizenship, country, county, city, address, dob, IDseries]
-    RegisterCandidateRequest:
+    AuthTokens:
       type: object
       properties:
-        firstName: { type: string }
-        lastName:  { type: string }
-        username:  { type: string }
-        password:  { type: string }
-        gender:    { type: string, enum: [MALE, FEMALE] }
-        email:     { type: string, format: email }
-        dob:       { type: string, format: date }
-        age:       { type: integer }
-        IDseries:  { type: string, pattern: '^[A-Za-z]{2}\\d{6}$' }
-        politicalPartyId: { type: integer }
-      required: [firstName, lastName, username, password, gender, email, dob, IDseries, politicalPartyId]
-    LoginRequest:
-      type: object
-      properties:
-        username: { type: string }
-        password: { type: string }
-      required: [username, password]
-    SuperAdminLoginRequest:
-      type: object
-      properties:
-        username:  { type: string }
-        password:  { type: string }
-        secretKey: { type: string }
-      required: [username, password, secretKey]
-    LoginResponse:
-      type: object
-      properties:
-        needs2fa:    { type: boolean }
-        accessToken: { type: string }
-        refreshToken:{ type: string }
-        username:    { type: string }
-        role:        { type: string }
-    ResetPasswordRequest:
-      type: object
-      properties:
-        token:       { type: string }
-        newPassword: { type: string }
-      required: [token, newPassword]
-    RefreshTokenRequest:
-      type: object
-      properties:
-        refreshToken: { type: string }
-      required: [refreshToken]
-    TokenPair:
-      type: object
-      properties:
-        accessToken:  { type: string }
-        refreshToken: { type: string }
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
     VerifyRequest:
       type: object
       properties:
-        username: { type: string }
-        code:     { type: string }
-      required: [username, code]
-    Setup2FAResponse:
+        username:
+          type: string
+        code:
+          type: string
+    RefreshTokenRequest:
       type: object
       properties:
-        secret:      { type: string }
-        uri:         { type: string }
-        qrCodeImage: { type: string }
-    Confirm2FARequest:
+        refreshToken:
+          type: string
+    UserProfile:
       type: object
       properties:
-        username: { type: string }
-        code:     { type: string }
-      required: [username, code]
-    UserInfoDto:
+        userId:
+          type: string
+        roles:
+          type: array
+          items:
+            type: string
+    Party:
       type: object
       properties:
-        age:          { type: integer }
-        citizenship:  { type: string }
-        dateOfBirth:  { type: string, format: date }
-        gender:       { type: string }
-        lastName:     { type: string }
-        firstName:    { type: string }
-        idSeries:     { type: string }
-    FaceComparisonResult:
+        id:
+          type: string
+        name:
+          type: string
+    BlindKey:
       type: object
       properties:
-        userId:     { type: string }
-        match:      { type: boolean }
-        confidence: { type: number }
-        threshold:  { type: number }
-    Document:
+        n:
+          type: string
+        e:
+          type: integer
+    BlindedTokenRequest:
       type: object
       properties:
-        id:           { type: integer }
-        filename:     { type: string }
-        contentType:  { type: string }
-        ocrText:      { type: string }
-        uploadedAt:   { type: string, format: date-time }
-    CastRequest:
+        blindedMessage:
+          type: string
+    BlindedSignature:
       type: object
       properties:
-        evuid:       { type: string }
-        candidateId: { type: string }
-        signature:   { type: string }
-      required: [evuid, candidateId, signature]
-    VoteVerifyRequest:
+        blindedSignature:
+          type: string
+    CandidateVerificationRequest:
       type: object
       properties:
-        evuid:     { type: string }
-        signature: { type: string }
-      required: [evuid, signature]
-    VoteVerifyResponse:
+        candidateId:
+          type: string
+    CandidateUpdate:
       type: object
       properties:
-        evuidLen: { type: integer }
-        sigLen:   { type: integer }
-        verified: { type: boolean }
-    CandidateSummary:
+        manifesto:
+          type: string
+    VoteCastRequest:
       type: object
       properties:
-        candidateId: { type: string }
-        name:        { type: string }
-        party:       { type: string }
-        votes:       { type: integer }
-      required: [candidateId, name, party, votes]
+        token:
+          type: string
+        candidateId:
+          type: string
+    TokenVerificationRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        signature:
+          type: string
+    UsageStatus:
+      type: object
+      properties:
+        hasVoted:
+          type: boolean
+    VoteSummary:
+      type: object
+      properties:
+        candidateId:
+          type: string
+        count:
+          type: integer
+    VoteCount:
+      type: object
+      properties:
+        candidateId:
+          type: string
+        count:
+          type: integer
