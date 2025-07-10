@@ -99,6 +99,7 @@ public class AuthService {
                 .createdDate(LocalDateTime.now())
                 .lastModifiedBy(registerRequest.getUsername())
                 .lastModifiedDate(LocalDateTime.now())
+                .identityVerification(false)
                 .build();
 
         userRepository.save(user);

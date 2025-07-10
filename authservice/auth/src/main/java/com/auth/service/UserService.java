@@ -29,7 +29,8 @@ public class UserService {
                         u.getPhoneNo(),
                         u.getCreatedDate(),
                         u.getUsername(),
-                        u.isTwoFactorEnabled()
+                        u.isTwoFactorEnabled(),
+                        u.isIdentityVerification()
                 ));
     }
 }

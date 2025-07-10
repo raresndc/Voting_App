@@ -93,4 +93,6 @@ public class RegisterRequest {
     private Integer age;
 
     private String IDseries;
+
+    private boolean identityVerification = false;
 }

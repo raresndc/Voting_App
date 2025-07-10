@@ -148,6 +148,9 @@ public class User {
     )
     private String IDseries;
 
+    @Column(name = "identityVerification")
+    private Boolean identityVerification = false;
+
     public User(String firstName,
                 String lastName,
                 String username,
@@ -164,7 +167,8 @@ public class User {
                 String address,
                 LocalDate dob,
                 Integer age,
-                boolean verified) {
+                boolean verified,
+                boolean identityVerification) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.username = username;
@@ -182,6 +186,7 @@ public class User {
         this.dob = dob;
         this.age = age;
         this.verified = verified;
+        this.identityVerification = identityVerification;
     }
 
     public User(String username, String email) {
@@ -195,5 +200,13 @@ public class User {
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public boolean isIdentityVerification() {
+        return identityVerification;
+    }
+
+    public void setIdentityVerification(boolean identityVerification) {
+        this.identityVerification = identityVerification;
     }
 }
