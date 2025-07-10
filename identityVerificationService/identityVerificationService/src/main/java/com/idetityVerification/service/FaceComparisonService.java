@@ -1,6 +1,8 @@
 package com.idetityVerification.service;
 
 import com.idetityVerification.dto.FaceComparisonResult;
+import com.idetityVerification.model.User;
+import com.idetityVerification.repository.UserRepository;
 import org.bytedeco.javacpp.Loader;
 import org.bytedeco.javacpp.BytePointer;
 import org.bytedeco.javacpp.IntPointer;
@@ -9,6 +11,7 @@ import org.bytedeco.opencv.opencv_core.Mat;
 import org.bytedeco.opencv.opencv_core.MatVector;
 //import org.bytedeco.opencv.opencv_core.Size;
 import org.bytedeco.opencv.opencv_face.LBPHFaceRecognizer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +24,13 @@ import static org.bytedeco.opencv.global.opencv_imgproc.resize;
 import static org.bytedeco.opencv.global.opencv_imgproc.equalizeHist;
 import org.bytedeco.opencv.opencv_core.Size;
 
+import java.util.Optional;
+
 @Service
 public class FaceComparisonService {
 
+    @Autowired
+    private UserRepository userRepository;
     private final RedisTemplate<String, byte[]> redisTemplate;
 
     public FaceComparisonService(RedisTemplate<String, byte[]> redisTemplate) {
@@ -84,6 +91,16 @@ public class FaceComparisonService {
         );
 
         boolean match     = (label == 1 && confidence < threshold);
+
+        Long id = Long.valueOf(userId);
+        Optional<User> opt = userRepository.findById(id);
+        if (opt.isPresent()) {
+            User user = opt.get();
+            user.setIdentityVerification(match);
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("User not found: " + userId);
+        }
 
         return new FaceComparisonResult(userId, match, confidence, threshold);
     }
