@@ -15,6 +15,7 @@ import Stats from './pages/Stats';
 import Locations from './pages/Locations';
 import Profile from './pages/Profile';
 import TwoFASetup from './pages/2FA';
+import Verify from './pages/Verify';
 import { UserProvider, useUser } from './context/UserContext';
 import { getProfile } from './api/auth';
 
@@ -26,16 +27,16 @@ function AppInner() {
   const location = useLocation();
 
   useEffect(() => {
+    const publicPaths = ['/', '/login', '/register', '/verify'];
+    if (publicPaths.includes(location.pathname)) return;   // <-- do nothing!
     getProfile()
       .then(res => setUser(res.data))
       .catch(() => {
         clearUser();
-        const publicPaths = ['/', '/login', '/register'];
-        if (!publicPaths.includes(location.pathname)) {
-          navigate('/');
-        }
+        navigate('/');
       });
   }, [location.pathname]);
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -43,6 +44,7 @@ function AppInner() {
         <Route path="/" element={<Welcome />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify" element={<Verify />} />
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/parties" element={<Parties />} />

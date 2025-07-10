@@ -15,7 +15,7 @@ API.interceptors.request.use(config => {
 });
 
 // Auth endpoints
-export const registerUser    = data => API.post('/api/auth/register', data);
+export const registerUser = data => API.post('/api/auth/register', data, { withCredentials: false, headers: { Authorization: undefined } });
 export const registerCand    = data => API.post('/api/auth/register-candidate', data);
 export const loginUser       = data => API.post('/api/auth/login', data);
 export const loginSU         = data => API.post('/api/auth/login-super-user', data);

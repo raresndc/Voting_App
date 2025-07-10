@@ -18,7 +18,7 @@ const voteData = [
 export default function Dashboard() {
   const { user } = useUser();
 
-  const verificationStatus = user?.verified ? 'Verified' : 'Pending Verification';
+  const verificationStatus = user?.identityVerification ? 'Verified' : 'Pending Verification';
   const upcomingElection = '2025 General Election';
 
   return (
