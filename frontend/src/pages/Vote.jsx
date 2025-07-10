@@ -11,11 +11,14 @@ export default function Vote() {
   const { user } = useUser();
   const navigate = useNavigate();
 
-  const [tokenPair, setTokenPair] = useState(null);
-  const [candidates, setCandidates] = useState([]);
-  const [loadingToken, setLoadingToken] = useState(true);
-  const [voteState, setVoteState] = useState({}); // key: candidateId, value: {loading, error, success}
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [isVerified, setIsVerified] = useState(false);
   const [globalError, setGlobalError] = useState(null);
+
+  const [tokenPair, setTokenPair] = useState(null);
+  const [loadingToken, setLoadingToken] = useState(true);
+  const [candidates, setCandidates] = useState([]);
+  const [voteState, setVoteState] = useState({}); // key: candidateId, value: {loading, error, success}
 
   const hasIssued = useRef(false);
 
@@ -24,18 +27,34 @@ export default function Vote() {
     if (user === null) navigate("/login");
   }, [user, navigate]);
 
-  // Fetch candidates once
+  // Fetch profile to check verification
   useEffect(() => {
+    if (!user) return;
+    (async () => {
+      try {
+        const res = await API.get('/api/auth/profile'); // GET /api/auth/profile
+        setIsVerified(res.data.identityVerification);
+      } catch (err) {
+        setGlobalError("Could not verify your identity. Please try again.");
+      } finally {
+        setProfileLoading(false);
+      }
+    })();
+  }, [user]);
+
+  // Fetch candidates once (only if verified)
+  useEffect(() => {
+    if (profileLoading || !isVerified) return;
     API.get("/api/candidates")
       .then((res) => setCandidates(res.data))
       .catch((err) => {
         setGlobalError("Could not load candidates. Please try again.");
       });
-  }, []);
+  }, [profileLoading, isVerified]);
 
-  // Issue the blind‐sig token once after login
+  // Issue the blind‐sig token once after login & verification
   useEffect(() => {
-    if (!user || hasIssued.current) return;
+    if (!user || profileLoading || !isVerified || hasIssued.current) return;
     hasIssued.current = true;
 
     (async () => {
@@ -48,7 +67,7 @@ export default function Vote() {
         setLoadingToken(false);
       }
     })();
-  }, [user]);
+  }, [user, profileLoading, isVerified]);
 
   const handleVote = async (candidateId) => {
     setVoteState((prev) => ({
@@ -77,6 +96,35 @@ export default function Vote() {
       }));
     }
   };
+
+  // Show loader while profile or token is loading
+  if (profileLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-800 text-white">
+        <span className="text-lg animate-pulse">Verifying your account…</span>
+      </div>
+    );
+  }
+
+  // Block unverified users
+  if (!isVerified) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white p-6">
+        <div className="max-w-md text-center bg-red-700 bg-opacity-80 rounded-lg p-8">
+          <h2 className="text-2xl font-bold mb-4">Access Denied</h2>
+          <p className="mb-4">
+            Your account is not verified. Please complete identity verification to participate in voting.
+          </p>
+          <button
+            className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+            onClick={() => navigate('/profile')}
+          >
+            Go to Verification
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   if (loadingToken) {
     return (
